@@ -149,11 +149,13 @@ function PlaylistCard({
 	playlist,
 	cfg,
 	selected,
+	disabled,
 	onClick,
 }: {
 	playlist: JellyfinPlaylist;
 	cfg: JellyfinConfig;
 	selected: boolean;
+	disabled: boolean;
 	onClick: () => void;
 }) {
 	const imgUrl = playlistThumbnailUrl(cfg, playlist);
@@ -161,7 +163,10 @@ function PlaylistCard({
 		<button
 			type="button"
 			onClick={onClick}
-			className={`island-shell feature-card rounded-xl border p-4 text-left w-full rise-in cursor-pointer flex items-center gap-3 ${
+			disabled={disabled}
+			className={`island-shell feature-card rounded-xl border p-4 text-left w-full rise-in flex items-center gap-3 ${
+				disabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"
+			} ${
 				selected
 					? "border-[var(--lagoon)] ring-2 ring-[var(--lagoon)]/30"
 					: "border-[var(--line)]"
@@ -194,17 +199,22 @@ function PlaylistCard({
 function PlaylistRow({
 	playlist,
 	selected,
+	disabled,
 	onClick,
 }: {
 	playlist: JellyfinPlaylist;
 	selected: boolean;
+	disabled: boolean;
 	onClick: () => void;
 }) {
 	return (
 		<button
 			type="button"
 			onClick={onClick}
-			className={`island-shell rounded-lg border px-4 py-3 text-left w-full rise-in cursor-pointer flex items-center gap-4 ${
+			disabled={disabled}
+			className={`island-shell rounded-lg border px-4 py-3 text-left w-full rise-in flex items-center gap-4 ${
+				disabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"
+			} ${
 				selected
 					? "border-[var(--lagoon)] ring-2 ring-[var(--lagoon)]/30"
 					: "border-[var(--line)]"
@@ -741,8 +751,13 @@ function PlaylistsPage() {
 	const showConnect = hydrated && !jellyfinConfig;
 	const showSkeletons = !hydrated || (!!jellyfinConfig && isPending);
 
-	const totalPages = Math.ceil((playlists?.length ?? 0) / PAGE_SIZE);
-	const visiblePlaylists = playlists?.slice(
+	const sortedPlaylists = playlists?.slice().sort((a, b) => {
+		const aEmpty = (a.ChildCount ?? 1) === 0;
+		const bEmpty = (b.ChildCount ?? 1) === 0;
+		return Number(aEmpty) - Number(bEmpty);
+	});
+	const totalPages = Math.ceil((sortedPlaylists?.length ?? 0) / PAGE_SIZE);
+	const visiblePlaylists = sortedPlaylists?.slice(
 		page * PAGE_SIZE,
 		(page + 1) * PAGE_SIZE,
 	);
@@ -808,6 +823,7 @@ function PlaylistsPage() {
 											playlist={pl}
 											cfg={jellyfinConfig}
 											selected={pl.Id === selectedId}
+											disabled={(pl.ChildCount ?? 1) === 0}
 											onClick={() => selectPlaylist(pl.Id)}
 										/>
 									))}
@@ -824,6 +840,7 @@ function PlaylistsPage() {
 											key={pl.Id}
 											playlist={pl}
 											selected={pl.Id === selectedId}
+											disabled={(pl.ChildCount ?? 1) === 0}
 											onClick={() => selectPlaylist(pl.Id)}
 										/>
 									))}
