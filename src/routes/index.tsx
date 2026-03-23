@@ -321,7 +321,7 @@ function TrackTableRow({
 
 	return (
 		<tr className="border-b border-[var(--line)] last:border-0 hover:bg-[var(--surface)]/40">
-			{/* Jellyfin: thumbnail + title/artist */}
+			{/* Jellyfin: thumbnail + title/artist/duration */}
 			<td className="px-4 py-3">
 				<div className="flex items-center gap-3 min-w-0">
 					<img
@@ -335,18 +335,17 @@ function TrackTableRow({
 							{track.Name}
 						</p>
 						<p className="text-xs text-[var(--sea-ink-soft)] truncate">
-							{track.Artists?.join(", ") ?? ""}
+							{[
+								track.Artists?.join(", "),
+								track.RunTimeTicks != null
+									? ticksToDisplay(track.RunTimeTicks)
+									: null,
+							]
+								.filter(Boolean)
+								.join(" · ")}
 						</p>
 					</div>
 				</div>
-			</td>
-			{/* Jellyfin: duration */}
-			<td className="px-4 py-3 whitespace-nowrap">
-				<span className="text-xs tabular-nums text-[var(--sea-ink-soft)]">
-					{track.RunTimeTicks != null
-						? ticksToDisplay(track.RunTimeTicks)
-						: "—"}
-				</span>
 			</td>
 			{/* Link indicator */}
 			<td className="px-4 py-3 w-12 text-center">
@@ -361,7 +360,7 @@ function TrackTableRow({
 					</span>
 				)}
 			</td>
-			{/* MB: title/artist/releases */}
+			{/* MB: title/artist/duration/releases */}
 			<td className="px-4 py-3">
 				{mbid && mbPending && (
 					<div className="animate-pulse">
@@ -385,23 +384,17 @@ function TrackTableRow({
 								{recording.title}
 							</a>
 							<p className="text-xs text-[var(--sea-ink-soft)] truncate">
-								{formatArtistCredits(recording["artist-credit"])}
+								{[
+									formatArtistCredits(recording["artist-credit"]),
+									recording.length != null
+										? msToDisplay(recording.length)
+										: null,
+								]
+									.filter(Boolean)
+									.join(" · ")}
 							</p>
 						</div>
-						{recording.releases != null && recording.releases.length > 0 && (
-							<span className="text-xs text-[var(--sea-ink-soft)] shrink-0 border border-[var(--line)] rounded px-1.5 py-0.5">
-								{recording.releases.length}
-							</span>
-						)}
 					</div>
-				)}
-			</td>
-			{/* MB: duration */}
-			<td className="px-4 py-3 whitespace-nowrap">
-				{recording?.length != null && (
-					<span className="text-xs tabular-nums text-[var(--sea-ink-soft)]">
-						{msToDisplay(recording.length)}
-					</span>
 				)}
 			</td>
 		</tr>
@@ -688,15 +681,9 @@ function TrackSection({
 							<th className="px-4 py-3 text-left text-xs font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wide">
 								Track
 							</th>
-							<th className="px-4 py-3 text-left text-xs font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wide">
-								Duration
-							</th>
-							<th className="px-4 py-3 w-12" />
+							<th className="w-12" />
 							<th className="px-4 py-3 text-left text-xs font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wide">
 								MusicBrainz
-							</th>
-							<th className="px-4 py-3 text-left text-xs font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wide">
-								Duration
 							</th>
 						</tr>
 					</thead>
@@ -716,10 +703,6 @@ function TrackSection({
 												</div>
 											</div>
 										</td>
-										<td className="px-4 py-3">
-											<div className="h-3 w-8 rounded bg-[var(--line)]" />
-										</td>
-										<td className="px-4 py-3" />
 										<td className="px-4 py-3" />
 										<td className="px-4 py-3" />
 									</tr>
