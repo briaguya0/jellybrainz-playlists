@@ -752,8 +752,8 @@ function PlaylistsPage() {
 	const showSkeletons = !hydrated || (!!jellyfinConfig && isPending);
 
 	const sortedPlaylists = playlists?.slice().sort((a, b) => {
-		const aEmpty = (a.ChildCount ?? 1) === 0;
-		const bEmpty = (b.ChildCount ?? 1) === 0;
+		const aEmpty = (a.ChildCount ?? 0) === 0;
+		const bEmpty = (b.ChildCount ?? 0) === 0;
 		return Number(aEmpty) - Number(bEmpty);
 	});
 	const totalPages = Math.ceil((sortedPlaylists?.length ?? 0) / PAGE_SIZE);
@@ -823,7 +823,7 @@ function PlaylistsPage() {
 											playlist={pl}
 											cfg={jellyfinConfig}
 											selected={pl.Id === selectedId}
-											disabled={(pl.ChildCount ?? 1) === 0}
+											disabled={(pl.ChildCount ?? 0) === 0}
 											onClick={() => selectPlaylist(pl.Id)}
 										/>
 									))}
@@ -840,7 +840,7 @@ function PlaylistsPage() {
 											key={pl.Id}
 											playlist={pl}
 											selected={pl.Id === selectedId}
-											disabled={(pl.ChildCount ?? 1) === 0}
+											disabled={(pl.ChildCount ?? 0) === 0}
 											onClick={() => selectPlaylist(pl.Id)}
 										/>
 									))}
