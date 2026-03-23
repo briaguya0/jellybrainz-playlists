@@ -164,9 +164,7 @@ function PlaylistCard({
 			type="button"
 			onClick={onClick}
 			disabled={disabled}
-			className={`island-shell feature-card rounded-xl border p-4 text-left w-full rise-in flex items-center gap-3 ${
-				disabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"
-			} ${
+			className={`island-shell feature-card rounded-xl border p-4 text-left w-full rise-in flex items-center gap-3 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
 				selected
 					? "border-[var(--lagoon)] ring-2 ring-[var(--lagoon)]/30"
 					: "border-[var(--line)]"
@@ -212,9 +210,7 @@ function PlaylistRow({
 			type="button"
 			onClick={onClick}
 			disabled={disabled}
-			className={`island-shell rounded-lg border px-4 py-3 text-left w-full rise-in flex items-center gap-4 ${
-				disabled ? "opacity-40 cursor-not-allowed" : "cursor-pointer"
-			} ${
+			className={`island-shell rounded-lg border px-4 py-3 text-left w-full rise-in flex items-center gap-4 cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
 				selected
 					? "border-[var(--lagoon)] ring-2 ring-[var(--lagoon)]/30"
 					: "border-[var(--line)]"
