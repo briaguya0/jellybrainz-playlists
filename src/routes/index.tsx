@@ -1,9 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ArrowRight, LayoutGrid, List, Music, X } from "lucide-react";
+import {
+	ArrowRight,
+	ChevronDown,
+	LayoutGrid,
+	List,
+	Music,
+	X,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import {
 	getJellyfinConfig,
+	getMbAuth,
 	setJellyfinConfig as storeJellyfinConfig,
 } from "../lib/config";
 import {
@@ -15,14 +23,20 @@ import {
 	ticksToDisplay,
 } from "../lib/jellyfin";
 import {
+	addRecordingsToCollection,
+	createCollection,
+	fetchCollections,
 	fetchRecording,
 	formatArtistCredits,
 	msToDisplay,
 } from "../lib/musicbrainz";
+import { buildAuthUrl, generatePkce } from "../lib/oauth";
 import type {
 	JellyfinConfig,
 	JellyfinPlaylist,
 	JellyfinTrack,
+	MbAuth,
+	MbCollection,
 } from "../lib/types";
 
 export const Route = createFileRoute("/")({
@@ -377,6 +391,195 @@ function TrackTableRow({
 	);
 }
 
+// ─── sync dropdown ────────────────────────────────────────────────────────────
+
+type SyncState =
+	| { phase: "idle" }
+	| { phase: "progress"; added: number; total: number }
+	| { phase: "done"; collectionId: string }
+	| { phase: "error"; message: string };
+
+function SyncDropdown({
+	mbAuth,
+	playlistName,
+	matchedMbids,
+}: {
+	mbAuth: MbAuth | null;
+	playlistName: string;
+	matchedMbids: string[];
+}) {
+	const [open, setOpen] = useState(false);
+	const [syncState, setSyncState] = useState<SyncState>({ phase: "idle" });
+	const [collections, setCollections] = useState<MbCollection[] | null>(null);
+	const ref = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (!open) return;
+		function close(e: MouseEvent) {
+			if (ref.current && !ref.current.contains(e.target as Node)) {
+				setOpen(false);
+			}
+		}
+		document.addEventListener("mousedown", close);
+		return () => document.removeEventListener("mousedown", close);
+	}, [open]);
+
+	useEffect(() => {
+		if (open && mbAuth && !collections) {
+			fetchCollections(mbAuth.username, mbAuth.accessToken).then(
+				setCollections,
+				() => {},
+			);
+		}
+	}, [open, mbAuth, collections]);
+
+	async function startOAuth() {
+		const clientId = import.meta.env.VITE_MB_CLIENT_ID as string | undefined;
+		if (!clientId) return;
+		const { codeVerifier, codeChallenge } = await generatePkce();
+		sessionStorage.setItem("mb_pkce_verifier", codeVerifier);
+		const redirectUri = `${window.location.origin}/mb-callback`;
+		window.location.href = buildAuthUrl(clientId, redirectUri, codeChallenge);
+	}
+
+	async function exportToNew() {
+		if (!mbAuth || matchedMbids.length === 0) return;
+		setSyncState({ phase: "progress", added: 0, total: matchedMbids.length });
+		try {
+			const collId = await createCollection(playlistName, mbAuth.accessToken);
+			if (!collId) {
+				setSyncState({
+					phase: "error",
+					message:
+						"Collection creation is not supported by this MusicBrainz server (endpoint returned 404/405). Create a collection manually and use \u201cExport to existing collection\u201d.",
+				});
+				return;
+			}
+			await addRecordingsToCollection(collId, matchedMbids, mbAuth.accessToken);
+			setSyncState({ phase: "done", collectionId: collId });
+		} catch (err) {
+			setSyncState({
+				phase: "error",
+				message: err instanceof Error ? err.message : "Sync failed",
+			});
+		}
+	}
+
+	async function exportToExisting(collection: MbCollection) {
+		if (!mbAuth || matchedMbids.length === 0) return;
+		setSyncState({ phase: "progress", added: 0, total: matchedMbids.length });
+		try {
+			await addRecordingsToCollection(
+				collection.id,
+				matchedMbids,
+				mbAuth.accessToken,
+			);
+			setSyncState({ phase: "done", collectionId: collection.id });
+		} catch (err) {
+			setSyncState({
+				phase: "error",
+				message: err instanceof Error ? err.message : "Sync failed",
+			});
+		}
+	}
+
+	return (
+		<div ref={ref} className="relative">
+			<button
+				type="button"
+				onClick={() => {
+					setOpen((v) => !v);
+					if (syncState.phase === "done" || syncState.phase === "error") {
+						setSyncState({ phase: "idle" });
+					}
+				}}
+				className="island-shell flex items-center gap-1.5 rounded-lg border border-[var(--line)] px-3 py-1.5 text-sm font-semibold text-[var(--lagoon-deep)] hover:text-[var(--lagoon)]"
+			>
+				<Music size={14} />
+				Sync
+				<ChevronDown size={14} />
+			</button>
+
+			{open && (
+				<div className="absolute right-0 top-full mt-1 z-40 island-shell rounded-xl border border-[var(--line)] p-4 w-72 rise-in">
+					{!mbAuth ? (
+						<>
+							<p className="text-sm text-[var(--sea-ink-soft)] mb-3">
+								Log in to MusicBrainz to sync this playlist.
+							</p>
+							<button
+								type="button"
+								onClick={startOAuth}
+								className="w-full island-shell rounded-lg border border-[var(--line)] px-3 py-2 text-sm font-semibold text-[var(--lagoon-deep)] hover:text-[var(--lagoon)]"
+							>
+								Connect MusicBrainz
+							</button>
+						</>
+					) : syncState.phase === "progress" ? (
+						<p className="text-sm text-[var(--sea-ink-soft)]">
+							Adding {syncState.total} recordings…
+						</p>
+					) : syncState.phase === "done" ? (
+						<>
+							<p className="text-sm font-semibold text-[var(--sea-ink)] mb-2">
+								Sync complete
+							</p>
+							<a
+								href={`https://musicbrainz.org/collection/${syncState.collectionId}`}
+								target="_blank"
+								rel="noreferrer"
+								className="text-sm"
+							>
+								View collection on MusicBrainz →
+							</a>
+						</>
+					) : syncState.phase === "error" ? (
+						<p className="text-sm text-red-600 dark:text-red-400">
+							{syncState.message}
+						</p>
+					) : (
+						<>
+							<p className="text-xs text-[var(--sea-ink-soft)] mb-3">
+								Syncing {matchedMbids.length} matched recording
+								{matchedMbids.length === 1 ? "" : "s"} as {mbAuth.username}
+							</p>
+							<button
+								type="button"
+								onClick={exportToNew}
+								className="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-[var(--surface)] text-[var(--sea-ink)]"
+							>
+								Export to new collection
+							</button>
+							{collections && collections.length > 0 && (
+								<>
+									<hr className="border-[var(--line)] my-2" />
+									<p className="text-xs text-[var(--sea-ink-soft)] mb-1 px-1">
+										Export to existing collection
+									</p>
+									<div className="max-h-48 overflow-y-auto">
+										{collections
+											.filter((c) => c["entity-type"] === "recording")
+											.map((c) => (
+												<button
+													key={c.id}
+													type="button"
+													onClick={() => exportToExisting(c)}
+													className="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-[var(--surface)] text-[var(--sea-ink)] truncate"
+												>
+													{c.name}
+												</button>
+											))}
+									</div>
+								</>
+							)}
+						</>
+					)}
+				</div>
+			)}
+		</div>
+	);
+}
+
 // ─── track section ────────────────────────────────────────────────────────────
 
 function TrackSection({
@@ -388,6 +591,11 @@ function TrackSection({
 	playlistId: string;
 	playlistName: string;
 }) {
+	const [mbAuth, setMbAuth] = useState<MbAuth | null>(null);
+	useEffect(() => {
+		setMbAuth(getMbAuth());
+	}, []);
+
 	const {
 		data: tracks,
 		isPending,
@@ -402,9 +610,9 @@ function TrackSection({
 		enabled: !!cfg.userId,
 	});
 
-	const matchedCount = (tracks ?? []).filter(
-		(t) => !!extractMbRecordingId(t),
-	).length;
+	const matchedMbids = (tracks ?? [])
+		.map(extractMbRecordingId)
+		.filter((id): id is string => id != null);
 
 	return (
 		<section className="mt-10 rise-in">
@@ -415,11 +623,15 @@ function TrackSection({
 					</h2>
 					{tracks && (
 						<p className="text-xs text-[var(--sea-ink-soft)]">
-							{matchedCount}/{tracks.length} matched
+							{matchedMbids.length}/{tracks.length} matched
 						</p>
 					)}
 				</div>
-				{/* Sync dropdown — added in a later commit */}
+				<SyncDropdown
+					mbAuth={mbAuth}
+					playlistName={playlistName}
+					matchedMbids={matchedMbids}
+				/>
 			</div>
 
 			{isError && (
