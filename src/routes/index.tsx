@@ -135,14 +135,8 @@ function ConnectForm({
 				</button>
 			</form>
 			<p className="mt-4 text-xs text-[var(--sea-ink-soft)]">
-				Don&apos;t have a key?{" "}
-				<a
-					href="https://jellyfin.org/docs/general/networking/index.html"
-					target="_blank"
-					rel="noreferrer"
-				>
-					Learn how to generate one
-				</a>
+				Find your API key in the Jellyfin admin dashboard under{" "}
+				<strong>Administration → API Keys</strong>.
 			</p>
 		</div>
 	);
