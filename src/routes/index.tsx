@@ -299,7 +299,7 @@ function TrackTableRow({
 			<td className="px-4 py-3">
 				<div className="flex items-center gap-3 min-w-0">
 					<img
-						src={thumbnailUrl(cfg, track.Id)}
+						src={thumbnailUrl(cfg, track)}
 						alt=""
 						className="w-10 h-10 rounded shrink-0 bg-[var(--line)] object-cover"
 						loading="lazy"
