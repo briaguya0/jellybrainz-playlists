@@ -1,13 +1,18 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { LayoutGrid, List } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
 	getJellyfinConfig,
 	setJellyfinConfig as storeJellyfinConfig,
 } from "../lib/config";
-import { resolveUserId } from "../lib/jellyfin";
-import type { JellyfinConfig } from "../lib/types";
+import { fetchPlaylists, resolveUserId } from "../lib/jellyfin";
+import type { JellyfinConfig, JellyfinPlaylist } from "../lib/types";
 
 export const Route = createFileRoute("/")({
+	validateSearch: (search: Record<string, unknown>) => ({
+		playlist: typeof search.playlist === "string" ? search.playlist : undefined,
+	}),
 	component: PlaylistsPage,
 });
 
@@ -111,30 +116,181 @@ function ConnectOverlay({
 	);
 }
 
+function PlaylistCard({
+	playlist,
+	selected,
+	onClick,
+}: {
+	playlist: JellyfinPlaylist;
+	selected: boolean;
+	onClick: () => void;
+}) {
+	return (
+		<button
+			type="button"
+			onClick={onClick}
+			className={`island-shell feature-card rounded-xl border p-5 text-left w-full rise-in cursor-pointer ${
+				selected
+					? "border-[var(--lagoon)] ring-2 ring-[var(--lagoon)]/30"
+					: "border-[var(--line)]"
+			}`}
+		>
+			<p className="font-semibold text-[var(--sea-ink)] truncate">
+				{playlist.Name}
+			</p>
+			{playlist.ChildCount != null && (
+				<p className="text-xs text-[var(--sea-ink-soft)] mt-1">
+					{playlist.ChildCount} tracks
+				</p>
+			)}
+		</button>
+	);
+}
+
+function PlaylistRow({
+	playlist,
+	selected,
+	onClick,
+}: {
+	playlist: JellyfinPlaylist;
+	selected: boolean;
+	onClick: () => void;
+}) {
+	return (
+		<button
+			type="button"
+			onClick={onClick}
+			className={`island-shell rounded-lg border px-4 py-3 text-left w-full rise-in cursor-pointer flex items-center gap-4 ${
+				selected
+					? "border-[var(--lagoon)] ring-2 ring-[var(--lagoon)]/30"
+					: "border-[var(--line)]"
+			}`}
+		>
+			<span className="font-semibold text-[var(--sea-ink)] flex-1 truncate">
+				{playlist.Name}
+			</span>
+			{playlist.ChildCount != null && (
+				<span className="text-xs text-[var(--sea-ink-soft)] shrink-0">
+					{playlist.ChildCount} tracks
+				</span>
+			)}
+		</button>
+	);
+}
+
 function PlaylistsPage() {
+	const navigate = useNavigate({ from: "/" });
+	const { playlist: selectedId } = Route.useSearch();
+
 	const [jellyfinConfig, setJellyfinConfig] = useState<JellyfinConfig | null>(
 		null,
 	);
 	const [hydrated, setHydrated] = useState(false);
+	const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
 	useEffect(() => {
 		setJellyfinConfig(getJellyfinConfig());
 		setHydrated(true);
 	}, []);
 
+	const {
+		data: playlists,
+		isPending,
+		isError,
+		error,
+	} = useQuery({
+		queryKey: ["playlists", jellyfinConfig],
+		queryFn: () => {
+			if (!jellyfinConfig?.userId) throw new Error("No config");
+			return fetchPlaylists(jellyfinConfig, jellyfinConfig.userId);
+		},
+		enabled: !!jellyfinConfig?.userId,
+	});
+
+	function selectPlaylist(id: string) {
+		navigate({ search: { playlist: id }, replace: true });
+	}
+
 	const showOverlay = hydrated && !jellyfinConfig;
+	const showSkeletons = !hydrated || (!!jellyfinConfig && isPending);
 
 	return (
 		<main className="page-wrap px-4 pb-8 pt-14 relative">
 			{showOverlay && (
 				<ConnectOverlay onConnected={(cfg) => setJellyfinConfig(cfg)} />
 			)}
-			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-				{Array.from({ length: 6 }, (_, i) => (
-					// biome-ignore lint/suspicious/noArrayIndexKey: skeleton placeholders have no stable identity
-					<SkeletonCard key={i} />
-				))}
+
+			<div className="flex items-center justify-between mb-5">
+				<h1 className="text-xl font-semibold text-[var(--sea-ink)]">
+					Playlists
+				</h1>
+				<div className="flex items-center gap-1">
+					<button
+						type="button"
+						onClick={() => setViewMode("grid")}
+						aria-label="Grid view"
+						className={`p-2 rounded-lg border ${
+							viewMode === "grid"
+								? "island-shell border-[var(--lagoon)] text-[var(--lagoon-deep)]"
+								: "border-transparent text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+						}`}
+					>
+						<LayoutGrid size={16} />
+					</button>
+					<button
+						type="button"
+						onClick={() => setViewMode("list")}
+						aria-label="List view"
+						className={`p-2 rounded-lg border ${
+							viewMode === "list"
+								? "island-shell border-[var(--lagoon)] text-[var(--lagoon-deep)]"
+								: "border-transparent text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+						}`}
+					>
+						<List size={16} />
+					</button>
+				</div>
 			</div>
+
+			{isError && (
+				<p className="text-sm text-red-600 dark:text-red-400 mb-4">
+					{error instanceof Error ? error.message : "Failed to load playlists"}
+				</p>
+			)}
+
+			{viewMode === "grid" ? (
+				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+					{showSkeletons
+						? Array.from({ length: 6 }, (_, i) => (
+								// biome-ignore lint/suspicious/noArrayIndexKey: skeleton placeholders have no stable identity
+								<SkeletonCard key={i} />
+							))
+						: playlists?.map((pl) => (
+								<PlaylistCard
+									key={pl.Id}
+									playlist={pl}
+									selected={pl.Id === selectedId}
+									onClick={() => selectPlaylist(pl.Id)}
+								/>
+							))}
+				</div>
+			) : (
+				<div className="flex flex-col gap-2">
+					{showSkeletons
+						? Array.from({ length: 6 }, (_, i) => (
+								// biome-ignore lint/suspicious/noArrayIndexKey: skeleton placeholders have no stable identity
+								<SkeletonCard key={i} />
+							))
+						: playlists?.map((pl) => (
+								<PlaylistRow
+									key={pl.Id}
+									playlist={pl}
+									selected={pl.Id === selectedId}
+									onClick={() => selectPlaylist(pl.Id)}
+								/>
+							))}
+				</div>
+			)}
 		</main>
 	);
 }
