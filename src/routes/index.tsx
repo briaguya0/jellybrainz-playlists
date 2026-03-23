@@ -18,6 +18,7 @@ import {
 	extractMbRecordingId,
 	fetchPlaylists,
 	fetchPlaylistTracks,
+	playlistThumbnailUrl,
 	resolveUserId,
 	thumbnailUrl,
 	ticksToDisplay,
@@ -146,31 +147,46 @@ function ConnectForm({
 
 function PlaylistCard({
 	playlist,
+	cfg,
 	selected,
 	onClick,
 }: {
 	playlist: JellyfinPlaylist;
+	cfg: JellyfinConfig;
 	selected: boolean;
 	onClick: () => void;
 }) {
+	const imgUrl = playlistThumbnailUrl(cfg, playlist);
 	return (
 		<button
 			type="button"
 			onClick={onClick}
-			className={`island-shell feature-card rounded-xl border p-5 text-left w-full rise-in cursor-pointer ${
+			className={`island-shell feature-card rounded-xl border p-4 text-left w-full rise-in cursor-pointer flex items-center gap-3 ${
 				selected
 					? "border-[var(--lagoon)] ring-2 ring-[var(--lagoon)]/30"
 					: "border-[var(--line)]"
 			}`}
 		>
-			<p className="font-semibold text-[var(--sea-ink)] truncate">
-				{playlist.Name}
-			</p>
-			{playlist.ChildCount != null && (
-				<p className="text-xs text-[var(--sea-ink-soft)] mt-1">
-					{playlist.ChildCount} tracks
-				</p>
+			{imgUrl ? (
+				<img
+					src={imgUrl}
+					alt=""
+					className="w-12 h-12 rounded-lg object-cover shrink-0 bg-[var(--line)]"
+					loading="lazy"
+				/>
+			) : (
+				<div className="w-12 h-12 rounded-lg shrink-0 bg-[var(--line)]" />
 			)}
+			<div className="min-w-0">
+				<p className="font-semibold text-[var(--sea-ink)] truncate">
+					{playlist.Name}
+				</p>
+				{playlist.ChildCount != null && (
+					<p className="text-xs text-[var(--sea-ink-soft)] mt-0.5">
+						{playlist.ChildCount} tracks
+					</p>
+				)}
+			</div>
 		</button>
 	);
 }
@@ -790,6 +806,7 @@ function PlaylistsPage() {
 										<PlaylistCard
 											key={pl.Id}
 											playlist={pl}
+											cfg={jellyfinConfig}
 											selected={pl.Id === selectedId}
 											onClick={() => selectPlaylist(pl.Id)}
 										/>
