@@ -1,213 +1,84 @@
-Welcome to your new TanStack Start app! 
+# jellybrainz-playlists
 
-# Getting Started
+Browse your Jellyfin playlists and export them as [MusicBrainz](https://musicbrainz.org) recording collections. All API calls are client-side — your Jellyfin API key and MusicBrainz access token never leave the browser.
 
-To run this application:
+## Features
+
+- Connect to any Jellyfin server using an API key
+- Browse playlists in a grid or list view
+- Per-track match table: Jellyfin metadata on the left, linked MusicBrainz recording on the right
+- Diagnostic popover on unmatched tracks (shows raw `ProviderIds` or MB API error)
+- OAuth2 PKCE flow for MusicBrainz — no client secret required
+- Export matched recordings to a new or existing MB recording collection
+- `VITE_MB_BASE_URL` override for testing against a local [musicbrainz-docker](https://github.com/metabrainz/musicbrainz-docker) instance
+
+## Setup
+
+Copy `.env.example` to `.env.local` and fill in your values:
+
+```bash
+cp .env.example .env.local
+```
+
+| Variable | Required | Description |
+|---|---|---|
+| `VITE_MB_CLIENT_ID` | Yes (for MB sync) | OAuth application client ID. Register at [musicbrainz.org/account/applications/register](https://musicbrainz.org/account/applications/register) with redirect URI `http://localhost:3000/mb-callback` |
+| `VITE_MB_BASE_URL` | No | Override the MusicBrainz host, e.g. `http://localhost:5000` for local testing |
+
+## Running
 
 ```bash
 npm install
 npm run dev
 ```
 
-# Building For Production
-
-To build this application for production:
-
-```bash
-npm run build
-```
+The app starts at `http://localhost:3000`. On first visit an overlay prompts for your Jellyfin server URL and API key. MusicBrainz connection is optional — needed only to export collections.
 
 ## Testing
-
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
 
 ```bash
 npm run test
 ```
 
-## Styling
+Unit tests cover the pure utility functions in `src/lib/`: duration formatting, array chunking, artist credit formatting, PKCE generation, and OAuth URL construction (29 tests).
 
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
+For manual testing against a local MusicBrainz instance, set `VITE_MB_BASE_URL=http://localhost:5000` in `.env.local` and follow the [musicbrainz-docker](https://github.com/metabrainz/musicbrainz-docker) setup guide.
 
-### Removing Tailwind CSS
-
-If you prefer not to use Tailwind CSS:
-
-1. Remove the demo pages in `src/routes/demo/`
-2. Replace the Tailwind import in `src/styles.css` with your own styles
-3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
-4. Uninstall the packages: `npm install @tailwindcss/vite tailwindcss -D`
-
-## Linting & Formatting
-
-This project uses [Biome](https://biomejs.dev/) for linting and formatting. The following scripts are available:
-
+## Building
 
 ```bash
-npm run lint
-npm run format
+npm run build
+```
+
+## Linting & formatting
+
+```bash
 npm run check
 ```
 
+Uses [Biome](https://biomejs.dev/) for both linting and formatting.
 
-## Shadcn
+## Architecture
 
-Add components using the latest version of [Shadcn](https://ui.shadcn.com/).
+- **Framework**: [TanStack Start](https://tanstack.com/start) (React, SSR shell only — all data fetching is client-side)
+- **Routing**: [TanStack Router](https://tanstack.com/router) with `?playlist=<id>` search param for selected playlist
+- **Data fetching**: [TanStack Query](https://tanstack.com/query) — per-row MB recording queries with `staleTime: Infinity`
+- **Auth**: MusicBrainz OAuth2 PKCE via `SubtleCrypto` (browser-native, no server needed)
+- **Storage**: Jellyfin config and MB auth stored in `localStorage` (SSR-safe)
+- **Styling**: Tailwind CSS v4 with custom design tokens
 
-```bash
-pnpm dlx shadcn@latest add button
+### Key files
+
 ```
+src/lib/
+  types.ts         — shared TypeScript interfaces
+  config.ts        — SSR-safe localStorage helpers
+  jellyfin.ts      — Jellyfin API client
+  musicbrainz.ts   — MusicBrainz API client (recordings + collections)
+  oauth.ts         — PKCE helpers + token exchange
 
-
-
-## Routing
-
-This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes`.
-
-### Adding A Route
-
-To add a new route to your application just add a new file in the `./src/routes` directory.
-
-TanStack will automatically generate the content of the route file for you.
-
-Now that you have two routes you can use a `Link` component to navigate between them.
-
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
-
-```tsx
-import { Link } from "@tanstack/react-router";
+src/routes/
+  index.tsx        — playlists grid + track table + sync dropdown
+  settings.tsx     — edit Jellyfin config, connect/disconnect MB
+  mb-callback.tsx  — OAuth2 callback handler
 ```
-
-Then anywhere in your JSX you can use it like so:
-
-```tsx
-<Link to="/about">About</Link>
-```
-
-This will create a link that will navigate to the `/about` route.
-
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you render `{children}` in the `shellComponent`.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-
-export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'My App' },
-    ],
-  }),
-  shellComponent: ({ children }) => (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <header>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/about">About</Link>
-          </nav>
-        </header>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  ),
-})
-```
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-## Server Functions
-
-TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your client components.
-
-```tsx
-import { createServerFn } from '@tanstack/react-start'
-
-const getServerTime = createServerFn({
-  method: 'GET',
-}).handler(async () => {
-  return new Date().toISOString()
-})
-
-// Use in a component
-function MyComponent() {
-  const [time, setTime] = useState('')
-  
-  useEffect(() => {
-    getServerTime().then(setTime)
-  }, [])
-  
-  return <div>Server time: {time}</div>
-}
-```
-
-## API Routes
-
-You can create API routes by using the `server` property in your route definitions:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-import { json } from '@tanstack/react-start'
-
-export const Route = createFileRoute('/api/hello')({
-  server: {
-    handlers: {
-      GET: () => json({ message: 'Hello, World!' }),
-    },
-  },
-})
-```
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-
-export const Route = createFileRoute('/people')({
-  loader: async () => {
-    const response = await fetch('https://swapi.dev/api/people')
-    return response.json()
-  },
-  component: PeopleComponent,
-})
-
-function PeopleComponent() {
-  const data = Route.useLoaderData()
-  return (
-    <ul>
-      {data.results.map((person) => (
-        <li key={person.name}>{person.name}</li>
-      ))}
-    </ul>
-  )
-}
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
-
-For TanStack Start specific documentation, visit [TanStack Start](https://tanstack.com/start).
