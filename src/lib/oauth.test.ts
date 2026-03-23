@@ -34,7 +34,11 @@ describe("generatePkce", () => {
 describe("buildAuthUrl", () => {
 	it("includes all required OAuth params", () => {
 		const url = new URL(
-			buildAuthUrl("my-client-id", "http://localhost:3000/mb-callback", "abc123"),
+			buildAuthUrl(
+				"my-client-id",
+				"http://localhost:3000/mb-callback",
+				"abc123",
+			),
 		);
 		expect(url.searchParams.get("response_type")).toBe("code");
 		expect(url.searchParams.get("client_id")).toBe("my-client-id");

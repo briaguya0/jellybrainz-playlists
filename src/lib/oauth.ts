@@ -1,5 +1,5 @@
 const MB_HOST =
-	(import.meta.env["VITE_MB_BASE_URL"] as string | undefined) ??
+	(import.meta.env.VITE_MB_BASE_URL as string | undefined) ??
 	"https://musicbrainz.org";
 
 export interface PkceParams {
