@@ -6,26 +6,47 @@ const MB_HOST =
 export const MB_BASE = `${MB_HOST}/ws/2`;
 const MB_CLIENT = "jellybrainz-playlists-0.1.0";
 const MB_BATCH = 400;
-const USER_AGENT =
-	"jellybrainz-playlists/0.1.0 ( https://github.com/briaguya/jellybrainz-playlists )";
-
 function mbHeaders(accessToken?: string): Record<string, string> {
-	const h: Record<string, string> = { "User-Agent": USER_AGENT };
-	if (accessToken) h.Authorization = `Bearer ${accessToken}`;
-	return h;
+	if (accessToken) return { Authorization: `Bearer ${accessToken}` };
+	return {};
 }
 
-export async function fetchRecording(mbid: string): Promise<MbRecording> {
-	const url = new URL(`${MB_BASE}/recording/${mbid}`);
-	url.searchParams.set("inc", "artist-credits+releases");
-	url.searchParams.set("fmt", "json");
-	const resp = await fetch(url.toString(), { headers: mbHeaders() });
-	if (!resp.ok) {
-		throw new Error(
-			`MB recording lookup failed: ${resp.status} ${resp.statusText}`,
-		);
+export async function fetchRecordingsByTrackIds(
+	trackMbids: string[],
+): Promise<Map<string, MbRecording>> {
+	const result = new Map<string, MbRecording>();
+	if (trackMbids.length === 0) return result;
+
+	const trackMbidSet = new Set(trackMbids);
+	const chunks = chunkArray(trackMbids, 100);
+
+	for (const chunk of chunks) {
+		const query = chunk.map((id) => `tid:${id}`).join(" OR ");
+		const url = new URL(`${MB_BASE}/recording/`);
+		url.searchParams.set("query", query);
+		url.searchParams.set("limit", String(chunk.length));
+		url.searchParams.set("fmt", "json");
+		const resp = await fetch(url.toString(), { headers: mbHeaders() });
+		if (!resp.ok) {
+			throw new Error(
+				`MB recording lookup failed: ${resp.status} ${resp.statusText}`,
+			);
+		}
+		const data: { recordings: MbRecording[] } = await resp.json();
+		for (const recording of data.recordings ?? []) {
+			for (const release of recording.releases ?? []) {
+				for (const medium of release.media ?? []) {
+					for (const track of medium.track ?? []) {
+						if (trackMbidSet.has(track.id)) {
+							result.set(track.id, recording);
+						}
+					}
+				}
+			}
+		}
 	}
-	return resp.json() as Promise<MbRecording>;
+
+	return result;
 }
 
 export async function fetchCollections(
