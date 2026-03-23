@@ -20,6 +20,8 @@ export interface JellyfinTrack {
 	Name: string;
 	Artists?: string[];
 	Album?: string;
+	AlbumId?: string;
+	AlbumPrimaryImageTag?: string;
 	RunTimeTicks?: number;
 	ProviderIds?: Record<string, string>;
 }

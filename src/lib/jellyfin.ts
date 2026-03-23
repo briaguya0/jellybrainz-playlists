@@ -73,6 +73,17 @@ export function ticksToDisplay(ticks: number): string {
 	return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
-export function thumbnailUrl(cfg: JellyfinConfig, itemId: string): string {
-	return `${base(cfg.url)}/Items/${itemId}/Images/Primary`;
+export function thumbnailUrl(
+	cfg: JellyfinConfig,
+	track: JellyfinTrack,
+): string {
+	const itemId = track.AlbumId ?? track.Id;
+	const url = new URL(`${base(cfg.url)}/Items/${itemId}/Images/Primary`);
+	url.searchParams.set("fillWidth", "80");
+	url.searchParams.set("fillHeight", "80");
+	url.searchParams.set("quality", "80");
+	if (track.AlbumPrimaryImageTag) {
+		url.searchParams.set("tag", track.AlbumPrimaryImageTag);
+	}
+	return url.toString();
 }
