@@ -511,7 +511,7 @@ function SyncDropdown({
 				}}
 				className="island-shell flex items-center gap-1.5 rounded-lg border border-[var(--line)] px-3 py-1.5 text-sm font-semibold text-[var(--lagoon-deep)] hover:text-[var(--lagoon)]"
 			>
-				<Music size={14} />
+				<img src="/musicbrainz-icon.svg" width={14} height={14} alt="" aria-hidden="true" />
 				Sync
 				<ChevronDown size={14} />
 			</button>
@@ -769,7 +769,8 @@ function PlaylistsPage() {
 			) : (
 				<>
 					<div className="flex items-center justify-between mb-5">
-						<h1 className="text-xl font-semibold text-[var(--sea-ink)]">
+						<h1 className="text-xl font-semibold text-[var(--sea-ink)] flex items-center gap-2">
+							<img src="/jellyfin-icon.svg" width={22} height={22} alt="" aria-hidden="true" />
 							Playlists
 						</h1>
 						<div className="flex items-center gap-1">
