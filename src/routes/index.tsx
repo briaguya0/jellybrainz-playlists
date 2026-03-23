@@ -696,6 +696,8 @@ function PlaylistsPage() {
 	);
 	const [hydrated, setHydrated] = useState(false);
 	const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+	const [page, setPage] = useState(0);
+	const PAGE_SIZE = 12;
 
 	useEffect(() => {
 		setJellyfinConfig(getJellyfinConfig());
@@ -722,6 +724,12 @@ function PlaylistsPage() {
 
 	const showConnect = hydrated && !jellyfinConfig;
 	const showSkeletons = !hydrated || (!!jellyfinConfig && isPending);
+
+	const totalPages = Math.ceil((playlists?.length ?? 0) / PAGE_SIZE);
+	const visiblePlaylists = playlists?.slice(
+		page * PAGE_SIZE,
+		(page + 1) * PAGE_SIZE,
+	);
 
 	const selectedPlaylist = playlists?.find((p) => p.Id === selectedId);
 
@@ -778,7 +786,7 @@ function PlaylistsPage() {
 										// biome-ignore lint/suspicious/noArrayIndexKey: skeleton placeholders have no stable identity
 										<SkeletonCard key={i} />
 									))
-								: playlists?.map((pl) => (
+								: visiblePlaylists?.map((pl) => (
 										<PlaylistCard
 											key={pl.Id}
 											playlist={pl}
@@ -794,7 +802,7 @@ function PlaylistsPage() {
 										// biome-ignore lint/suspicious/noArrayIndexKey: skeleton placeholders have no stable identity
 										<SkeletonCard key={i} />
 									))
-								: playlists?.map((pl) => (
+								: visiblePlaylists?.map((pl) => (
 										<PlaylistRow
 											key={pl.Id}
 											playlist={pl}
@@ -802,6 +810,30 @@ function PlaylistsPage() {
 											onClick={() => selectPlaylist(pl.Id)}
 										/>
 									))}
+						</div>
+					)}
+
+					{totalPages > 1 && (
+						<div className="flex items-center justify-between mt-4">
+							<button
+								type="button"
+								onClick={() => setPage((p) => p - 1)}
+								disabled={page === 0}
+								className="island-shell rounded-lg border border-[var(--line)] px-3 py-1.5 text-sm text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)] disabled:opacity-30"
+							>
+								← Prev
+							</button>
+							<span className="text-xs text-[var(--sea-ink-soft)]">
+								{page + 1} / {totalPages}
+							</span>
+							<button
+								type="button"
+								onClick={() => setPage((p) => p + 1)}
+								disabled={page >= totalPages - 1}
+								className="island-shell rounded-lg border border-[var(--line)] px-3 py-1.5 text-sm text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)] disabled:opacity-30"
+							>
+								Next →
+							</button>
 						</div>
 					)}
 				</>
