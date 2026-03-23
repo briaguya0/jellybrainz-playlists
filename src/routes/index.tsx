@@ -1,12 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import {
-	createColumnHelper,
-	flexRender,
-	getCoreRowModel,
-	useReactTable,
-} from "@tanstack/react-table";
-import { ArrowRight, LayoutGrid, List, X } from "lucide-react";
+import { ArrowRight, LayoutGrid, List, Music, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import {
 	getJellyfinConfig,
@@ -20,6 +14,11 @@ import {
 	thumbnailUrl,
 	ticksToDisplay,
 } from "../lib/jellyfin";
+import {
+	fetchRecording,
+	formatArtistCredits,
+	msToDisplay,
+} from "../lib/musicbrainz";
 import type {
 	JellyfinConfig,
 	JellyfinPlaylist,
@@ -32,13 +31,6 @@ export const Route = createFileRoute("/")({
 	}),
 	component: PlaylistsPage,
 });
-
-// ─── shared row type ─────────────────────────────────────────────────────────
-
-interface TrackRow {
-	track: JellyfinTrack;
-	mbid: string | undefined;
-}
 
 // ─── skeleton ────────────────────────────────────────────────────────────────
 
@@ -210,7 +202,13 @@ function PlaylistRow({
 
 // ─── diagnostic popover ──────────────────────────────────────────────────────
 
-function DiagnosticPopover({ track }: { track: JellyfinTrack }) {
+function DiagnosticPopover({
+	track,
+	mbError,
+}: {
+	track: JellyfinTrack;
+	mbError?: Error | null;
+}) {
 	const [open, setOpen] = useState(false);
 	const ref = useRef<HTMLDivElement>(null);
 
@@ -237,37 +235,68 @@ function DiagnosticPopover({ track }: { track: JellyfinTrack }) {
 			</button>
 			{open && (
 				<div className="absolute left-0 top-full mt-1 z-40 island-shell rounded-lg border border-[var(--line)] p-3 w-72 text-xs rise-in">
-					<p className="font-semibold text-[var(--sea-ink)] mb-1">
-						No MusicBrainz recording ID
-					</p>
-					<p className="text-[var(--sea-ink-soft)] mb-2">
-						Raw <code className="text-[0.8em]">ProviderIds</code> from Jellyfin:
-					</p>
-					<pre className="bg-[var(--surface)] rounded p-2 overflow-x-auto text-[0.75rem] text-[var(--sea-ink)]">
-						{JSON.stringify(track.ProviderIds ?? null, null, 2)}
-					</pre>
+					{mbError ? (
+						<>
+							<p className="font-semibold text-[var(--sea-ink)] mb-1">
+								MusicBrainz lookup failed
+							</p>
+							<p className="text-[var(--sea-ink-soft)]">{mbError.message}</p>
+						</>
+					) : (
+						<>
+							<p className="font-semibold text-[var(--sea-ink)] mb-1">
+								No MusicBrainz recording ID
+							</p>
+							<p className="text-[var(--sea-ink-soft)] mb-2">
+								Raw <code className="text-[0.8em]">ProviderIds</code> from
+								Jellyfin:
+							</p>
+							<pre className="bg-[var(--surface)] rounded p-2 overflow-x-auto text-[0.75rem] text-[var(--sea-ink)]">
+								{JSON.stringify(track.ProviderIds ?? null, null, 2)}
+							</pre>
+						</>
+					)}
 				</div>
 			)}
 		</div>
 	);
 }
 
-// ─── track table ─────────────────────────────────────────────────────────────
+// ─── track table row ─────────────────────────────────────────────────────────
 
-const colHelper = createColumnHelper<TrackRow>();
+function TrackTableRow({
+	track,
+	cfg,
+}: {
+	track: JellyfinTrack;
+	cfg: JellyfinConfig;
+}) {
+	const mbid = extractMbRecordingId(track);
 
-const columns = [
-	colHelper.display({
-		id: "jf-track",
-		header: "Track",
-		cell: ({ row }) => {
-			const { track } = row.original;
-			return (
+	const {
+		data: recording,
+		isPending: mbPending,
+		isError: mbIsError,
+		error: mbFetchError,
+	} = useQuery({
+		queryKey: ["mb-recording", mbid],
+		queryFn: () => fetchRecording(mbid as string),
+		enabled: !!mbid,
+		staleTime: Number.POSITIVE_INFINITY,
+	});
+
+	const matched = !!mbid && !mbIsError;
+
+	return (
+		<tr className="border-b border-[var(--line)] last:border-0 hover:bg-[var(--surface)]/40">
+			{/* Jellyfin: thumbnail + title/artist */}
+			<td className="px-4 py-3">
 				<div className="flex items-center gap-3 min-w-0">
-					{/* album art placeholder — real thumbnails need cfg, handled via data attr */}
-					<div
-						className="w-10 h-10 rounded shrink-0 bg-[var(--line)] overflow-hidden"
-						data-item-id={track.Id}
+					<img
+						src={thumbnailUrl(cfg, track.Id)}
+						alt=""
+						className="w-10 h-10 rounded shrink-0 bg-[var(--line)] object-cover"
+						loading="lazy"
 					/>
 					<div className="min-w-0">
 						<p className="text-sm font-medium text-[var(--sea-ink)] truncate">
@@ -278,45 +307,75 @@ const columns = [
 						</p>
 					</div>
 				</div>
-			);
-		},
-	}),
-	colHelper.display({
-		id: "jf-duration",
-		header: "Duration",
-		cell: ({ row }) => {
-			const { track } = row.original;
-			return (
+			</td>
+			{/* Jellyfin: duration */}
+			<td className="px-4 py-3 whitespace-nowrap">
 				<span className="text-xs tabular-nums text-[var(--sea-ink-soft)]">
 					{track.RunTimeTicks != null
 						? ticksToDisplay(track.RunTimeTicks)
 						: "—"}
 				</span>
-			);
-		},
-	}),
-	colHelper.display({
-		id: "link",
-		header: "",
-		cell: ({ row }) => {
-			const { track, mbid } = row.original;
-			if (mbid) {
-				return (
-					<ArrowRight
-						size={16}
-						className="text-[var(--lagoon-deep)] shrink-0"
-					/>
-				);
-			}
-			return (
-				<span className="flex items-center gap-1">
-					<X size={14} className="text-[var(--sea-ink-soft)] shrink-0" />
-					<DiagnosticPopover track={track} />
-				</span>
-			);
-		},
-	}),
-];
+			</td>
+			{/* Link indicator */}
+			<td className="px-4 py-3 w-12 text-center">
+				{matched ? (
+					<ArrowRight size={16} className="text-[var(--lagoon-deep)] mx-auto" />
+				) : (
+					<span className="flex items-center justify-center gap-1">
+						<X size={14} className="text-[var(--sea-ink-soft)] shrink-0" />
+						<DiagnosticPopover
+							track={track}
+							mbError={mbIsError ? (mbFetchError as Error) : null}
+						/>
+					</span>
+				)}
+			</td>
+			{/* MB: title/artist/releases */}
+			<td className="px-4 py-3">
+				{mbid && mbPending && (
+					<div className="animate-pulse">
+						<div className="h-3 w-32 rounded bg-[var(--line)] mb-1.5" />
+						<div className="h-2.5 w-20 rounded bg-[var(--line)]" />
+					</div>
+				)}
+				{recording && (
+					<div className="flex items-center gap-2 min-w-0">
+						<Music
+							size={14}
+							className="text-[var(--lagoon-deep)] shrink-0 mt-0.5"
+						/>
+						<div className="min-w-0 flex-1">
+							<a
+								href={`https://musicbrainz.org/recording/${recording.id}`}
+								target="_blank"
+								rel="noreferrer"
+								className="text-sm font-medium truncate block"
+							>
+								{recording.title}
+							</a>
+							<p className="text-xs text-[var(--sea-ink-soft)] truncate">
+								{formatArtistCredits(recording["artist-credit"])}
+							</p>
+						</div>
+						{recording.releases != null && recording.releases.length > 0 && (
+							<span className="text-xs text-[var(--sea-ink-soft)] shrink-0 border border-[var(--line)] rounded px-1.5 py-0.5">
+								{recording.releases.length}
+							</span>
+						)}
+					</div>
+				)}
+			</td>
+			{/* MB: duration */}
+			<td className="px-4 py-3 whitespace-nowrap">
+				{recording?.length != null && (
+					<span className="text-xs tabular-nums text-[var(--sea-ink-soft)]">
+						{msToDisplay(recording.length)}
+					</span>
+				)}
+			</td>
+		</tr>
+	);
+}
 
 // ─── track section ────────────────────────────────────────────────────────────
 
@@ -343,18 +402,9 @@ function TrackSection({
 		enabled: !!cfg.userId,
 	});
 
-	const rows: TrackRow[] = (tracks ?? []).map((track) => ({
-		track,
-		mbid: extractMbRecordingId(track),
-	}));
-
-	const matchedCount = rows.filter((r) => r.mbid != null).length;
-
-	const table = useReactTable({
-		data: rows,
-		columns,
-		getCoreRowModel: getCoreRowModel(),
-	});
+	const matchedCount = (tracks ?? []).filter(
+		(t) => !!extractMbRecordingId(t),
+	).length;
 
 	return (
 		<section className="mt-10 rise-in">
@@ -369,7 +419,7 @@ function TrackSection({
 						</p>
 					)}
 				</div>
-				{/* Sync dropdown placeholder — added in a later commit */}
+				{/* Sync dropdown — added in a later commit */}
 			</div>
 
 			{isError && (
@@ -378,24 +428,24 @@ function TrackSection({
 				</p>
 			)}
 
-			<div className="island-shell rounded-xl border border-[var(--line)] overflow-hidden">
-				<table className="w-full text-sm">
+			<div className="island-shell rounded-xl border border-[var(--line)] overflow-x-auto">
+				<table className="w-full text-sm min-w-[640px]">
 					<thead>
-						{table.getHeaderGroups().map((hg) => (
-							<tr key={hg.id} className="border-b border-[var(--line)]">
-								{hg.headers.map((header) => (
-									<th
-										key={header.id}
-										className="px-4 py-3 text-left text-xs font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wide"
-									>
-										{flexRender(
-											header.column.columnDef.header,
-											header.getContext(),
-										)}
-									</th>
-								))}
-							</tr>
-						))}
+						<tr className="border-b border-[var(--line)]">
+							<th className="px-4 py-3 text-left text-xs font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wide">
+								Track
+							</th>
+							<th className="px-4 py-3 text-left text-xs font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wide">
+								Duration
+							</th>
+							<th className="px-4 py-3 w-12" />
+							<th className="px-4 py-3 text-left text-xs font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wide">
+								MusicBrainz
+							</th>
+							<th className="px-4 py-3 text-left text-xs font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wide">
+								Duration
+							</th>
+						</tr>
 					</thead>
 					<tbody>
 						{isPending
@@ -408,7 +458,7 @@ function TrackSection({
 											<div className="flex items-center gap-3">
 												<div className="w-10 h-10 rounded bg-[var(--line)]" />
 												<div>
-													<div className="h-3 w-32 rounded bg-[var(--line)] mb-2" />
+													<div className="h-3 w-32 rounded bg-[var(--line)] mb-1.5" />
 													<div className="h-2.5 w-20 rounded bg-[var(--line)]" />
 												</div>
 											</div>
@@ -417,50 +467,18 @@ function TrackSection({
 											<div className="h-3 w-8 rounded bg-[var(--line)]" />
 										</td>
 										<td className="px-4 py-3" />
+										<td className="px-4 py-3" />
+										<td className="px-4 py-3" />
 									</tr>
 								))
-							: table.getRowModel().rows.map((row) => (
-									<tr
-										key={row.id}
-										className="border-b border-[var(--line)] last:border-0 hover:bg-[var(--surface)]/40"
-									>
-										{row.getVisibleCells().map((cell) => (
-											<td key={cell.id} className="px-4 py-3">
-												{flexRender(
-													cell.column.columnDef.cell,
-													cell.getContext(),
-												)}
-											</td>
-										))}
-									</tr>
+							: tracks?.map((track) => (
+									<TrackTableRow key={track.Id} track={track} cfg={cfg} />
 								))}
 					</tbody>
 				</table>
 			</div>
 		</section>
 	);
-}
-
-// ─── thumbnail hydration ─────────────────────────────────────────────────────
-
-/**
- * After the track table renders, fill in album art thumbnails by reading the
- * data-item-id attribute. This runs client-side only and avoids passing cfg
- * through TanStack Table column defs.
- */
-function useThumbnailFill(cfg: JellyfinConfig | null) {
-	useEffect(() => {
-		if (!cfg) return;
-		const imgs = document.querySelectorAll<HTMLElement>("[data-item-id]");
-		for (const el of imgs) {
-			const itemId = el.dataset.itemId;
-			if (!itemId) continue;
-			const url = thumbnailUrl(cfg, itemId);
-			el.style.backgroundImage = `url(${url})`;
-			el.style.backgroundSize = "cover";
-			el.style.backgroundPosition = "center";
-		}
-	});
 }
 
 // ─── main page ────────────────────────────────────────────────────────────────
@@ -479,8 +497,6 @@ function PlaylistsPage() {
 		setJellyfinConfig(getJellyfinConfig());
 		setHydrated(true);
 	}, []);
-
-	useThumbnailFill(jellyfinConfig);
 
 	const {
 		data: playlists,
