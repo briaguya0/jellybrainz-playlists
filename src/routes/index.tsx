@@ -1,13 +1,30 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { LayoutGrid, List } from "lucide-react";
-import { useEffect, useState } from "react";
+import {
+	createColumnHelper,
+	flexRender,
+	getCoreRowModel,
+	useReactTable,
+} from "@tanstack/react-table";
+import { ArrowRight, LayoutGrid, List, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import {
 	getJellyfinConfig,
 	setJellyfinConfig as storeJellyfinConfig,
 } from "../lib/config";
-import { fetchPlaylists, resolveUserId } from "../lib/jellyfin";
-import type { JellyfinConfig, JellyfinPlaylist } from "../lib/types";
+import {
+	extractMbRecordingId,
+	fetchPlaylists,
+	fetchPlaylistTracks,
+	resolveUserId,
+	thumbnailUrl,
+	ticksToDisplay,
+} from "../lib/jellyfin";
+import type {
+	JellyfinConfig,
+	JellyfinPlaylist,
+	JellyfinTrack,
+} from "../lib/types";
 
 export const Route = createFileRoute("/")({
 	validateSearch: (search: Record<string, unknown>) => ({
@@ -15,6 +32,15 @@ export const Route = createFileRoute("/")({
 	}),
 	component: PlaylistsPage,
 });
+
+// ─── shared row type ─────────────────────────────────────────────────────────
+
+interface TrackRow {
+	track: JellyfinTrack;
+	mbid: string | undefined;
+}
+
+// ─── skeleton ────────────────────────────────────────────────────────────────
 
 function SkeletonCard() {
 	return (
@@ -24,6 +50,8 @@ function SkeletonCard() {
 		</div>
 	);
 }
+
+// ─── connect overlay ─────────────────────────────────────────────────────────
 
 function ConnectOverlay({
 	onConnected,
@@ -116,6 +144,8 @@ function ConnectOverlay({
 	);
 }
 
+// ─── playlist card / row ─────────────────────────────────────────────────────
+
 function PlaylistCard({
 	playlist,
 	selected,
@@ -178,6 +208,263 @@ function PlaylistRow({
 	);
 }
 
+// ─── diagnostic popover ──────────────────────────────────────────────────────
+
+function DiagnosticPopover({ track }: { track: JellyfinTrack }) {
+	const [open, setOpen] = useState(false);
+	const ref = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (!open) return;
+		function close(e: MouseEvent) {
+			if (ref.current && !ref.current.contains(e.target as Node)) {
+				setOpen(false);
+			}
+		}
+		document.addEventListener("mousedown", close);
+		return () => document.removeEventListener("mousedown", close);
+	}, [open]);
+
+	return (
+		<div ref={ref} className="relative inline-block">
+			<button
+				type="button"
+				onClick={() => setOpen((v) => !v)}
+				className="text-xs font-mono text-[var(--sea-ink-soft)] border border-[var(--line)] rounded px-1 leading-4 hover:border-[var(--lagoon)] hover:text-[var(--lagoon-deep)]"
+				aria-label="Show diagnostic info"
+			>
+				?
+			</button>
+			{open && (
+				<div className="absolute left-0 top-full mt-1 z-40 island-shell rounded-lg border border-[var(--line)] p-3 w-72 text-xs rise-in">
+					<p className="font-semibold text-[var(--sea-ink)] mb-1">
+						No MusicBrainz recording ID
+					</p>
+					<p className="text-[var(--sea-ink-soft)] mb-2">
+						Raw <code className="text-[0.8em]">ProviderIds</code> from Jellyfin:
+					</p>
+					<pre className="bg-[var(--surface)] rounded p-2 overflow-x-auto text-[0.75rem] text-[var(--sea-ink)]">
+						{JSON.stringify(track.ProviderIds ?? null, null, 2)}
+					</pre>
+				</div>
+			)}
+		</div>
+	);
+}
+
+// ─── track table ─────────────────────────────────────────────────────────────
+
+const colHelper = createColumnHelper<TrackRow>();
+
+const columns = [
+	colHelper.display({
+		id: "jf-track",
+		header: "Track",
+		cell: ({ row }) => {
+			const { track } = row.original;
+			return (
+				<div className="flex items-center gap-3 min-w-0">
+					{/* album art placeholder — real thumbnails need cfg, handled via data attr */}
+					<div
+						className="w-10 h-10 rounded shrink-0 bg-[var(--line)] overflow-hidden"
+						data-item-id={track.Id}
+					/>
+					<div className="min-w-0">
+						<p className="text-sm font-medium text-[var(--sea-ink)] truncate">
+							{track.Name}
+						</p>
+						<p className="text-xs text-[var(--sea-ink-soft)] truncate">
+							{track.Artists?.join(", ") ?? ""}
+						</p>
+					</div>
+				</div>
+			);
+		},
+	}),
+	colHelper.display({
+		id: "jf-duration",
+		header: "Duration",
+		cell: ({ row }) => {
+			const { track } = row.original;
+			return (
+				<span className="text-xs tabular-nums text-[var(--sea-ink-soft)]">
+					{track.RunTimeTicks != null
+						? ticksToDisplay(track.RunTimeTicks)
+						: "—"}
+				</span>
+			);
+		},
+	}),
+	colHelper.display({
+		id: "link",
+		header: "",
+		cell: ({ row }) => {
+			const { track, mbid } = row.original;
+			if (mbid) {
+				return (
+					<ArrowRight
+						size={16}
+						className="text-[var(--lagoon-deep)] shrink-0"
+					/>
+				);
+			}
+			return (
+				<span className="flex items-center gap-1">
+					<X size={14} className="text-[var(--sea-ink-soft)] shrink-0" />
+					<DiagnosticPopover track={track} />
+				</span>
+			);
+		},
+	}),
+];
+
+// ─── track section ────────────────────────────────────────────────────────────
+
+function TrackSection({
+	cfg,
+	playlistId,
+	playlistName,
+}: {
+	cfg: JellyfinConfig;
+	playlistId: string;
+	playlistName: string;
+}) {
+	const {
+		data: tracks,
+		isPending,
+		isError,
+		error,
+	} = useQuery({
+		queryKey: ["playlist-tracks", playlistId, cfg],
+		queryFn: () => {
+			if (!cfg.userId) throw new Error("No userId");
+			return fetchPlaylistTracks(cfg, cfg.userId, playlistId);
+		},
+		enabled: !!cfg.userId,
+	});
+
+	const rows: TrackRow[] = (tracks ?? []).map((track) => ({
+		track,
+		mbid: extractMbRecordingId(track),
+	}));
+
+	const matchedCount = rows.filter((r) => r.mbid != null).length;
+
+	const table = useReactTable({
+		data: rows,
+		columns,
+		getCoreRowModel: getCoreRowModel(),
+	});
+
+	return (
+		<section className="mt-10 rise-in">
+			<div className="flex items-center justify-between mb-3">
+				<div>
+					<h2 className="text-base font-semibold text-[var(--sea-ink)]">
+						{playlistName}
+					</h2>
+					{tracks && (
+						<p className="text-xs text-[var(--sea-ink-soft)]">
+							{matchedCount}/{tracks.length} matched
+						</p>
+					)}
+				</div>
+				{/* Sync dropdown placeholder — added in a later commit */}
+			</div>
+
+			{isError && (
+				<p className="text-sm text-red-600 dark:text-red-400 mb-3">
+					{error instanceof Error ? error.message : "Failed to load tracks"}
+				</p>
+			)}
+
+			<div className="island-shell rounded-xl border border-[var(--line)] overflow-hidden">
+				<table className="w-full text-sm">
+					<thead>
+						{table.getHeaderGroups().map((hg) => (
+							<tr key={hg.id} className="border-b border-[var(--line)]">
+								{hg.headers.map((header) => (
+									<th
+										key={header.id}
+										className="px-4 py-3 text-left text-xs font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wide"
+									>
+										{flexRender(
+											header.column.columnDef.header,
+											header.getContext(),
+										)}
+									</th>
+								))}
+							</tr>
+						))}
+					</thead>
+					<tbody>
+						{isPending
+							? ["sk-1", "sk-2", "sk-3", "sk-4", "sk-5"].map((k) => (
+									<tr
+										key={k}
+										className="border-b border-[var(--line)] animate-pulse"
+									>
+										<td className="px-4 py-3">
+											<div className="flex items-center gap-3">
+												<div className="w-10 h-10 rounded bg-[var(--line)]" />
+												<div>
+													<div className="h-3 w-32 rounded bg-[var(--line)] mb-2" />
+													<div className="h-2.5 w-20 rounded bg-[var(--line)]" />
+												</div>
+											</div>
+										</td>
+										<td className="px-4 py-3">
+											<div className="h-3 w-8 rounded bg-[var(--line)]" />
+										</td>
+										<td className="px-4 py-3" />
+									</tr>
+								))
+							: table.getRowModel().rows.map((row) => (
+									<tr
+										key={row.id}
+										className="border-b border-[var(--line)] last:border-0 hover:bg-[var(--surface)]/40"
+									>
+										{row.getVisibleCells().map((cell) => (
+											<td key={cell.id} className="px-4 py-3">
+												{flexRender(
+													cell.column.columnDef.cell,
+													cell.getContext(),
+												)}
+											</td>
+										))}
+									</tr>
+								))}
+					</tbody>
+				</table>
+			</div>
+		</section>
+	);
+}
+
+// ─── thumbnail hydration ─────────────────────────────────────────────────────
+
+/**
+ * After the track table renders, fill in album art thumbnails by reading the
+ * data-item-id attribute. This runs client-side only and avoids passing cfg
+ * through TanStack Table column defs.
+ */
+function useThumbnailFill(cfg: JellyfinConfig | null) {
+	useEffect(() => {
+		if (!cfg) return;
+		const imgs = document.querySelectorAll<HTMLElement>("[data-item-id]");
+		for (const el of imgs) {
+			const itemId = el.dataset.itemId;
+			if (!itemId) continue;
+			const url = thumbnailUrl(cfg, itemId);
+			el.style.backgroundImage = `url(${url})`;
+			el.style.backgroundSize = "cover";
+			el.style.backgroundPosition = "center";
+		}
+	});
+}
+
+// ─── main page ────────────────────────────────────────────────────────────────
+
 function PlaylistsPage() {
 	const navigate = useNavigate({ from: "/" });
 	const { playlist: selectedId } = Route.useSearch();
@@ -192,6 +479,8 @@ function PlaylistsPage() {
 		setJellyfinConfig(getJellyfinConfig());
 		setHydrated(true);
 	}, []);
+
+	useThumbnailFill(jellyfinConfig);
 
 	const {
 		data: playlists,
@@ -213,6 +502,8 @@ function PlaylistsPage() {
 
 	const showOverlay = hydrated && !jellyfinConfig;
 	const showSkeletons = !hydrated || (!!jellyfinConfig && isPending);
+
+	const selectedPlaylist = playlists?.find((p) => p.Id === selectedId);
 
 	return (
 		<main className="page-wrap px-4 pb-8 pt-14 relative">
@@ -290,6 +581,14 @@ function PlaylistsPage() {
 								/>
 							))}
 				</div>
+			)}
+
+			{jellyfinConfig && selectedId && selectedPlaylist && (
+				<TrackSection
+					cfg={jellyfinConfig}
+					playlistId={selectedId}
+					playlistName={selectedPlaylist.Name}
+				/>
 			)}
 		</main>
 	);
