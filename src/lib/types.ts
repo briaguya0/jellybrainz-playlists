@@ -13,6 +13,7 @@ export interface JellyfinPlaylist {
 	Id: string;
 	Name: string;
 	ChildCount?: number;
+	ImageTags?: Record<string, string>;
 }
 
 export interface JellyfinTrack {
