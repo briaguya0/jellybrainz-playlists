@@ -60,8 +60,8 @@ export async function fetchPlaylistTracks(
 
 export function extractMbRecordingId(track: JellyfinTrack): string | undefined {
 	return (
-		track.ProviderIds?.["MusicBrainzTrack"] ??
-		track.ProviderIds?.["MusicBrainzRecording"]
+		track.ProviderIds?.MusicBrainzTrack ??
+		track.ProviderIds?.MusicBrainzRecording
 	);
 }
 
