@@ -27,7 +27,7 @@ import {
 	addRecordingsToCollection,
 	createCollection,
 	fetchCollections,
-	fetchRecording,
+	fetchRecordingsByTrackIds,
 	formatArtistCredits,
 	msToDisplay,
 } from "../lib/musicbrainz";
@@ -38,6 +38,7 @@ import type {
 	JellyfinTrack,
 	MbAuth,
 	MbCollection,
+	MbRecording,
 } from "../lib/types";
 
 export const Route = createFileRoute("/")({
@@ -164,7 +165,11 @@ function PlaylistCard({
 			type="button"
 			onClick={onClick}
 			disabled={disabled}
-			style={disabled ? { filter: "grayscale(1) opacity(0.45)", cursor: "not-allowed" } : undefined}
+			style={
+				disabled
+					? { filter: "grayscale(1) opacity(0.45)", cursor: "not-allowed" }
+					: undefined
+			}
 			className={`island-shell feature-card rounded-xl border p-4 text-left w-full rise-in flex items-center gap-3 cursor-pointer ${
 				selected
 					? "border-[var(--lagoon)] ring-2 ring-[var(--lagoon)]/30"
@@ -211,7 +216,11 @@ function PlaylistRow({
 			type="button"
 			onClick={onClick}
 			disabled={disabled}
-			style={disabled ? { filter: "grayscale(1) opacity(0.45)", cursor: "not-allowed" } : undefined}
+			style={
+				disabled
+					? { filter: "grayscale(1) opacity(0.45)", cursor: "not-allowed" }
+					: undefined
+			}
 			className={`island-shell feature-card rounded-lg border px-4 py-3 text-left w-full rise-in flex items-center gap-4 cursor-pointer ${
 				selected
 					? "border-[var(--lagoon)] ring-2 ring-[var(--lagoon)]/30"
@@ -297,25 +306,18 @@ function DiagnosticPopover({
 function TrackTableRow({
 	track,
 	cfg,
+	recording,
+	mbPending,
+	mbError,
 }: {
 	track: JellyfinTrack;
 	cfg: JellyfinConfig;
+	recording: MbRecording | undefined;
+	mbPending: boolean;
+	mbError: Error | null;
 }) {
 	const mbid = extractMbRecordingId(track);
-
-	const {
-		data: recording,
-		isPending: mbPending,
-		isError: mbIsError,
-		error: mbFetchError,
-	} = useQuery({
-		queryKey: ["mb-recording", mbid],
-		queryFn: () => fetchRecording(mbid as string),
-		enabled: !!mbid,
-		staleTime: Number.POSITIVE_INFINITY,
-	});
-
-	const matched = !!mbid && !mbIsError;
+	const matched = !!mbid && !!recording;
 
 	return (
 		<tr className="border-b border-[var(--line)] last:border-0 hover:bg-[var(--surface)]/40">
@@ -348,15 +350,14 @@ function TrackTableRow({
 			</td>
 			{/* Link indicator */}
 			<td className="px-4 py-3 w-12 text-center">
-				{matched ? (
+				{mbid && mbPending ? (
+					<div className="h-4 w-4 rounded bg-[var(--line)] animate-pulse mx-auto" />
+				) : matched ? (
 					<ArrowRight size={16} className="text-[var(--lagoon-deep)] mx-auto" />
 				) : (
 					<span className="flex items-center justify-center gap-1">
 						<X size={14} className="text-[var(--sea-ink-soft)] shrink-0" />
-						<DiagnosticPopover
-							track={track}
-							mbError={mbIsError ? (mbFetchError as Error) : null}
-						/>
+						<DiagnosticPopover track={track} mbError={mbError} />
 					</span>
 				)}
 			</td>
@@ -511,7 +512,13 @@ function SyncDropdown({
 				}}
 				className="island-shell flex items-center gap-1.5 rounded-lg border border-[var(--line)] px-3 py-1.5 text-sm font-semibold text-[var(--lagoon-deep)] hover:text-[var(--lagoon)]"
 			>
-				<img src="/musicbrainz-icon.svg" width={14} height={14} alt="" aria-hidden="true" />
+				<img
+					src="/musicbrainz-icon.svg"
+					width={14}
+					height={14}
+					alt=""
+					aria-hidden="true"
+				/>
 				Sync
 				<ChevronDown size={14} />
 			</button>
@@ -626,9 +633,27 @@ function TrackSection({
 		enabled: !!cfg.userId,
 	});
 
-	const matchedMbids = (tracks ?? [])
-		.map(extractMbRecordingId)
-		.filter((id): id is string => id != null);
+	const trackMbids = (tracks ?? []).flatMap((t) => {
+		const id = extractMbRecordingId(t);
+		return id ? [id] : [];
+	});
+
+	const {
+		data: recordingMap,
+		isPending: mbPending,
+		isError: mbIsError,
+		error: mbError,
+	} = useQuery({
+		queryKey: ["playlist-recordings", playlistId, trackMbids],
+		queryFn: () => fetchRecordingsByTrackIds(trackMbids),
+		enabled: trackMbids.length > 0,
+		staleTime: Number.POSITIVE_INFINITY,
+	});
+
+	const matchedMbids = trackMbids.flatMap((trackMbid) => {
+		const rec = recordingMap?.get(trackMbid);
+		return rec ? [rec.id] : [];
+	});
 
 	return (
 		<section className="mt-10 rise-in">
@@ -699,9 +724,21 @@ function TrackSection({
 										<td className="px-4 py-3" />
 									</tr>
 								))
-							: tracks?.map((track) => (
-									<TrackTableRow key={track.Id} track={track} cfg={cfg} />
-								))}
+							: tracks?.map((track) => {
+									const trackMbid = extractMbRecordingId(track);
+									return (
+										<TrackTableRow
+											key={track.Id}
+											track={track}
+											cfg={cfg}
+											recording={
+												trackMbid ? recordingMap?.get(trackMbid) : undefined
+											}
+											mbPending={mbPending && !!trackMbid}
+											mbError={mbIsError ? (mbError as Error) : null}
+										/>
+									);
+								})}
 					</tbody>
 				</table>
 			</div>
@@ -770,7 +807,13 @@ function PlaylistsPage() {
 				<>
 					<div className="flex items-center justify-between mb-5">
 						<h1 className="text-xl font-semibold text-[var(--sea-ink)] flex items-center gap-2">
-							<img src="/jellyfin-icon.svg" width={22} height={22} alt="" aria-hidden="true" />
+							<img
+								src="/jellyfin-icon.svg"
+								width={22}
+								height={22}
+								alt=""
+								aria-hidden="true"
+							/>
 							Playlists
 						</h1>
 						<div className="flex items-center gap-1">
