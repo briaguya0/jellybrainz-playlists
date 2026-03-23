@@ -28,7 +28,7 @@ cp .env.example .env.local
 ## Running
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
