@@ -272,6 +272,11 @@ pre code {
   border-color: color-mix(in oklab, var(--lagoon-deep) 35%, var(--line));
 }
 
+button:disabled.feature-card:hover {
+  transform: none;
+  border-color: var(--line);
+}
+
 button,
 .island-shell,
 a {
