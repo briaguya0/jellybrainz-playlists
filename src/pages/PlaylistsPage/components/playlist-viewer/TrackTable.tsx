@@ -21,7 +21,7 @@ export function TrackTable({
   onClearOverride: (jellyfinId: string) => void;
 }) {
   return (
-    <div className="island-shell rounded-xl border border-stroke">
+    <div className="glass-panel rounded-xl border border-stroke">
       <table className="w-full text-sm table-fixed">
         <thead>
           <tr className="border-b border-stroke">

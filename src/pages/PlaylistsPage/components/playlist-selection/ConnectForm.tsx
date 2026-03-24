@@ -27,7 +27,7 @@ export function ConnectForm() {
   }
 
   return (
-    <div className="island-shell rounded-2xl p-8 w-full max-w-sm rise-in">
+    <div className="glass-panel rounded-2xl p-8 w-full max-w-sm rise-in">
       <h2 className="text-lg font-semibold text-app-text mb-1">
         Connect to Jellyfin
       </h2>
@@ -67,7 +67,7 @@ export function ConnectForm() {
         <button
           type="submit"
           disabled={connecting}
-          className="island-shell rounded-lg px-4 py-2 text-sm font-semibold text-accent-text enabled:hover:text-app-text disabled:opacity-50"
+          className="glass-panel rounded-lg px-4 py-2 text-sm font-semibold text-accent-text enabled:hover:text-app-text disabled:opacity-50"
         >
           {connecting ? "Connecting…" : "Connect"}
         </button>

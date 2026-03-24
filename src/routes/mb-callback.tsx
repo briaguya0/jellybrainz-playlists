@@ -73,7 +73,7 @@ function MbCallbackPage() {
   if (status === "error") {
     return (
       <main className="page-wrap px-4 pb-8 pt-14 flex flex-col items-center gap-4">
-        <div className="island-shell rounded-xl border border-stroke p-8 max-w-md w-full text-center rise-in">
+        <div className="glass-panel rounded-xl border border-stroke p-8 max-w-md w-full text-center rise-in">
           <p className="text-sm font-semibold text-red-600 dark:text-red-400 mb-2">
             Connection failed
           </p>
@@ -88,7 +88,7 @@ function MbCallbackPage() {
 
   return (
     <main className="page-wrap px-4 pb-8 pt-14 flex flex-col items-center gap-4">
-      <div className="island-shell rounded-xl border border-stroke p-8 max-w-md w-full text-center rise-in">
+      <div className="glass-panel rounded-xl border border-stroke p-8 max-w-md w-full text-center rise-in">
         <p className="text-sm text-app-muted">Connecting to MusicBrainz…</p>
       </div>
     </main>

@@ -158,7 +158,7 @@ pre code {
   font-family: 'Fraunces', Georgia, serif;
 }
 
-.island-shell {
+.glass-panel {
   border: 1px solid var(--stroke);
   background: linear-gradient(165deg, var(--surface-strong), var(--surface));
   box-shadow:
@@ -168,34 +168,36 @@ pre code {
   backdrop-filter: blur(4px);
 }
 
-.dark .island-shell {
+.dark .glass-panel {
   box-shadow:
     0 1px 0 var(--glint) inset,
     0 22px 44px rgba(0, 164, 220, 0.06),
     0 6px 18px rgba(8, 9, 16, 0.5);
 }
 
-.feature-card {
+.glass-card {
+  border: 1px solid var(--stroke);
   background: linear-gradient(165deg, color-mix(in oklab, var(--surface-strong) 93%, white 7%), var(--surface));
   box-shadow:
     0 1px 0 var(--glint) inset,
     0 18px 34px rgba(30, 90, 72, 0.1),
     0 4px 14px rgba(23, 58, 64, 0.06);
+  backdrop-filter: blur(4px);
 }
 
-.dark .feature-card {
+.dark .glass-card {
   box-shadow:
     0 1px 0 var(--glint) inset,
     0 18px 34px rgba(0, 164, 220, 0.05),
     0 4px 14px rgba(8, 9, 16, 0.4);
 }
 
-.feature-card:hover {
+.glass-card:hover {
   transform: translateY(-2px);
   border-color: color-mix(in oklab, var(--accent-text) 35%, var(--stroke));
 }
 
-button:disabled.feature-card:hover {
+button:disabled.glass-card:hover {
   transform: none;
   border-color: var(--stroke);
 }
@@ -212,7 +214,8 @@ button:disabled {
 }
 
 button,
-.island-shell,
+.glass-panel,
+.glass-card,
 a {
   transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease,
     transform 180ms ease;

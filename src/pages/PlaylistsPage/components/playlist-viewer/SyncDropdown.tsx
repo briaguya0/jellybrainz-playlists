@@ -108,7 +108,7 @@ export function SyncDropdown({
             setSyncState({ phase: "idle" });
           }
         }}
-        className="island-shell flex items-center gap-1.5 rounded-lg border border-stroke px-3 py-1.5 text-sm font-semibold text-accent-text hover:text-app-text"
+        className="glass-panel flex items-center gap-1.5 rounded-lg border border-stroke px-3 py-1.5 text-sm font-semibold text-accent-text hover:text-app-text"
       >
         <img
           src="/musicbrainz-icon.svg"
@@ -121,7 +121,7 @@ export function SyncDropdown({
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-1 z-40 island-shell rounded-xl border border-stroke p-4 w-72 rise-in">
+        <div className="absolute right-0 top-full mt-1 z-40 glass-panel rounded-xl border border-stroke p-4 w-72 rise-in">
           {!mbAuth ? (
             <>
               <p className="text-sm text-app-muted mb-3">
@@ -130,7 +130,7 @@ export function SyncDropdown({
               <button
                 type="button"
                 onClick={startOAuth}
-                className="w-full island-shell rounded-lg border border-stroke px-3 py-2 text-sm font-semibold text-accent-text hover:text-[var(--accent)]"
+                className="w-full glass-panel rounded-lg border border-stroke px-3 py-2 text-sm font-semibold text-accent-text hover:text-[var(--accent)]"
               >
                 Connect MusicBrainz
               </button>

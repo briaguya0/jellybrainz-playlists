@@ -27,7 +27,7 @@ export function SettingsPanel({ onClose }: { onClose: () => void }) {
       <div
         role="dialog"
         aria-label="Settings"
-        className="fixed right-0 top-0 z-50 flex h-full w-80 max-w-full flex-col island-shell border-l border-stroke shadow-2xl animate-slide-in-right overflow-y-auto"
+        className="fixed right-0 top-0 z-50 flex h-full w-80 max-w-full flex-col glass-panel border-l border-stroke shadow-2xl animate-slide-in-right overflow-y-auto"
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-stroke">
           <h2 className="text-sm font-semibold text-app-text">Settings</h2>
