@@ -19,6 +19,10 @@ export function parseOverrides(raw: unknown): Record<string, string> {
   );
 }
 
+export function getErrorMessage(err: unknown, fallback: string): string {
+  return err instanceof Error ? err.message : fallback;
+}
+
 export function serializeOverrides(
   overrides: Record<string, string>,
 ): string | undefined {

@@ -3,7 +3,11 @@ import { useEffect, useState } from "react";
 import { useTrackMatching } from "../../../../hooks/useTrackMatching";
 import { getMbAuth } from "../../../../lib/config";
 import type { JellyfinConfig, MbAuth } from "../../../../lib/types";
-import { parseOverrides, serializeOverrides } from "../../../../lib/utils";
+import {
+  getErrorMessage,
+  parseOverrides,
+  serializeOverrides,
+} from "../../../../lib/utils";
 import { SyncDropdown } from "./SyncDropdown";
 import { TrackTable } from "./TrackTable";
 
@@ -88,7 +92,7 @@ export function PlaylistViewer({
 
       {isError && (
         <p className="text-sm text-red-600 dark:text-red-400 mb-3">
-          {error instanceof Error ? error.message : "Failed to load tracks"}
+          {getErrorMessage(error, "Failed to load tracks")}
         </p>
       )}
 
