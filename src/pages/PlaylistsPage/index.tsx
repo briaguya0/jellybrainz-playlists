@@ -1,9 +1,9 @@
+import { getJellyfinConfig } from "@src/lib/config";
+import { fetchPlaylists } from "@src/lib/jellyfin";
+import type { JellyfinConfig } from "@src/lib/types";
 import { useQuery } from "@tanstack/react-query";
 import { useSearch } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { getJellyfinConfig } from "../../lib/config";
-import { fetchPlaylists } from "../../lib/jellyfin";
-import type { JellyfinConfig } from "../../lib/types";
 import { PlaylistSelection } from "./components/playlist-selection/PlaylistSelection";
 import { PlaylistViewer } from "./components/playlist-viewer/PlaylistViewer";
 

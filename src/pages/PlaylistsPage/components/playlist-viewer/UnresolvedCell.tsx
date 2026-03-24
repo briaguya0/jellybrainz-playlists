@@ -1,9 +1,9 @@
+import { usePopoverPosition } from "@src/hooks/usePopoverPosition";
+import { formatArtistCredits, msToDisplay } from "@src/lib/musicbrainz";
+import type { MbRecording } from "@src/lib/types";
 import { ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { usePopoverPosition } from "../../../../hooks/usePopoverPosition";
-import { formatArtistCredits, msToDisplay } from "../../../../lib/musicbrainz";
-import type { MbRecording } from "../../../../lib/types";
 
 export function UnresolvedCell({
   candidates,

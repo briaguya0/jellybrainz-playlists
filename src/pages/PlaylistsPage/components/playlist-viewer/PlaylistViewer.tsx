@@ -1,13 +1,13 @@
-import { useNavigate, useSearch } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { useTrackMatching } from "../../../../hooks/useTrackMatching";
-import { getMbAuth } from "../../../../lib/config";
-import type { JellyfinConfig, MbAuth } from "../../../../lib/types";
+import { useTrackMatching } from "@src/hooks/useTrackMatching";
+import { getMbAuth } from "@src/lib/config";
+import type { JellyfinConfig, MbAuth } from "@src/lib/types";
 import {
   getErrorMessage,
   parseOverrides,
   serializeOverrides,
-} from "../../../../lib/utils";
+} from "@src/lib/utils";
+import { useNavigate, useSearch } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { SyncDropdown } from "./SyncDropdown";
 import { TrackTable } from "./TrackTable";
 

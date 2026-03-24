@@ -1,8 +1,8 @@
+import { setJellyfinConfig as storeJellyfinConfig } from "@src/lib/config";
+import { resolveUserId } from "@src/lib/jellyfin";
+import type { JellyfinConfig } from "@src/lib/types";
+import { getErrorMessage } from "@src/lib/utils";
 import { useState } from "react";
-import { setJellyfinConfig as storeJellyfinConfig } from "../../../../lib/config";
-import { resolveUserId } from "../../../../lib/jellyfin";
-import type { JellyfinConfig } from "../../../../lib/types";
-import { getErrorMessage } from "../../../../lib/utils";
 
 export function ConnectForm({
   onConnected,
