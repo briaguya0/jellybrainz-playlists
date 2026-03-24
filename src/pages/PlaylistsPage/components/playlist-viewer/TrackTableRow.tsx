@@ -5,6 +5,7 @@ import type {
   TrackMatchState,
 } from "@src/lib/types";
 import { Search } from "lucide-react";
+import { asset } from "@src/lib/utils";
 import { MbBadge } from "./MbBadge";
 import { RecordingInfo } from "./RecordingInfo";
 import { ThumbnailTooltip } from "./ThumbnailTooltip";
@@ -58,7 +59,7 @@ export function TrackTableRow({
         {matchState.kind === "loading" && (
           <div className="flex items-center gap-2 min-w-0 animate-pulse">
             <div className="relative shrink-0 w-8 h-8">
-              <img src="/mb-blank-icon.svg" width={32} height={32} alt="" />
+              <img src={asset("/mb-blank-icon.svg")} width={32} height={32} alt="" />
               <span className="absolute inset-0 flex items-center justify-center">
                 <Search size={16} className="text-white" />
               </span>
@@ -76,7 +77,7 @@ export function TrackTableRow({
             <div className="shrink-0">
               {matchState.kind === "exact" ? (
                 <img
-                  src="/mb-recording-icon.svg"
+                  src={asset("/mb-recording-icon.svg")}
                   width={32}
                   height={32}
                   alt=""
@@ -101,7 +102,7 @@ export function TrackTableRow({
               ) : (
                 // override recording still loading
                 <div className="animate-pulse opacity-50 w-8 h-8">
-                  <img src="/mb-blank-icon.svg" width={32} height={32} alt="" />
+                  <img src={asset("/mb-blank-icon.svg")} width={32} height={32} alt="" />
                 </div>
               )}
             </div>

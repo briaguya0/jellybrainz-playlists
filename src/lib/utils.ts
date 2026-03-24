@@ -23,6 +23,10 @@ export function getErrorMessage(err: unknown, fallback: string): string {
   return err instanceof Error ? err.message : fallback;
 }
 
+export function asset(path: string): string {
+  return `${import.meta.env.BASE_URL}${path.replace(/^\//, "")}`;
+}
+
 export function serializeOverrides(
   overrides: Record<string, string>,
 ): string | undefined {

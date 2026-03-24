@@ -7,7 +7,7 @@ import {
 } from "@src/lib/musicbrainz";
 import { buildAuthUrl, generatePkce } from "@src/lib/oauth";
 import type { MbCollection } from "@src/lib/types";
-import { getErrorMessage } from "@src/lib/utils";
+import { asset, getErrorMessage } from "@src/lib/utils";
 import { useEffect, useRef, useState } from "react";
 
 type ExportView =
@@ -438,7 +438,7 @@ export function SyncDropdown({
         className="glass-panel flex items-center gap-1.5 rounded-lg border border-stroke px-3 py-1.5 text-sm font-semibold text-accent-text hover:text-app-text"
       >
         <img
-          src="/musicbrainz-icon.svg"
+          src={asset("/musicbrainz-icon.svg")}
           width={14}
           height={14}
           alt=""
