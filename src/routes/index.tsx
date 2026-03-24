@@ -1,13 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ChevronDown, LayoutGrid, List, Search } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   getJellyfinConfig,
   getMbAuth,
   setJellyfinConfig as storeJellyfinConfig,
 } from "../lib/config";
 import {
+  extractMbArtistId,
   extractMbRecordingId,
   fetchPlaylists,
   fetchPlaylistTracks,
@@ -20,9 +21,11 @@ import {
   addRecordingsToCollection,
   createCollection,
   fetchCollections,
+  fetchRecordingsByRecordingIds,
   fetchRecordingsByTrackIds,
   formatArtistCredits,
   msToDisplay,
+  searchRecordingsByArtist,
 } from "../lib/musicbrainz";
 import { buildAuthUrl, generatePkce } from "../lib/oauth";
 import type {
@@ -34,12 +37,48 @@ import type {
   MbRecording,
 } from "../lib/types";
 
+// ─── url helpers ─────────────────────────────────────────────────────────────
+
+function parseOverrides(raw: unknown): Record<string, string> {
+  if (typeof raw !== "string" || !raw) return {};
+  return Object.fromEntries(
+    raw.split(",").flatMap((pair) => {
+      const idx = pair.indexOf(":");
+      if (idx === -1) return [];
+      const k = pair.slice(0, idx);
+      const v = pair.slice(idx + 1);
+      return k && v ? [[k, v]] : [];
+    }),
+  );
+}
+
+function serializeOverrides(
+  overrides: Record<string, string>,
+): string | undefined {
+  const entries = Object.entries(overrides);
+  if (!entries.length) return undefined;
+  return entries.map(([k, v]) => `${k}:${v}`).join(",");
+}
+
+// ─── route ───────────────────────────────────────────────────────────────────
+
 export const Route = createFileRoute("/")({
   validateSearch: (search: Record<string, unknown>) => ({
     playlist: typeof search.playlist === "string" ? search.playlist : undefined,
+    overrides:
+      typeof search.overrides === "string" ? search.overrides : undefined,
   }),
   component: PlaylistsPage,
 });
+
+// ─── match state ─────────────────────────────────────────────────────────────
+
+type TrackMatchState =
+  | { kind: "loading" }
+  | { kind: "exact"; recording: MbRecording }
+  | { kind: "partial-auto"; recording: MbRecording }
+  | { kind: "override"; recording: MbRecording | undefined }
+  | { kind: "unresolved"; candidates: MbRecording[] };
 
 // ─── skeleton ────────────────────────────────────────────────────────────────
 
@@ -232,20 +271,294 @@ function PlaylistRow({
   );
 }
 
+// ─── recording info ───────────────────────────────────────────────────────────
+
+function RecordingInfo({ recording }: { recording: MbRecording }) {
+  return (
+    <div className="min-w-0 flex-1">
+      <p className="text-sm font-medium text-[var(--sea-ink)] truncate">
+        {recording.title}
+      </p>
+      <p className="text-xs text-[var(--sea-ink-soft)] truncate">
+        {[
+          formatArtistCredits(recording["artist-credit"]),
+          recording.length != null ? msToDisplay(recording.length) : null,
+        ]
+          .filter(Boolean)
+          .join(" · ")}
+      </p>
+    </div>
+  );
+}
+
+// ─── mb badge (corner dot on matched/confirmed icons) ─────────────────────────
+
+function MbBadge({
+  kind,
+  recording,
+  onConfirm,
+  onOverride,
+}: {
+  kind: "partial-auto" | "override";
+  recording: MbRecording | undefined;
+  onConfirm?: () => void;
+  onOverride: (mbid: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [showChange, setShowChange] = useState(false);
+  const [manualMbid, setManualMbid] = useState("");
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) {
+      setShowChange(false);
+      setManualMbid("");
+      return;
+    }
+    function close(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node))
+        setOpen(false);
+    }
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, [open]);
+
+  return (
+    <div ref={ref} className="absolute -bottom-1 -right-1 z-10">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-label={
+          kind === "partial-auto"
+            ? "Partial match — click to review"
+            : "Confirmed match — click to change"
+        }
+        className={`w-3.5 h-3.5 rounded-full border-2 border-[var(--surface)] ${
+          kind === "partial-auto" ? "bg-amber-400" : "bg-green-500"
+        }`}
+      />
+      {open && (
+        <div className="absolute bottom-full right-0 mb-2 z-40 island-shell rounded-xl border border-[var(--line)] p-4 w-72 rise-in">
+          {!showChange ? (
+            <>
+              <p className="text-xs text-[var(--sea-ink-soft)] mb-2">
+                {kind === "partial-auto"
+                  ? "Matched via artist + title search"
+                  : "Manually confirmed"}
+              </p>
+              {recording && (
+                <>
+                  <p className="text-sm font-medium text-[var(--sea-ink)]">
+                    {recording.title}
+                  </p>
+                  <p className="text-xs text-[var(--sea-ink-soft)] mb-3">
+                    {formatArtistCredits(recording["artist-credit"])}
+                  </p>
+                </>
+              )}
+              <div className="flex gap-2">
+                {kind === "partial-auto" && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onConfirm?.();
+                      setOpen(false);
+                    }}
+                    className="flex-1 rounded-lg px-3 py-1.5 text-sm font-semibold bg-green-500/10 text-green-700 dark:text-green-400 hover:bg-green-500/20"
+                  >
+                    Confirm
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setShowChange(true)}
+                  className="flex-1 rounded-lg island-shell border border-[var(--line)] px-3 py-1.5 text-sm text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+                >
+                  Change
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="text-xs text-[var(--sea-ink-soft)] mb-2">
+                Enter MusicBrainz recording ID
+              </p>
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (manualMbid) {
+                    onOverride(manualMbid.trim());
+                    setOpen(false);
+                  }
+                }}
+                className="flex flex-col gap-2"
+              >
+                <input
+                  type="text"
+                  value={manualMbid}
+                  onChange={(e) => setManualMbid(e.target.value)}
+                  placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                  // biome-ignore lint/a11y/noAutofocus: intentional focus when user opens change panel
+                  autoFocus
+                  className="w-full rounded-lg border border-[var(--line)] bg-[var(--surface-strong)] px-3 py-2 text-xs text-[var(--sea-ink)] outline-none focus:border-[var(--lagoon)]"
+                />
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowChange(false)}
+                    className="flex-1 rounded-lg island-shell border border-[var(--line)] px-3 py-1.5 text-sm text-[var(--sea-ink-soft)]"
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={!manualMbid}
+                    className="flex-1 rounded-lg island-shell border border-[var(--line)] px-3 py-1.5 text-sm font-semibold text-[var(--lagoon-deep)] hover:text-[var(--lagoon)] disabled:opacity-30"
+                  >
+                    Apply
+                  </button>
+                </div>
+              </form>
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── unresolved cell (? icon + picker popover) ────────────────────────────────
+
+function UnresolvedCell({
+  candidates,
+  onOverride,
+}: {
+  candidates: MbRecording[];
+  onOverride: (mbid: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [manualMbid, setManualMbid] = useState("");
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) {
+      setManualMbid("");
+      return;
+    }
+    function close(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node))
+        setOpen(false);
+    }
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, [open]);
+
+  return (
+    <div ref={ref} className="relative inline-block">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-label="No MusicBrainz match — click to search or enter MBID"
+        className="relative w-8 h-8"
+      >
+        <img
+          src="/mb-blank-icon.svg"
+          width={32}
+          height={32}
+          alt="No MusicBrainz match"
+        />
+        <span className="absolute inset-0 flex items-center justify-center text-white text-2xl font-bold leading-none">
+          ?
+        </span>
+      </button>
+      {open && (
+        <div className="absolute left-0 top-full mt-1 z-40 island-shell rounded-xl border border-[var(--line)] p-4 w-80 rise-in">
+          {candidates.length > 0 && (
+            <>
+              <p className="text-xs text-[var(--sea-ink-soft)] mb-2">
+                Possible matches
+              </p>
+              <div className="space-y-1 mb-3">
+                {candidates.map((rec) => (
+                  <button
+                    key={rec.id}
+                    type="button"
+                    onClick={() => {
+                      onOverride(rec.id);
+                      setOpen(false);
+                    }}
+                    className="w-full text-left rounded-lg px-3 py-2 hover:bg-[var(--surface)] text-sm"
+                  >
+                    <p className="font-medium text-[var(--sea-ink)] truncate">
+                      {rec.title}
+                    </p>
+                    <p className="text-xs text-[var(--sea-ink-soft)] truncate">
+                      {[
+                        formatArtistCredits(rec["artist-credit"]),
+                        rec.length ? msToDisplay(rec.length) : null,
+                      ]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </p>
+                  </button>
+                ))}
+              </div>
+              <hr className="border-[var(--line)] mb-3" />
+            </>
+          )}
+          <p className="text-xs text-[var(--sea-ink-soft)] mb-2">
+            Enter MusicBrainz recording ID
+          </p>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (manualMbid) {
+                onOverride(manualMbid.trim());
+                setOpen(false);
+              }
+            }}
+            className="flex flex-col gap-2"
+          >
+            <input
+              type="text"
+              value={manualMbid}
+              onChange={(e) => setManualMbid(e.target.value)}
+              placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+              className="w-full rounded-lg border border-[var(--line)] bg-[var(--surface-strong)] px-3 py-2 text-xs text-[var(--sea-ink)] outline-none focus:border-[var(--lagoon)]"
+            />
+            <button
+              type="submit"
+              disabled={!manualMbid}
+              className="w-full rounded-lg island-shell border border-[var(--line)] px-3 py-1.5 text-sm font-semibold text-[var(--lagoon-deep)] hover:text-[var(--lagoon)] disabled:opacity-30"
+            >
+              Apply
+            </button>
+          </form>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── track table row ─────────────────────────────────────────────────────────
 
 function TrackTableRow({
   track,
   cfg,
-  recording,
-  mbPending,
+  matchState,
+  onSetOverride,
 }: {
   track: JellyfinTrack;
   cfg: JellyfinConfig;
-  recording: MbRecording | undefined;
-  mbPending: boolean;
+  matchState: TrackMatchState;
+  onSetOverride: (jellyfinId: string, mbid: string) => void;
 }) {
-  const mbid = extractMbRecordingId(track);
+  const recording =
+    matchState.kind === "exact" ||
+    matchState.kind === "partial-auto" ||
+    matchState.kind === "override"
+      ? matchState.recording
+      : undefined;
 
   return (
     <tr className="border-b border-[var(--line)] last:border-0 hover:bg-[var(--surface)]/40">
@@ -275,9 +588,9 @@ function TrackTableRow({
           </div>
         </div>
       </td>
-      {/* MB: title/artist/duration */}
+      {/* MB */}
       <td className="px-4 py-3">
-        {mbid && mbPending && (
+        {matchState.kind === "loading" && (
           <div className="flex items-center gap-2 min-w-0 animate-pulse">
             <div className="relative shrink-0 w-8 h-8">
               <img src="/mb-blank-icon.svg" width={32} height={32} alt="" />
@@ -291,56 +604,56 @@ function TrackTableRow({
             </div>
           </div>
         )}
-        {!mbPending && (
+        {(matchState.kind === "exact" ||
+          matchState.kind === "partial-auto" ||
+          matchState.kind === "override") && (
           <div className="flex items-center gap-2 min-w-0">
-            {recording ? (
-              // matched
-              <a
-                href={`https://musicbrainz.org/recording/${recording.id}`}
-                target="_blank"
-                rel="noreferrer"
-                className="shrink-0"
-              >
-                <img
-                  src="/mb-recording-icon.svg"
-                  width={32}
-                  height={32}
-                  alt="View on MusicBrainz"
+            <div className="relative shrink-0 w-8 h-8">
+              {recording ? (
+                <a
+                  href={`https://musicbrainz.org/recording/${recording.id}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <img
+                    src="/mb-recording-icon.svg"
+                    width={32}
+                    height={32}
+                    alt="View on MusicBrainz"
+                  />
+                </a>
+              ) : (
+                // override recording still loading
+                <div className="animate-pulse opacity-50">
+                  <img src="/mb-blank-icon.svg" width={32} height={32} alt="" />
+                </div>
+              )}
+              {matchState.kind === "partial-auto" && (
+                <MbBadge
+                  kind="partial-auto"
+                  recording={matchState.recording}
+                  onConfirm={() =>
+                    onSetOverride(track.Id, matchState.recording.id)
+                  }
+                  onOverride={(mbid) => onSetOverride(track.Id, mbid)}
                 />
-              </a>
-            ) : (
-              // TODO: partial match state goes here
-              // no match
-              <div className="relative shrink-0 w-8 h-8">
-                <img
-                  src="/mb-blank-icon.svg"
-                  width={32}
-                  height={32}
-                  alt="No MusicBrainz match"
+              )}
+              {matchState.kind === "override" && (
+                <MbBadge
+                  kind="override"
+                  recording={matchState.recording}
+                  onOverride={(mbid) => onSetOverride(track.Id, mbid)}
                 />
-                <span className="absolute inset-0 flex items-center justify-center text-white text-2xl font-bold leading-none">
-                  ?
-                </span>
-              </div>
-            )}
-            {recording && (
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-[var(--sea-ink)] truncate">
-                  {recording.title}
-                </p>
-                <p className="text-xs text-[var(--sea-ink-soft)] truncate">
-                  {[
-                    formatArtistCredits(recording["artist-credit"]),
-                    recording.length != null
-                      ? msToDisplay(recording.length)
-                      : null,
-                  ]
-                    .filter(Boolean)
-                    .join(" · ")}
-                </p>
-              </div>
-            )}
+              )}
+            </div>
+            {recording && <RecordingInfo recording={recording} />}
           </div>
+        )}
+        {matchState.kind === "unresolved" && (
+          <UnresolvedCell
+            candidates={matchState.candidates}
+            onOverride={(mbid) => onSetOverride(track.Id, mbid)}
+          />
         )}
       </td>
     </tr>
@@ -553,6 +866,9 @@ function TrackSection({
   playlistId: string;
   playlistName: string;
 }) {
+  const navigate = useNavigate({ from: "/" });
+  const { overrides: rawOverrides } = Route.useSearch();
+  const overrides = useMemo(() => parseOverrides(rawOverrides), [rawOverrides]);
   const [mbAuth, setMbAuth] = useState<MbAuth | null>(null);
   useEffect(() => {
     setMbAuth(getMbAuth());
@@ -572,10 +888,14 @@ function TrackSection({
     enabled: !!cfg.userId,
   });
 
-  const trackMbids = (tracks ?? []).flatMap((t) => {
-    const id = extractMbRecordingId(t);
-    return id ? [id] : [];
-  });
+  const trackMbids = useMemo(
+    () =>
+      (tracks ?? []).flatMap((t) => {
+        const id = extractMbRecordingId(t);
+        return id ? [id] : [];
+      }),
+    [tracks],
+  );
 
   const { data: recordingMap, isPending: mbPending } = useQuery({
     queryKey: ["playlist-recordings", playlistId, trackMbids],
@@ -584,10 +904,139 @@ function TrackSection({
     staleTime: Number.POSITIVE_INFINITY,
   });
 
-  const matchedMbids = trackMbids.flatMap((trackMbid) => {
-    const rec = recordingMap?.get(trackMbid);
-    return rec ? [rec.id] : [];
+  // Tracks needing partial search: no recording MBID, not overridden, has artist MBID
+  const tracksForPartialSearch = useMemo(
+    () =>
+      !tracks || !recordingMap
+        ? []
+        : tracks.filter((t) => {
+            if (extractMbRecordingId(t)) return false;
+            if (overrides[t.Id]) return false;
+            return !!extractMbArtistId(t);
+          }),
+    [tracks, recordingMap, overrides],
+  );
+
+  const partialSearchKey = tracksForPartialSearch.map((t) => t.Id).join(",");
+
+  const { data: partialCandidatesMap, isPending: partialPending } = useQuery({
+    queryKey: ["partial-search", partialSearchKey],
+    queryFn: async (): Promise<Map<string, MbRecording[]>> => {
+      const result = new Map<string, MbRecording[]>();
+      for (let i = 0; i < tracksForPartialSearch.length; i++) {
+        const track = tracksForPartialSearch[i];
+        const artistId = extractMbArtistId(track);
+        if (!artistId) continue;
+        const candidates = await searchRecordingsByArtist(artistId, track.Name);
+        result.set(track.Id, candidates);
+        if (i < tracksForPartialSearch.length - 1) {
+          await new Promise((r) => setTimeout(r, 1100));
+        }
+      }
+      return result;
+    },
+    enabled: tracksForPartialSearch.length > 0,
+    staleTime: Number.POSITIVE_INFINITY,
+    placeholderData: keepPreviousData,
   });
+
+  // Fetch recording data for URL overrides (needed after page refresh)
+  const overrideMbids = useMemo(() => Object.values(overrides), [overrides]);
+  const overrideMbidsKey = overrideMbids.slice().sort().join(",");
+  const { data: overrideRecordingsMap } = useQuery({
+    queryKey: ["override-recordings", overrideMbidsKey],
+    queryFn: () => fetchRecordingsByRecordingIds(overrideMbids),
+    enabled: overrideMbids.length > 0,
+    staleTime: Number.POSITIVE_INFINITY,
+    placeholderData: keepPreviousData,
+  });
+
+  function handleSetOverride(jellyfinId: string, mbid: string) {
+    navigate({
+      search: (prev) => ({
+        ...prev,
+        overrides: serializeOverrides({
+          ...parseOverrides(prev.overrides),
+          [jellyfinId]: mbid,
+        }),
+      }),
+      replace: true,
+    });
+  }
+
+  // Compute per-track match state
+  const matchStates = useMemo((): Map<string, TrackMatchState> => {
+    const map = new Map<string, TrackMatchState>();
+    for (const track of tracks ?? []) {
+      const mbid = extractMbRecordingId(track);
+
+      if (mbid) {
+        if (mbPending) {
+          map.set(track.Id, { kind: "loading" });
+        } else {
+          const recording = recordingMap?.get(mbid);
+          map.set(
+            track.Id,
+            recording
+              ? { kind: "exact", recording }
+              : { kind: "unresolved", candidates: [] },
+          );
+        }
+        continue;
+      }
+
+      if (overrides[track.Id]) {
+        const recording = overrideRecordingsMap?.get(overrides[track.Id]);
+        map.set(track.Id, { kind: "override", recording });
+        continue;
+      }
+
+      if (extractMbArtistId(track)) {
+        if (partialPending && !partialCandidatesMap) {
+          map.set(track.Id, { kind: "loading" });
+        } else {
+          const candidates = partialCandidatesMap?.get(track.Id) ?? [];
+          map.set(
+            track.Id,
+            candidates.length === 1
+              ? { kind: "partial-auto", recording: candidates[0] }
+              : { kind: "unresolved", candidates },
+          );
+        }
+        continue;
+      }
+
+      map.set(track.Id, { kind: "unresolved", candidates: [] });
+    }
+    return map;
+  }, [
+    tracks,
+    mbPending,
+    recordingMap,
+    overrides,
+    overrideRecordingsMap,
+    partialPending,
+    partialCandidatesMap,
+  ]);
+
+  // Recording MBIDs for sync: exact matches + confirmed overrides
+  const matchedMbids = useMemo(() => {
+    const ids: string[] = [];
+    for (const track of tracks ?? []) {
+      const state = matchStates.get(track.Id);
+      if (!state) continue;
+      if (state.kind === "exact") ids.push(state.recording.id);
+      if (state.kind === "override" && state.recording)
+        ids.push(state.recording.id);
+    }
+    return [...new Set(ids)];
+  }, [tracks, matchStates]);
+
+  const totalPartialAuto = useMemo(
+    () =>
+      [...matchStates.values()].filter((s) => s.kind === "partial-auto").length,
+    [matchStates],
+  );
 
   return (
     <section className="mt-10 rise-in">
@@ -599,6 +1048,7 @@ function TrackSection({
           {tracks && (
             <p className="text-xs text-[var(--sea-ink-soft)]">
               {matchedMbids.length}/{tracks.length} matched
+              {totalPartialAuto > 0 ? `, ${totalPartialAuto} unconfirmed` : ""}
             </p>
           )}
         </div>
@@ -658,20 +1108,17 @@ function TrackSection({
                     <td className="px-4 py-3" />
                   </tr>
                 ))
-              : tracks?.map((track) => {
-                  const trackMbid = extractMbRecordingId(track);
-                  return (
-                    <TrackTableRow
-                      key={track.Id}
-                      track={track}
-                      cfg={cfg}
-                      recording={
-                        trackMbid ? recordingMap?.get(trackMbid) : undefined
-                      }
-                      mbPending={mbPending && !!trackMbid}
-                    />
-                  );
-                })}
+              : tracks?.map((track) => (
+                  <TrackTableRow
+                    key={track.Id}
+                    track={track}
+                    cfg={cfg}
+                    matchState={
+                      matchStates.get(track.Id) ?? { kind: "loading" }
+                    }
+                    onSetOverride={handleSetOverride}
+                  />
+                ))}
           </tbody>
         </table>
       </div>
@@ -713,7 +1160,10 @@ function PlaylistsPage() {
   });
 
   function selectPlaylist(id: string) {
-    navigate({ search: { playlist: id }, replace: true });
+    navigate({
+      search: (prev) => ({ ...prev, playlist: id }),
+      replace: true,
+    });
   }
 
   const showConnect = hydrated && !jellyfinConfig;
