@@ -1,7 +1,6 @@
-import { usePopoverPosition } from "@src/hooks/usePopoverPosition";
+import { Popover } from "@src/components/Popover";
 import { thumbnailUrl, ticksToDisplay } from "@src/lib/jellyfin";
 import type { JellyfinConfig, JellyfinTrack } from "@src/lib/types";
-import { createPortal } from "react-dom";
 
 export function ThumbnailTooltip({
   track,
@@ -10,10 +9,6 @@ export function ThumbnailTooltip({
   track: JellyfinTrack;
   cfg: JellyfinConfig;
 }) {
-  const { open, pos, buttonRef, popoverRef, handleToggle } = usePopoverPosition(
-    { placement: "below-left", offset: 6 },
-  );
-
   const subtitle = [
     track.Artists?.join(", "),
     track.RunTimeTicks != null ? ticksToDisplay(track.RunTimeTicks) : null,
@@ -22,11 +17,25 @@ export function ThumbnailTooltip({
     .join(" · ");
 
   return (
-    <>
+    <Popover
+      placement="below-left"
+      offset={6}
+      className="w-48"
+      content={() => (
+        <>
+          <p className="text-xs font-medium text-[var(--text)] truncate">
+            {track.Name}
+          </p>
+          {subtitle && (
+            <p className="text-xs text-[var(--text-muted)] truncate">
+              {subtitle}
+            </p>
+          )}
+        </>
+      )}
+    >
       <button
-        ref={buttonRef}
         type="button"
-        onClick={handleToggle}
         className="shrink-0 sm:cursor-default"
         aria-label={track.Name}
       >
@@ -37,24 +46,6 @@ export function ThumbnailTooltip({
           loading="lazy"
         />
       </button>
-      {open &&
-        createPortal(
-          <div
-            ref={popoverRef}
-            style={{ top: pos.top, left: pos.left }}
-            className="fixed z-50 island-shell rounded-lg border border-[var(--stroke)] px-3 py-2 w-48 rise-in shadow-lg"
-          >
-            <p className="text-xs font-medium text-[var(--text)] truncate">
-              {track.Name}
-            </p>
-            {subtitle && (
-              <p className="text-xs text-[var(--text-muted)] truncate">
-                {subtitle}
-              </p>
-            )}
-          </div>,
-          document.body,
-        )}
-    </>
+    </Popover>
   );
 }
