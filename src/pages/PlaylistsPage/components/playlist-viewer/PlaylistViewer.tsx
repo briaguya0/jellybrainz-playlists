@@ -8,6 +8,7 @@ import {
 } from "@src/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
+import { LbExportButton } from "./LbExportButton";
 import { SyncDropdown } from "./SyncDropdown";
 import { TrackTable } from "./TrackTable";
 
@@ -84,7 +85,13 @@ export function PlaylistViewer({
             </p>
           )}
         </div>
-        <SyncDropdown matchedMbids={matchedMbids} />
+        <div className="flex items-center gap-2">
+          <LbExportButton
+            playlistName={playlistName ?? ""}
+            matchedMbids={matchedMbids}
+          />
+          <SyncDropdown matchedMbids={matchedMbids} />
+        </div>
       </div>
 
       {isError && (

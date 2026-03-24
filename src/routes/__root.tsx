@@ -1,6 +1,7 @@
 import Footer from "@src/components/Footer";
 import Header from "@src/components/Header";
 import { JellyfinProvider } from "@src/contexts/JellyfinContext";
+import { LbAuthProvider } from "@src/contexts/LbAuthContext";
 import { MbAuthProvider } from "@src/contexts/MbAuthContext";
 import TanStackQueryDevtools from "@src/integrations/tanstack-query/devtools";
 import TanStackQueryProvider from "@src/integrations/tanstack-query/root-provider";
@@ -56,9 +57,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <TanStackQueryProvider>
           <JellyfinProvider>
             <MbAuthProvider>
+            <LbAuthProvider>
               <Header />
               {children}
               <Footer />
+            </LbAuthProvider>
             </MbAuthProvider>
           </JellyfinProvider>
           <TanStackDevtools

@@ -1,9 +1,10 @@
-import type { JellyfinConfig, MbAuth } from "./types";
+import type { JellyfinConfig, LbAuth, MbAuth } from "./types";
 
 const JELLYFIN_KEY = "jellybrainz-jellyfin";
 const MB_AUTH_KEY = "jellybrainz-mb-auth";
 const MB_CLIENT_ID_KEY = "jellybrainz-mb-client-id";
 const MB_CLIENT_SECRET_KEY = "jellybrainz-mb-client-secret";
+const LB_AUTH_KEY = "jellybrainz-lb-auth";
 
 function read<T>(key: string): T | null {
   if (typeof window === "undefined") return null;
@@ -64,4 +65,16 @@ export function setMbClientSecret(secret: string): void {
 
 export function clearMbClientSecret(): void {
   remove(MB_CLIENT_SECRET_KEY);
+}
+
+export function getLbAuth(): LbAuth | null {
+  return read<LbAuth>(LB_AUTH_KEY);
+}
+
+export function setLbAuth(auth: LbAuth): void {
+  write(LB_AUTH_KEY, auth);
+}
+
+export function clearLbAuth(): void {
+  remove(LB_AUTH_KEY);
 }

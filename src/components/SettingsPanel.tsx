@@ -1,4 +1,5 @@
 import { JellyfinSection } from "@src/components/settings/JellyfinSection";
+import { LbSection } from "@src/components/settings/LbSection";
 import { MbSection } from "@src/components/settings/MbSection";
 import { ThemeSection } from "@src/components/settings/ThemeSection";
 import { X } from "lucide-react";
@@ -45,6 +46,7 @@ export function SettingsPanel({ onClose }: { onClose: () => void }) {
           <ThemeSection />
           <JellyfinSection />
           <MbSection />
+          <LbSection />
         </div>
       </div>
     </>,
