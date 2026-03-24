@@ -3,6 +3,7 @@ import type {
   JellyfinTrack,
   TrackMatchState,
 } from "@src/lib/types";
+import { asset } from "@src/lib/utils";
 import { TrackTableRow } from "./TrackTableRow";
 
 export function TrackTable({
@@ -27,7 +28,7 @@ export function TrackTable({
           <tr className="border-b border-stroke">
             <th className="w-[72px] sm:w-1/2 px-4 py-3 text-center">
               <img
-                src="/jellyfin-icon.svg"
+                src={asset("/jellyfin-icon.svg")}
                 width={32}
                 height={32}
                 alt="Jellyfin"
@@ -36,7 +37,7 @@ export function TrackTable({
             </th>
             <th className="sm:w-1/2 px-4 py-3 text-center">
               <img
-                src="/musicbrainz-icon.svg"
+                src={asset("/musicbrainz-icon.svg")}
                 width={32}
                 height={32}
                 alt="MusicBrainz"

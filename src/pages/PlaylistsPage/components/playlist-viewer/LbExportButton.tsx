@@ -7,7 +7,7 @@ import {
   replaceLbPlaylistTracks,
 } from "@src/lib/listenbrainz";
 import type { LbPlaylist } from "@src/lib/types";
-import { getErrorMessage } from "@src/lib/utils";
+import { asset, getErrorMessage } from "@src/lib/utils";
 import { useEffect, useRef, useState } from "react";
 
 type ExportView =
@@ -427,7 +427,7 @@ export function LbExportButton({
         className="glass-panel flex items-center gap-1.5 rounded-lg border border-stroke px-3 py-1.5 text-sm font-semibold text-accent-text hover:text-app-text"
       >
         <img
-          src="/listenbrainz-icon.svg"
+          src={asset("/listenbrainz-icon.svg")}
           width={14}
           height={14}
           alt=""

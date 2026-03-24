@@ -1,4 +1,5 @@
 import { Popover } from "@src/components/Popover";
+import { asset } from "@src/lib/utils";
 import { formatArtistCredits } from "@src/lib/musicbrainz";
 import type { MbRecording } from "@src/lib/types";
 import { useState } from "react";
@@ -159,7 +160,7 @@ export function MbBadge({
           className="w-full h-full cursor-pointer"
         >
           <img
-            src="/mb-recording-icon.svg"
+            src={asset("/mb-recording-icon.svg")}
             width={32}
             height={32}
             alt="MusicBrainz recording"

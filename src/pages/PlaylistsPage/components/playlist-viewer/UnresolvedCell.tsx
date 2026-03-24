@@ -1,4 +1,5 @@
 import { Popover } from "@src/components/Popover";
+import { asset } from "@src/lib/utils";
 import { formatArtistCredits, msToDisplay } from "@src/lib/musicbrainz";
 import type { MbRecording } from "@src/lib/types";
 import { ExternalLink } from "lucide-react";
@@ -127,7 +128,7 @@ export function UnresolvedCell({
         className="relative w-8 h-8 cursor-pointer"
       >
         <img
-          src="/mb-blank-icon.svg"
+          src={asset("/mb-blank-icon.svg")}
           width={32}
           height={32}
           alt="No MusicBrainz match"

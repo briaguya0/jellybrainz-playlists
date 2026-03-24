@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { LayoutGrid, List } from "lucide-react";
 import { useState } from "react";
+import { asset } from "@src/lib/utils";
 import { ConnectForm } from "./ConnectForm";
 import { PlaylistCard } from "./PlaylistCard";
 import { PlaylistRow } from "./PlaylistRow";
@@ -66,7 +67,7 @@ export function PlaylistSelection({
       <div className="flex items-center justify-between mb-5">
         <h1 className="text-xl font-semibold text-app-text flex items-center gap-2">
           <img
-            src="/jellyfin-icon.svg"
+            src={asset("/jellyfin-icon.svg")}
             width={22}
             height={22}
             alt=""
