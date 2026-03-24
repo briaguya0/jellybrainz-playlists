@@ -170,7 +170,7 @@ function ConnectForm({
         <button
           type="submit"
           disabled={connecting}
-          className="island-shell rounded-lg px-4 py-2 text-sm font-semibold text-[var(--accent-text)] hover:text-[var(--accent)] disabled:opacity-50"
+          className="island-shell rounded-lg px-4 py-2 text-sm font-semibold text-[var(--accent-text)] enabled:hover:text-[var(--text)] disabled:opacity-50"
         >
           {connecting ? "Connecting…" : "Connect"}
         </button>
@@ -454,13 +454,13 @@ function MbBadge({
                     placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
                     // biome-ignore lint/a11y/noAutofocus: intentional focus when user opens change panel
                     autoFocus
-                    className="w-full rounded-lg border border-[var(--stroke)] bg-[var(--surface-strong)] px-3 py-2 text-xs text-[var(--text)] outline-none focus:border-[var(--accent)]"
+                    className="w-full rounded-lg border-2 border-[var(--stroke)] bg-[var(--hover-bg)] px-3 py-2 text-xs text-[var(--text)] outline-none placeholder:text-[var(--text-muted)] focus:border-[var(--accent)]"
                   />
                   <div className="flex gap-2">
                     <button
                       type="button"
                       onClick={() => setShowChange(false)}
-                      className="rounded-lg island-shell border border-[var(--stroke)] px-3 py-1.5 text-sm text-[var(--text-muted)]"
+                      className="rounded-lg island-shell border border-[var(--stroke)] px-3 py-1.5 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
                     >
                       Back
                     </button>
@@ -470,14 +470,14 @@ function MbBadge({
                         onClear();
                         setOpen(false);
                       }}
-                      className="rounded-lg island-shell border border-[var(--stroke)] px-3 py-1.5 text-sm text-red-500 hover:text-red-600"
+                      className="rounded-lg island-shell border border-[var(--stroke)] px-3 py-1.5 text-sm text-red-500 hover:text-red-400"
                     >
                       Clear
                     </button>
                     <button
                       type="submit"
                       disabled={!manualMbid}
-                      className="flex-1 rounded-lg island-shell border border-[var(--stroke)] px-3 py-1.5 text-sm font-semibold text-[var(--accent-text)] hover:text-[var(--accent)] disabled:opacity-30"
+                      className="flex-1 rounded-lg border border-[var(--accent)] bg-[var(--accent)] px-3 py-1.5 text-sm font-semibold text-white enabled:hover:opacity-90 disabled:opacity-30"
                     >
                       Apply
                     </button>
@@ -633,12 +633,12 @@ function UnresolvedCell({
                 value={manualMbid}
                 onChange={(e) => setManualMbid(e.target.value)}
                 placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-                className="w-full rounded-lg border border-[var(--stroke)] bg-[var(--surface-strong)] px-3 py-2 text-xs text-[var(--text)] outline-none focus:border-[var(--accent)]"
+                className="w-full rounded-lg border-2 border-[var(--stroke)] bg-[var(--hover-bg)] px-3 py-2 text-xs text-[var(--text)] outline-none placeholder:text-[var(--text-muted)] focus:border-[var(--accent)]"
               />
               <button
                 type="submit"
                 disabled={!manualMbid}
-                className="w-full rounded-lg island-shell border border-[var(--stroke)] px-3 py-1.5 text-sm font-semibold text-[var(--accent-text)] hover:text-[var(--accent)] disabled:opacity-30"
+                className="w-full rounded-lg border border-[var(--accent)] bg-[var(--accent)] px-3 py-1.5 text-sm font-semibold text-white enabled:hover:opacity-90 disabled:opacity-30"
               >
                 Apply
               </button>
@@ -868,7 +868,7 @@ function SyncDropdown({
             setSyncState({ phase: "idle" });
           }
         }}
-        className="island-shell flex items-center gap-1.5 rounded-lg border border-[var(--stroke)] px-3 py-1.5 text-sm font-semibold text-[var(--accent-text)] hover:text-[var(--accent)]"
+        className="island-shell flex items-center gap-1.5 rounded-lg border border-[var(--stroke)] px-3 py-1.5 text-sm font-semibold text-[var(--accent-text)] hover:text-[var(--text)]"
       >
         <img
           src="/musicbrainz-icon.svg"
@@ -1396,7 +1396,7 @@ function PlaylistsPage() {
                 type="button"
                 onClick={() => setPage((p) => p - 1)}
                 disabled={page === 0}
-                className="island-shell rounded-lg border border-[var(--stroke)] px-3 py-1.5 text-sm text-[var(--text-muted)] hover:text-[var(--text)] disabled:opacity-30"
+                className="island-shell rounded-lg border border-[var(--stroke)] px-3 py-1.5 text-sm text-[var(--text-muted)] enabled:hover:text-[var(--text)] disabled:opacity-30"
               >
                 ← Prev
               </button>
@@ -1407,7 +1407,7 @@ function PlaylistsPage() {
                 type="button"
                 onClick={() => setPage((p) => p + 1)}
                 disabled={page >= totalPages - 1}
-                className="island-shell rounded-lg border border-[var(--stroke)] px-3 py-1.5 text-sm text-[var(--text-muted)] hover:text-[var(--text)] disabled:opacity-30"
+                className="island-shell rounded-lg border border-[var(--stroke)] px-3 py-1.5 text-sm text-[var(--text-muted)] enabled:hover:text-[var(--text)] disabled:opacity-30"
               >
                 Next →
               </button>

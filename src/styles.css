@@ -299,6 +299,17 @@ button:disabled.feature-card:hover {
 }
 
 button,
+a,
+[role="button"] {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  transition: none;
+}
+
+button,
 .island-shell,
 a {
   transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease,
