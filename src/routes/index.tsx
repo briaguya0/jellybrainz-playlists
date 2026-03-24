@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ChevronDown, LayoutGrid, List } from "lucide-react";
+import { ChevronDown, LayoutGrid, List, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import {
   getJellyfinConfig,
@@ -278,41 +278,68 @@ function TrackTableRow({
       {/* MB: title/artist/duration */}
       <td className="px-4 py-3">
         {mbid && mbPending && (
-          <div className="animate-pulse">
-            <div className="h-3 w-32 rounded bg-[var(--line)] mb-1.5" />
-            <div className="h-2.5 w-20 rounded bg-[var(--line)]" />
+          <div className="flex items-center gap-2 min-w-0 animate-pulse">
+            <div className="relative shrink-0 w-8 h-8">
+              <img src="/mb-blank-icon.svg" width={32} height={32} alt="" />
+              <span className="absolute inset-0 flex items-center justify-center">
+                <Search size={16} className="text-white" />
+              </span>
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="h-3 w-32 rounded bg-[var(--line)] mb-1.5" />
+              <div className="h-2.5 w-20 rounded bg-[var(--line)]" />
+            </div>
           </div>
         )}
-        {recording && (
+        {!mbPending && (
           <div className="flex items-center gap-2 min-w-0">
-            <a
-              href={`https://musicbrainz.org/recording/${recording.id}`}
-              target="_blank"
-              rel="noreferrer"
-              className="shrink-0"
-            >
-              <img
-                src="/mb-recording-icon.svg"
-                width={32}
-                height={32}
-                alt="View on MusicBrainz"
-              />
-            </a>
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-[var(--sea-ink)] truncate">
-                {recording.title}
-              </p>
-              <p className="text-xs text-[var(--sea-ink-soft)] truncate">
-                {[
-                  formatArtistCredits(recording["artist-credit"]),
-                  recording.length != null
-                    ? msToDisplay(recording.length)
-                    : null,
-                ]
-                  .filter(Boolean)
-                  .join(" · ")}
-              </p>
-            </div>
+            {recording ? (
+              // matched
+              <a
+                href={`https://musicbrainz.org/recording/${recording.id}`}
+                target="_blank"
+                rel="noreferrer"
+                className="shrink-0"
+              >
+                <img
+                  src="/mb-recording-icon.svg"
+                  width={32}
+                  height={32}
+                  alt="View on MusicBrainz"
+                />
+              </a>
+            ) : (
+              // TODO: partial match state goes here
+              // no match
+              <div className="relative shrink-0 w-8 h-8">
+                <img
+                  src="/mb-blank-icon.svg"
+                  width={32}
+                  height={32}
+                  alt="No MusicBrainz match"
+                />
+                <span className="absolute inset-0 flex items-center justify-center text-white text-2xl font-bold leading-none">
+                  ?
+                </span>
+              </div>
+            )}
+            {recording && (
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium text-[var(--sea-ink)] truncate">
+                  {recording.title}
+                </p>
+                <p className="text-xs text-[var(--sea-ink-soft)] truncate">
+                  {[
+                    formatArtistCredits(recording["artist-credit"]),
+                    recording.length != null
+                      ? msToDisplay(recording.length)
+                      : null,
+                  ]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </p>
+              </div>
+            )}
           </div>
         )}
       </td>
