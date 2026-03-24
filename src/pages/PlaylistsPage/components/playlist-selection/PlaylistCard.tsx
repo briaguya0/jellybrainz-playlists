@@ -28,7 +28,7 @@ export function PlaylistCard({
       className={`island-shell feature-card rounded-xl border p-4 text-left w-full rise-in flex items-center gap-3 cursor-pointer ${
         selected
           ? "border-[var(--accent)] ring-2 ring-[var(--accent)]/30"
-          : "border-[var(--stroke)]"
+          : "border-stroke"
       }`}
     >
       {imgUrl ? (
@@ -42,11 +42,9 @@ export function PlaylistCard({
         <div className="w-12 h-12 rounded-lg shrink-0 bg-[var(--stroke)]" />
       )}
       <div className="min-w-0">
-        <p className="font-semibold text-[var(--text)] truncate">
-          {playlist.Name}
-        </p>
+        <p className="font-semibold text-app-text truncate">{playlist.Name}</p>
         {playlist.ChildCount != null && (
-          <p className="text-xs text-[var(--text-muted)] mt-0.5">
+          <p className="text-xs text-app-muted mt-0.5">
             {playlist.ChildCount} tracks
           </p>
         )}

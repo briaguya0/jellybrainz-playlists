@@ -13,13 +13,13 @@ export default function Header() {
   }, [panelOpen]);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--stroke)] bg-[var(--header-bg)] px-4 backdrop-blur-lg">
+    <header className="sticky top-0 z-50 border-b border-stroke bg-[var(--header-bg)] px-4 backdrop-blur-lg">
       <nav className="page-wrap flex items-center py-3 sm:py-4">
         <h2 className="m-0">
           <Link
             to="/"
             search={{ playlist: undefined, overrides: undefined }}
-            className="inline-flex items-center gap-2 text-base font-semibold tracking-tight text-[var(--text)] no-underline"
+            className="inline-flex items-center gap-2 text-base font-semibold tracking-tight text-app-text no-underline"
           >
             jellybrainz
           </Link>
@@ -31,7 +31,7 @@ export default function Header() {
             type="button"
             onClick={() => setPanelOpen(true)}
             aria-label="Open settings"
-            className="rounded-lg p-2 text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--hover-bg)]"
+            className="rounded-lg p-2 text-app-muted hover:text-app-text hover:bg-hover"
           >
             <Settings size={18} />
           </button>

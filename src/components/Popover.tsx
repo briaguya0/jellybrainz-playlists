@@ -98,7 +98,7 @@ export function Popover({
                 ref={panelRef}
                 role="dialog"
                 onKeyDown={(e) => e.key === "Escape" && close()}
-                className={`fixed inset-x-0 bottom-0 z-50 island-shell rounded-t-2xl border-t border-[var(--stroke)] p-5 max-h-[80vh] overflow-y-auto rise-in ${className ?? ""}`}
+                className={`fixed inset-x-0 bottom-0 z-50 island-shell rounded-t-2xl border-t border-stroke p-5 max-h-[80vh] overflow-y-auto rise-in ${className ?? ""}`}
               >
                 {content(close)}
               </div>
@@ -107,7 +107,7 @@ export function Popover({
             <div
               ref={panelRef}
               style={pos}
-              className={`fixed z-50 island-shell rounded-xl border border-[var(--stroke)] p-4 rise-in ${className ?? ""}`}
+              className={`fixed z-50 island-shell rounded-xl border border-stroke p-4 rise-in ${className ?? ""}`}
             >
               {content(close)}
             </div>

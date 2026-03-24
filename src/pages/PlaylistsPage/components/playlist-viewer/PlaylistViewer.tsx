@@ -74,11 +74,11 @@ export function PlaylistViewer({
     <section className="mt-10 rise-in">
       <div className="flex items-center justify-between mb-3">
         <div>
-          <h2 className="text-base font-semibold text-[var(--text)]">
+          <h2 className="text-base font-semibold text-app-text">
             {playlistName}
           </h2>
           {tracks && (
-            <p className="text-xs text-[var(--text-muted)]">
+            <p className="text-xs text-app-muted">
               {matchedMbids.length}/{tracks.length} matched
               {totalPartialAuto > 0 ? `, ${totalPartialAuto} unconfirmed` : ""}
             </p>
