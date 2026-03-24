@@ -9,6 +9,17 @@ export interface MbAuth {
   username: string;
 }
 
+export interface LbAuth {
+  token: string;
+  username: string;
+}
+
+export interface LbPlaylist {
+  identifier: string;
+  title: string;
+  "track_count"?: number;
+}
+
 export interface JellyfinPlaylist {
   Id: string;
   Name: string;
