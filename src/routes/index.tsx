@@ -1,7 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
-  ChevronDown,
   ExternalLink,
   LayoutGrid,
   List,
@@ -683,7 +682,7 @@ function TrackTableRow({
             className="w-10 h-10 rounded shrink-0 bg-[var(--stroke)] object-cover"
             loading="lazy"
           />
-          <div className="min-w-0">
+          <div className="hidden sm:block min-w-0">
             <p className="text-sm font-medium text-[var(--text)] truncate">
               {track.Name}
             </p>
@@ -877,8 +876,7 @@ function SyncDropdown({
           alt=""
           aria-hidden="true"
         />
-        Sync
-        <ChevronDown size={14} />
+        Export to MusicBrainz…
       </button>
 
       {open && (
@@ -886,7 +884,7 @@ function SyncDropdown({
           {!mbAuth ? (
             <>
               <p className="text-sm text-[var(--text-muted)] mb-3">
-                Log in to MusicBrainz to sync this playlist.
+                Log in to MusicBrainz to export this playlist.
               </p>
               <button
                 type="button"
@@ -1182,11 +1180,11 @@ function TrackSection({
         </p>
       )}
 
-      <div className="island-shell rounded-xl border border-[var(--stroke)] overflow-x-auto">
-        <table className="w-full text-sm min-w-[640px] table-fixed">
+      <div className="island-shell rounded-xl border border-[var(--stroke)]">
+        <table className="w-full text-sm table-fixed">
           <thead>
             <tr className="border-b border-[var(--stroke)]">
-              <th className="w-1/2 px-4 py-3 text-center">
+              <th className="w-[72px] sm:w-1/2 px-4 py-3 text-center">
                 <img
                   src="/jellyfin-icon.svg"
                   width={32}
@@ -1195,7 +1193,7 @@ function TrackSection({
                   className="mx-auto"
                 />
               </th>
-              <th className="w-1/2 px-4 py-3 text-center">
+              <th className="sm:w-1/2 px-4 py-3 text-center">
                 <img
                   src="/musicbrainz-icon.svg"
                   width={32}
@@ -1215,8 +1213,8 @@ function TrackSection({
                   >
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded bg-[var(--stroke)]" />
-                        <div>
+                        <div className="w-10 h-10 rounded bg-[var(--stroke)] shrink-0" />
+                        <div className="hidden sm:block">
                           <div className="h-3 w-32 rounded bg-[var(--stroke)] mb-1.5" />
                           <div className="h-2.5 w-20 rounded bg-[var(--stroke)]" />
                         </div>
