@@ -2,6 +2,8 @@ import type { JellyfinConfig, MbAuth } from "./types";
 
 const JELLYFIN_KEY = "jellybrainz-jellyfin";
 const MB_AUTH_KEY = "jellybrainz-mb-auth";
+const MB_CLIENT_ID_KEY = "jellybrainz-mb-client-id";
+const MB_CLIENT_SECRET_KEY = "jellybrainz-mb-client-secret";
 
 function read<T>(key: string): T | null {
   if (typeof window === "undefined") return null;
@@ -42,4 +44,24 @@ export function setMbAuth(auth: MbAuth): void {
 
 export function clearMbAuth(): void {
   remove(MB_AUTH_KEY);
+}
+
+export function getMbClientId(): string | null {
+  return read<string>(MB_CLIENT_ID_KEY);
+}
+
+export function setMbClientId(id: string): void {
+  write(MB_CLIENT_ID_KEY, id);
+}
+
+export function getMbClientSecret(): string | null {
+  return read<string>(MB_CLIENT_SECRET_KEY);
+}
+
+export function setMbClientSecret(secret: string): void {
+  write(MB_CLIENT_SECRET_KEY, secret);
+}
+
+export function clearMbClientSecret(): void {
+  remove(MB_CLIENT_SECRET_KEY);
 }

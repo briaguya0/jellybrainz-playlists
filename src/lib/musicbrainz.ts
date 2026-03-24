@@ -71,6 +71,7 @@ export async function fetchCollections(
 export async function createCollection(
   name: string,
   accessToken: string,
+  isPublic = false,
 ): Promise<string | null> {
   const url = new URL(`${MB_BASE}/collection`);
   url.searchParams.set("client", MB_CLIENT);
@@ -82,19 +83,76 @@ export async function createCollection(
         ...mbHeaders(accessToken),
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ name, entity_type: "recording" }),
+      body: JSON.stringify({ name, entity_type: "recording", public: isPublic }),
     });
     if (resp.status === 404 || resp.status === 405) return null;
     if (!resp.ok) {
-      throw new Error(
-        `Failed to create collection: ${resp.status} ${resp.statusText}`,
-      );
+      const body = await resp.text();
+      throw new Error(`Failed to create collection: ${resp.status} ${body}`);
     }
     const data: { id?: string; mbid?: string } = await resp.json();
     return data.id ?? data.mbid ?? null;
   } catch (err) {
     if (err instanceof TypeError) return null; // network error on unsupported endpoint
     throw err;
+  }
+}
+
+export async function fetchCollectionRecordings(
+  collectionMbid: string,
+  accessToken: string,
+): Promise<string[]> {
+  const mbids: string[] = [];
+  const limit = 100;
+  let offset = 0;
+  let total = Infinity;
+
+  while (offset < total) {
+    const url = new URL(`${MB_BASE}/recording`);
+    url.searchParams.set("collection", collectionMbid);
+    url.searchParams.set("limit", String(limit));
+    url.searchParams.set("offset", String(offset));
+    url.searchParams.set("fmt", "json");
+    const resp = await fetch(url.toString(), {
+      headers: mbHeaders(accessToken),
+    });
+    if (!resp.ok) {
+      throw new Error(
+        `Failed to fetch collection recordings: ${resp.status} ${resp.statusText}`,
+      );
+    }
+    const data: { "recording-count": number; recordings: { id: string }[] } =
+      await resp.json();
+    total = data["recording-count"];
+    for (const r of data.recordings ?? []) mbids.push(r.id);
+    offset += limit;
+  }
+
+  return mbids;
+}
+
+export async function deleteRecordingsFromCollection(
+  collectionMbid: string,
+  recordingMbids: string[],
+  accessToken: string,
+): Promise<void> {
+  const chunks = chunkArray(recordingMbids, MB_BATCH);
+  for (const chunk of chunks) {
+    const joined = chunk.join(";");
+    const url = new URL(
+      `${MB_BASE}/collection/${collectionMbid}/recordings/${joined}`,
+    );
+    url.searchParams.set("client", MB_CLIENT);
+    url.searchParams.set("fmt", "json");
+    const resp = await fetch(url.toString(), {
+      method: "DELETE",
+      headers: mbHeaders(accessToken),
+    });
+    if (!resp.ok) {
+      throw new Error(
+        `Failed to delete recordings: ${resp.status} ${resp.statusText}`,
+      );
+    }
   }
 }
 

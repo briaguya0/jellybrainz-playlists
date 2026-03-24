@@ -1,8 +1,9 @@
 import { useMbAuth } from "@src/contexts/MbAuthContext";
+import { getMbClientId, getMbClientSecret } from "@src/lib/config";
 import { exchangeCode, fetchMbUsername } from "@src/lib/oauth";
 import { getErrorMessage } from "@src/lib/utils";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const Route = createFileRoute("/mb-callback")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -18,8 +19,11 @@ function MbCallbackPage() {
   const { code, error: oauthError } = Route.useSearch();
   const [status, setStatus] = useState<"pending" | "error">("pending");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const attempted = useRef(false);
 
   useEffect(() => {
+    if (attempted.current) return;
+    attempted.current = true;
     if (oauthError) {
       setErrorMsg(`Authorization denied: ${oauthError}`);
       setStatus("error");
@@ -32,7 +36,8 @@ function MbCallbackPage() {
     }
 
     const codeVerifier = sessionStorage.getItem("mb_pkce_verifier");
-    const clientId = import.meta.env.VITE_MB_CLIENT_ID as string | undefined;
+    const clientId = getMbClientId();
+    const clientSecret = getMbClientSecret();
     const redirectUri = `${window.location.origin}/mb-callback`;
 
     if (!codeVerifier) {
@@ -42,7 +47,7 @@ function MbCallbackPage() {
     }
     if (!clientId) {
       setErrorMsg(
-        "VITE_MB_CLIENT_ID is not set. See .env.example for instructions.",
+        "No MusicBrainz client ID configured. Add one in Settings.",
       );
       setStatus("error");
       return;
@@ -55,6 +60,7 @@ function MbCallbackPage() {
           codeVerifier,
           clientId,
           redirectUri,
+          clientSecret,
         );
         const username = await fetchMbUsername(accessToken);
         setMbAuth({ accessToken, username });

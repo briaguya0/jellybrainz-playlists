@@ -31,6 +31,7 @@ export interface MbCollection {
   id: string;
   name: string;
   "entity-type": string;
+  "recording-count"?: number;
 }
 
 export interface MbArtistCredit {
