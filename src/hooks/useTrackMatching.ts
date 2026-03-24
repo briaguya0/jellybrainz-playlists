@@ -1,5 +1,4 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
 import {
   extractMbArtistId,
   extractMbRecordingId,
@@ -44,14 +43,10 @@ export function useTrackMatching(
     enabled: !!cfg.userId,
   });
 
-  const trackMbids = useMemo(
-    () =>
-      (tracks ?? []).flatMap((t) => {
-        const id = extractMbRecordingId(t);
-        return id ? [id] : [];
-      }),
-    [tracks],
-  );
+  const trackMbids = (tracks ?? []).flatMap((t) => {
+    const id = extractMbRecordingId(t);
+    return id ? [id] : [];
+  });
 
   const { data: recordingMap, isPending: mbPending } = useQuery({
     queryKey: ["playlist-recordings", playlistId, trackMbids],
@@ -60,17 +55,14 @@ export function useTrackMatching(
     staleTime: Number.POSITIVE_INFINITY,
   });
 
-  const tracksForPartialSearch = useMemo(
-    () =>
-      !tracks || !recordingMap
-        ? []
-        : tracks.filter((t) => {
-            if (extractMbRecordingId(t)) return false;
-            if (overrides[t.Id]) return false;
-            return !!extractMbArtistId(t);
-          }),
-    [tracks, recordingMap, overrides],
-  );
+  const tracksForPartialSearch =
+    !tracks || !recordingMap
+      ? []
+      : tracks.filter((t) => {
+          if (extractMbRecordingId(t)) return false;
+          if (overrides[t.Id]) return false;
+          return !!extractMbArtistId(t);
+        });
 
   const partialSearchKey = tracksForPartialSearch.map((t) => t.Id).join(",");
 
@@ -95,7 +87,7 @@ export function useTrackMatching(
     placeholderData: keepPreviousData,
   });
 
-  const overrideMbids = useMemo(() => Object.values(overrides), [overrides]);
+  const overrideMbids = Object.values(overrides);
   const overrideMbidsKey = overrideMbids.slice().sort().join(",");
 
   const { data: overrideRecordingsMap } = useQuery({
@@ -106,7 +98,7 @@ export function useTrackMatching(
     placeholderData: keepPreviousData,
   });
 
-  const matchStates = useMemo((): Map<string, TrackMatchState> => {
+  const matchStates = ((): Map<string, TrackMatchState> => {
     const map = new Map<string, TrackMatchState>();
     for (const track of tracks ?? []) {
       const mbid = extractMbRecordingId(track);
@@ -150,17 +142,9 @@ export function useTrackMatching(
       map.set(track.Id, { kind: "unresolved", candidates: [] });
     }
     return map;
-  }, [
-    tracks,
-    mbPending,
-    recordingMap,
-    overrides,
-    overrideRecordingsMap,
-    partialPending,
-    partialCandidatesMap,
-  ]);
+  })();
 
-  const matchedMbids = useMemo(() => {
+  const matchedMbids = (() => {
     const ids: string[] = [];
     for (const track of tracks ?? []) {
       const state = matchStates.get(track.Id);
@@ -170,13 +154,11 @@ export function useTrackMatching(
         ids.push(state.recording.id);
     }
     return [...new Set(ids)];
-  }, [tracks, matchStates]);
+  })();
 
-  const totalPartialAuto = useMemo(
-    () =>
-      [...matchStates.values()].filter((s) => s.kind === "partial-auto").length,
-    [matchStates],
-  );
+  const totalPartialAuto = [...matchStates.values()].filter(
+    (s) => s.kind === "partial-auto",
+  ).length;
 
   return {
     tracks,
