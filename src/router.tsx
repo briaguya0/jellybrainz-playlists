@@ -8,6 +8,7 @@ export function getRouter() {
 
     context: getContext(),
 
+    basepath: import.meta.env.BASE_URL,
     scrollRestoration: true,
     defaultPreload: "intent",
     defaultPreloadStaleTime: 0,

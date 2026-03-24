@@ -6,7 +6,10 @@ import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { mockJellyfinPlugin } from "./vite-plugin-mock-jellyfin";
 
+const isGhPages = process.env.GITHUB_PAGES === "true";
+
 const config = defineConfig({
+  base: isGhPages ? "/jellybrainz-playlists/" : "/",
   plugins: [
     devtools(),
     tsconfigPaths({ projects: ["./tsconfig.json"] }),
