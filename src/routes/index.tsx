@@ -1364,7 +1364,7 @@ function PlaylistsPage() {
                     <PlaylistCard
                       key={pl.Id}
                       playlist={pl}
-                      cfg={jellyfinConfig}
+                      cfg={jellyfinConfig!}
                       selected={pl.Id === selectedId}
                       disabled={(pl.ChildCount ?? 0) === 0}
                       onClick={() => selectPlaylist(pl.Id)}
