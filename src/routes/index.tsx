@@ -2,6 +2,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ChevronDown, LayoutGrid, List, Search } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   getJellyfinConfig,
   getMbAuth,
@@ -275,7 +276,12 @@ function PlaylistRow({
 
 function RecordingInfo({ recording }: { recording: MbRecording }) {
   return (
-    <div className="min-w-0 flex-1">
+    <a
+      href={`https://musicbrainz.org/recording/${recording.id}`}
+      target="_blank"
+      rel="noreferrer"
+      className="min-w-0 flex-1 hover:underline"
+    >
       <p className="text-sm font-medium text-[var(--sea-ink)] truncate">
         {recording.title}
       </p>
@@ -287,7 +293,7 @@ function RecordingInfo({ recording }: { recording: MbRecording }) {
           .filter(Boolean)
           .join(" · ")}
       </p>
-    </div>
+    </a>
   );
 }
 
@@ -307,7 +313,12 @@ function MbBadge({
   const [open, setOpen] = useState(false);
   const [showChange, setShowChange] = useState(false);
   const [manualMbid, setManualMbid] = useState("");
-  const ref = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState<{ bottom: number; right: number }>({
+    bottom: 0,
+    right: 0,
+  });
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!open) {
@@ -316,113 +327,145 @@ function MbBadge({
       return;
     }
     function close(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node))
-        setOpen(false);
+      if (
+        buttonRef.current?.contains(e.target as Node) ||
+        popoverRef.current?.contains(e.target as Node)
+      )
+        return;
+      setOpen(false);
     }
     document.addEventListener("mousedown", close);
     return () => document.removeEventListener("mousedown", close);
   }, [open]);
 
+  function handleToggle() {
+    if (!open && buttonRef.current) {
+      const r = buttonRef.current.getBoundingClientRect();
+      setPos({
+        bottom: window.innerHeight - r.top + 8,
+        right: window.innerWidth - r.right,
+      });
+    }
+    setOpen((v) => !v);
+  }
+
   return (
-    <div ref={ref} className="absolute -bottom-1 -right-1 z-10">
+    <div className="relative w-8 h-8">
       <button
+        ref={buttonRef}
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={handleToggle}
         aria-label={
           kind === "partial-auto"
             ? "Partial match — click to review"
             : "Confirmed match — click to change"
         }
-        className={`w-3.5 h-3.5 rounded-full border-2 border-[var(--surface)] ${
+        className="w-full h-full cursor-pointer"
+      >
+        <img
+          src="/mb-recording-icon.svg"
+          width={32}
+          height={32}
+          alt="MusicBrainz recording"
+        />
+      </button>
+      <span
+        className={`absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full border-2 border-[var(--surface)] pointer-events-none ${
           kind === "partial-auto" ? "bg-amber-400" : "bg-green-500"
         }`}
       />
-      {open && (
-        <div className="absolute bottom-full right-0 mb-2 z-40 island-shell rounded-xl border border-[var(--line)] p-4 w-72 rise-in">
-          {!showChange ? (
-            <>
-              <p className="text-xs text-[var(--sea-ink-soft)] mb-2">
-                {kind === "partial-auto"
-                  ? "Matched via artist + title search"
-                  : "Manually confirmed"}
-              </p>
-              {recording && (
-                <>
-                  <p className="text-sm font-medium text-[var(--sea-ink)]">
-                    {recording.title}
-                  </p>
-                  <p className="text-xs text-[var(--sea-ink-soft)] mb-3">
-                    {formatArtistCredits(recording["artist-credit"])}
-                  </p>
-                </>
-              )}
-              <div className="flex gap-2">
-                {kind === "partial-auto" && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onConfirm?.();
-                      setOpen(false);
-                    }}
-                    className="flex-1 rounded-lg px-3 py-1.5 text-sm font-semibold bg-green-500/10 text-green-700 dark:text-green-400 hover:bg-green-500/20"
-                  >
-                    Confirm
-                  </button>
+      {open &&
+        createPortal(
+          <div
+            ref={popoverRef}
+            style={{ bottom: pos.bottom, right: pos.right }}
+            className="fixed z-50 island-shell rounded-xl border border-[var(--line)] p-4 w-72 rise-in"
+          >
+            {!showChange ? (
+              <>
+                <p className="text-xs text-[var(--sea-ink-soft)] mb-2">
+                  {kind === "partial-auto"
+                    ? "Matched via artist + title search"
+                    : "Manually confirmed"}
+                </p>
+                {recording && (
+                  <>
+                    <p className="text-sm font-medium text-[var(--sea-ink)]">
+                      {recording.title}
+                    </p>
+                    <p className="text-xs text-[var(--sea-ink-soft)] mb-3">
+                      {formatArtistCredits(recording["artist-credit"])}
+                    </p>
+                  </>
                 )}
-                <button
-                  type="button"
-                  onClick={() => setShowChange(true)}
-                  className="flex-1 rounded-lg island-shell border border-[var(--line)] px-3 py-1.5 text-sm text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
-                >
-                  Change
-                </button>
-              </div>
-            </>
-          ) : (
-            <>
-              <p className="text-xs text-[var(--sea-ink-soft)] mb-2">
-                Enter MusicBrainz recording ID
-              </p>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (manualMbid) {
-                    onOverride(manualMbid.trim());
-                    setOpen(false);
-                  }
-                }}
-                className="flex flex-col gap-2"
-              >
-                <input
-                  type="text"
-                  value={manualMbid}
-                  onChange={(e) => setManualMbid(e.target.value)}
-                  placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-                  // biome-ignore lint/a11y/noAutofocus: intentional focus when user opens change panel
-                  autoFocus
-                  className="w-full rounded-lg border border-[var(--line)] bg-[var(--surface-strong)] px-3 py-2 text-xs text-[var(--sea-ink)] outline-none focus:border-[var(--lagoon)]"
-                />
                 <div className="flex gap-2">
+                  {kind === "partial-auto" && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onConfirm?.();
+                        setOpen(false);
+                      }}
+                      className="flex-1 rounded-lg px-3 py-1.5 text-sm font-semibold bg-green-500/10 text-green-700 dark:text-green-400 hover:bg-green-500/20"
+                    >
+                      Confirm
+                    </button>
+                  )}
                   <button
                     type="button"
-                    onClick={() => setShowChange(false)}
-                    className="flex-1 rounded-lg island-shell border border-[var(--line)] px-3 py-1.5 text-sm text-[var(--sea-ink-soft)]"
+                    onClick={() => setShowChange(true)}
+                    className="flex-1 rounded-lg island-shell border border-[var(--line)] px-3 py-1.5 text-sm text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
                   >
-                    Back
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={!manualMbid}
-                    className="flex-1 rounded-lg island-shell border border-[var(--line)] px-3 py-1.5 text-sm font-semibold text-[var(--lagoon-deep)] hover:text-[var(--lagoon)] disabled:opacity-30"
-                  >
-                    Apply
+                    Change
                   </button>
                 </div>
-              </form>
-            </>
-          )}
-        </div>
-      )}
+              </>
+            ) : (
+              <>
+                <p className="text-xs text-[var(--sea-ink-soft)] mb-2">
+                  Enter MusicBrainz recording ID
+                </p>
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (manualMbid) {
+                      onOverride(manualMbid.trim());
+                      setOpen(false);
+                    }
+                  }}
+                  className="flex flex-col gap-2"
+                >
+                  <input
+                    type="text"
+                    value={manualMbid}
+                    onChange={(e) => setManualMbid(e.target.value)}
+                    placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                    // biome-ignore lint/a11y/noAutofocus: intentional focus when user opens change panel
+                    autoFocus
+                    className="w-full rounded-lg border border-[var(--line)] bg-[var(--surface-strong)] px-3 py-2 text-xs text-[var(--sea-ink)] outline-none focus:border-[var(--lagoon)]"
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowChange(false)}
+                      className="flex-1 rounded-lg island-shell border border-[var(--line)] px-3 py-1.5 text-sm text-[var(--sea-ink-soft)]"
+                    >
+                      Back
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={!manualMbid}
+                      className="flex-1 rounded-lg island-shell border border-[var(--line)] px-3 py-1.5 text-sm font-semibold text-[var(--lagoon-deep)] hover:text-[var(--lagoon)] disabled:opacity-30"
+                    >
+                      Apply
+                    </button>
+                  </div>
+                </form>
+              </>
+            )}
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
@@ -438,7 +481,12 @@ function UnresolvedCell({
 }) {
   const [open, setOpen] = useState(false);
   const [manualMbid, setManualMbid] = useState("");
-  const ref = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState<{ top: number; left: number }>({
+    top: 0,
+    left: 0,
+  });
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!open) {
@@ -446,20 +494,33 @@ function UnresolvedCell({
       return;
     }
     function close(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node))
-        setOpen(false);
+      if (
+        buttonRef.current?.contains(e.target as Node) ||
+        popoverRef.current?.contains(e.target as Node)
+      )
+        return;
+      setOpen(false);
     }
     document.addEventListener("mousedown", close);
     return () => document.removeEventListener("mousedown", close);
   }, [open]);
 
+  function handleToggle() {
+    if (!open && buttonRef.current) {
+      const r = buttonRef.current.getBoundingClientRect();
+      setPos({ top: r.bottom + 8, left: r.left });
+    }
+    setOpen((v) => !v);
+  }
+
   return (
-    <div ref={ref} className="relative inline-block">
+    <div className="relative inline-block">
       <button
+        ref={buttonRef}
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={handleToggle}
         aria-label="No MusicBrainz match — click to search or enter MBID"
-        className="relative w-8 h-8"
+        className="relative w-8 h-8 cursor-pointer"
       >
         <img
           src="/mb-blank-icon.svg"
@@ -471,71 +532,77 @@ function UnresolvedCell({
           ?
         </span>
       </button>
-      {open && (
-        <div className="absolute left-0 top-full mt-1 z-40 island-shell rounded-xl border border-[var(--line)] p-4 w-80 rise-in">
-          {candidates.length > 0 && (
-            <>
-              <p className="text-xs text-[var(--sea-ink-soft)] mb-2">
-                Possible matches
-              </p>
-              <div className="space-y-1 mb-3">
-                {candidates.map((rec) => (
-                  <button
-                    key={rec.id}
-                    type="button"
-                    onClick={() => {
-                      onOverride(rec.id);
-                      setOpen(false);
-                    }}
-                    className="w-full text-left rounded-lg px-3 py-2 hover:bg-[var(--surface)] text-sm"
-                  >
-                    <p className="font-medium text-[var(--sea-ink)] truncate">
-                      {rec.title}
-                    </p>
-                    <p className="text-xs text-[var(--sea-ink-soft)] truncate">
-                      {[
-                        formatArtistCredits(rec["artist-credit"]),
-                        rec.length ? msToDisplay(rec.length) : null,
-                      ]
-                        .filter(Boolean)
-                        .join(" · ")}
-                    </p>
-                  </button>
-                ))}
-              </div>
-              <hr className="border-[var(--line)] mb-3" />
-            </>
-          )}
-          <p className="text-xs text-[var(--sea-ink-soft)] mb-2">
-            Enter MusicBrainz recording ID
-          </p>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              if (manualMbid) {
-                onOverride(manualMbid.trim());
-                setOpen(false);
-              }
-            }}
-            className="flex flex-col gap-2"
+      {open &&
+        createPortal(
+          <div
+            ref={popoverRef}
+            style={{ top: pos.top, left: pos.left }}
+            className="fixed z-50 island-shell rounded-xl border border-[var(--line)] p-4 w-80 rise-in"
           >
-            <input
-              type="text"
-              value={manualMbid}
-              onChange={(e) => setManualMbid(e.target.value)}
-              placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-              className="w-full rounded-lg border border-[var(--line)] bg-[var(--surface-strong)] px-3 py-2 text-xs text-[var(--sea-ink)] outline-none focus:border-[var(--lagoon)]"
-            />
-            <button
-              type="submit"
-              disabled={!manualMbid}
-              className="w-full rounded-lg island-shell border border-[var(--line)] px-3 py-1.5 text-sm font-semibold text-[var(--lagoon-deep)] hover:text-[var(--lagoon)] disabled:opacity-30"
+            {candidates.length > 0 && (
+              <>
+                <p className="text-xs text-[var(--sea-ink-soft)] mb-2">
+                  Possible matches
+                </p>
+                <div className="space-y-1 mb-3">
+                  {candidates.map((rec) => (
+                    <button
+                      key={rec.id}
+                      type="button"
+                      onClick={() => {
+                        onOverride(rec.id);
+                        setOpen(false);
+                      }}
+                      className="w-full text-left rounded-lg px-3 py-2 hover:bg-[var(--surface)] text-sm"
+                    >
+                      <p className="font-medium text-[var(--sea-ink)] truncate">
+                        {rec.title}
+                      </p>
+                      <p className="text-xs text-[var(--sea-ink-soft)] truncate">
+                        {[
+                          formatArtistCredits(rec["artist-credit"]),
+                          rec.length ? msToDisplay(rec.length) : null,
+                        ]
+                          .filter(Boolean)
+                          .join(" · ")}
+                      </p>
+                    </button>
+                  ))}
+                </div>
+                <hr className="border-[var(--line)] mb-3" />
+              </>
+            )}
+            <p className="text-xs text-[var(--sea-ink-soft)] mb-2">
+              Enter MusicBrainz recording ID
+            </p>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (manualMbid) {
+                  onOverride(manualMbid.trim());
+                  setOpen(false);
+                }
+              }}
+              className="flex flex-col gap-2"
             >
-              Apply
-            </button>
-          </form>
-        </div>
-      )}
+              <input
+                type="text"
+                value={manualMbid}
+                onChange={(e) => setManualMbid(e.target.value)}
+                placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+                className="w-full rounded-lg border border-[var(--line)] bg-[var(--surface-strong)] px-3 py-2 text-xs text-[var(--sea-ink)] outline-none focus:border-[var(--lagoon)]"
+              />
+              <button
+                type="submit"
+                disabled={!manualMbid}
+                className="w-full rounded-lg island-shell border border-[var(--line)] px-3 py-1.5 text-sm font-semibold text-[var(--lagoon-deep)] hover:text-[var(--lagoon)] disabled:opacity-30"
+              >
+                Apply
+              </button>
+            </form>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
@@ -608,27 +675,15 @@ function TrackTableRow({
           matchState.kind === "partial-auto" ||
           matchState.kind === "override") && (
           <div className="flex items-center gap-2 min-w-0">
-            <div className="relative shrink-0 w-8 h-8">
-              {recording ? (
-                <a
-                  href={`https://musicbrainz.org/recording/${recording.id}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <img
-                    src="/mb-recording-icon.svg"
-                    width={32}
-                    height={32}
-                    alt="View on MusicBrainz"
-                  />
-                </a>
-              ) : (
-                // override recording still loading
-                <div className="animate-pulse opacity-50">
-                  <img src="/mb-blank-icon.svg" width={32} height={32} alt="" />
-                </div>
-              )}
-              {matchState.kind === "partial-auto" && (
+            <div className="shrink-0">
+              {matchState.kind === "exact" ? (
+                <img
+                  src="/mb-recording-icon.svg"
+                  width={32}
+                  height={32}
+                  alt=""
+                />
+              ) : matchState.kind === "partial-auto" ? (
                 <MbBadge
                   kind="partial-auto"
                   recording={matchState.recording}
@@ -637,13 +692,17 @@ function TrackTableRow({
                   }
                   onOverride={(mbid) => onSetOverride(track.Id, mbid)}
                 />
-              )}
-              {matchState.kind === "override" && (
+              ) : matchState.recording ? (
                 <MbBadge
                   kind="override"
                   recording={matchState.recording}
                   onOverride={(mbid) => onSetOverride(track.Id, mbid)}
                 />
+              ) : (
+                // override recording still loading
+                <div className="animate-pulse opacity-50 w-8 h-8">
+                  <img src="/mb-blank-icon.svg" width={32} height={32} alt="" />
+                </div>
               )}
             </div>
             {recording && <RecordingInfo recording={recording} />}
