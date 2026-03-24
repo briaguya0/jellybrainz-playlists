@@ -1,4 +1,4 @@
-import type { JellyfinPlaylist } from "../../../../lib/types";
+import type { JellyfinPlaylist } from "@src/lib/types";
 
 export function PlaylistRow({
   playlist,

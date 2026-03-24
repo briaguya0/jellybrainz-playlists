@@ -1,6 +1,6 @@
+import { formatArtistCredits, msToDisplay } from "@src/lib/musicbrainz";
+import type { MbRecording } from "@src/lib/types";
 import { ExternalLink } from "lucide-react";
-import { formatArtistCredits, msToDisplay } from "../../../../lib/musicbrainz";
-import type { MbRecording } from "../../../../lib/types";
 
 export function RecordingInfo({ recording }: { recording: MbRecording }) {
   return (

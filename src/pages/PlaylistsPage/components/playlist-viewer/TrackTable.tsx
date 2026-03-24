@@ -2,7 +2,7 @@ import type {
   JellyfinConfig,
   JellyfinTrack,
   TrackMatchState,
-} from "../../../../lib/types";
+} from "@src/lib/types";
 import { TrackTableRow } from "./TrackTableRow";
 
 export function TrackTable({

@@ -1,10 +1,10 @@
-import { Search } from "lucide-react";
-import { ticksToDisplay } from "../../../../lib/jellyfin";
+import { ticksToDisplay } from "@src/lib/jellyfin";
 import type {
   JellyfinConfig,
   JellyfinTrack,
   TrackMatchState,
-} from "../../../../lib/types";
+} from "@src/lib/types";
+import { Search } from "lucide-react";
 import { MbBadge } from "./MbBadge";
 import { RecordingInfo } from "./RecordingInfo";
 import { ThumbnailTooltip } from "./ThumbnailTooltip";

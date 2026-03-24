@@ -1,5 +1,5 @@
+import { PlaylistsPage } from "@src/pages/PlaylistsPage";
 import { createFileRoute } from "@tanstack/react-router";
-import { PlaylistsPage } from "../pages/PlaylistsPage";
 
 export const Route = createFileRoute("/")({
   validateSearch: (search: Record<string, unknown>) => ({

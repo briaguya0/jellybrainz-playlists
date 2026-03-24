@@ -1,9 +1,9 @@
+import { fetchPlaylists } from "@src/lib/jellyfin";
+import type { JellyfinConfig, JellyfinPlaylist } from "@src/lib/types";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { LayoutGrid, List } from "lucide-react";
 import { useState } from "react";
-import { fetchPlaylists } from "../../../../lib/jellyfin";
-import type { JellyfinConfig, JellyfinPlaylist } from "../../../../lib/types";
 import { ConnectForm } from "./ConnectForm";
 import { PlaylistCard } from "./PlaylistCard";
 import { PlaylistRow } from "./PlaylistRow";

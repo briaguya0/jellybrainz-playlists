@@ -1,16 +1,16 @@
-import { X } from "lucide-react";
-import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
 import {
   clearMbAuth,
   getJellyfinConfig,
   getMbAuth,
   setJellyfinConfig,
-} from "../lib/config";
-import { resolveUserId } from "../lib/jellyfin";
-import { buildAuthUrl, generatePkce } from "../lib/oauth";
-import type { JellyfinConfig, MbAuth } from "../lib/types";
-import { getErrorMessage } from "../lib/utils";
+} from "@src/lib/config";
+import { resolveUserId } from "@src/lib/jellyfin";
+import { buildAuthUrl, generatePkce } from "@src/lib/oauth";
+import type { JellyfinConfig, MbAuth } from "@src/lib/types";
+import { getErrorMessage } from "@src/lib/utils";
+import { X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 // ─── theme logic ──────────────────────────────────────────────────────────────
 

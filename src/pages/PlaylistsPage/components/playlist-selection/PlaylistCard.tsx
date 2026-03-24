@@ -1,5 +1,5 @@
-import { playlistThumbnailUrl } from "../../../../lib/jellyfin";
-import type { JellyfinConfig, JellyfinPlaylist } from "../../../../lib/types";
+import { playlistThumbnailUrl } from "@src/lib/jellyfin";
+import type { JellyfinConfig, JellyfinPlaylist } from "@src/lib/types";
 
 export function PlaylistCard({
   playlist,

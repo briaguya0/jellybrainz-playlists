@@ -1,20 +1,20 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import {
   extractMbArtistId,
   extractMbRecordingId,
   fetchPlaylistTracks,
-} from "../lib/jellyfin";
+} from "@src/lib/jellyfin";
 import {
   fetchRecordingsByRecordingIds,
   fetchRecordingsByTrackIds,
   searchRecordingsByArtist,
-} from "../lib/musicbrainz";
+} from "@src/lib/musicbrainz";
 import type {
   JellyfinConfig,
   JellyfinTrack,
   MbRecording,
   TrackMatchState,
-} from "../lib/types";
+} from "@src/lib/types";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 export function useTrackMatching(
   cfg: JellyfinConfig,

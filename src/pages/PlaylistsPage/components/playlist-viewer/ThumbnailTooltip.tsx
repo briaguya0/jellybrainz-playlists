@@ -1,7 +1,7 @@
+import { usePopoverPosition } from "@src/hooks/usePopoverPosition";
+import { thumbnailUrl, ticksToDisplay } from "@src/lib/jellyfin";
+import type { JellyfinConfig, JellyfinTrack } from "@src/lib/types";
 import { createPortal } from "react-dom";
-import { usePopoverPosition } from "../../../../hooks/usePopoverPosition";
-import { thumbnailUrl, ticksToDisplay } from "../../../../lib/jellyfin";
-import type { JellyfinConfig, JellyfinTrack } from "../../../../lib/types";
 
 export function ThumbnailTooltip({
   track,

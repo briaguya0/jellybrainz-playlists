@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState } from "react";
 import {
   addRecordingsToCollection,
   createCollection,
   fetchCollections,
-} from "../../../../lib/musicbrainz";
-import { buildAuthUrl, generatePkce } from "../../../../lib/oauth";
-import type { MbAuth, MbCollection } from "../../../../lib/types";
-import { getErrorMessage } from "../../../../lib/utils";
+} from "@src/lib/musicbrainz";
+import { buildAuthUrl, generatePkce } from "@src/lib/oauth";
+import type { MbAuth, MbCollection } from "@src/lib/types";
+import { getErrorMessage } from "@src/lib/utils";
+import { useEffect, useRef, useState } from "react";
 
 type SyncState =
   | { phase: "idle" }
