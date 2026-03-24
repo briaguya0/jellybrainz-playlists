@@ -1,3 +1,4 @@
+import { MOBILE_BREAKPOINT } from "@src/lib/constants";
 import type { RefObject } from "react";
 import { useEffect, useRef, useState } from "react";
 
@@ -50,7 +51,7 @@ export function usePopoverPosition({
   function handleToggle() {
     if (!open && buttonRef.current) {
       if (enableMobile) {
-        const mobile = window.innerWidth < 640;
+        const mobile = window.innerWidth < MOBILE_BREAKPOINT;
         setIsMobile(mobile);
         if (mobile) {
           setOpen((v) => !v);
