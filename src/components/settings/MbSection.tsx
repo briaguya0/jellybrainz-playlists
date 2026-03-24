@@ -15,17 +15,17 @@ export function MbSection() {
 
   return (
     <section>
-      <p className="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)] mb-3">
+      <p className="text-xs font-semibold uppercase tracking-wide text-app-muted mb-3">
         MusicBrainz
       </p>
       {!clientId ? (
-        <p className="text-xs text-[var(--text-muted)]">
+        <p className="text-xs text-app-muted">
           <code>VITE_MB_CLIENT_ID</code> is not set. See{" "}
           <code>.env.example</code> for setup instructions.
         </p>
       ) : mbAuth ? (
         <div className="flex items-center justify-between gap-2">
-          <p className="text-sm text-[var(--text)] truncate">
+          <p className="text-sm text-app-text truncate">
             Connected as{" "}
             <a
               href={`https://musicbrainz.org/user/${mbAuth.username}`}
@@ -39,16 +39,14 @@ export function MbSection() {
           <button
             type="button"
             onClick={() => setMbAuth(null)}
-            className="shrink-0 text-sm text-[var(--text-muted)] hover:text-[var(--text)] underline"
+            className="shrink-0 text-sm text-app-muted hover:text-app-text underline"
           >
             Disconnect
           </button>
         </div>
       ) : (
         <>
-          <p className="text-sm text-[var(--text-muted)] mb-3">
-            Not connected.
-          </p>
+          <p className="text-sm text-app-muted mb-3">Not connected.</p>
           <button
             type="button"
             onClick={connectMb}

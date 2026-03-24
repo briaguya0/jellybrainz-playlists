@@ -24,17 +24,17 @@ function MbBadgeContent({
   if (!showChange) {
     return (
       <>
-        <p className="text-xs text-[var(--text-muted)] mb-2">
+        <p className="text-xs text-app-muted mb-2">
           {kind === "partial-auto"
             ? "Matched via artist + title search"
             : "Manually confirmed"}
         </p>
         {recording && (
           <>
-            <p className="text-sm font-medium text-[var(--text)]">
+            <p className="text-sm font-medium text-app-text">
               {recording.title}
             </p>
-            <p className="text-xs text-[var(--text-muted)] mb-3">
+            <p className="text-xs text-app-muted mb-3">
               {formatArtistCredits(recording["artist-credit"])}
             </p>
           </>
@@ -55,7 +55,7 @@ function MbBadgeContent({
           <button
             type="button"
             onClick={() => setShowChange(true)}
-            className="flex-1 rounded-lg island-shell border border-[var(--stroke)] px-3 py-1.5 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
+            className="flex-1 rounded-lg island-shell border border-stroke px-3 py-1.5 text-sm text-app-muted hover:text-app-text"
           >
             Change
           </button>
@@ -66,7 +66,7 @@ function MbBadgeContent({
 
   return (
     <>
-      <p className="text-xs text-[var(--text-muted)] mb-2">
+      <p className="text-xs text-app-muted mb-2">
         Enter MusicBrainz recording ID
       </p>
       <form
@@ -86,13 +86,13 @@ function MbBadgeContent({
           placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
           // biome-ignore lint/a11y/noAutofocus: intentional focus when user opens change panel
           autoFocus
-          className="w-full rounded-lg border-2 border-[var(--stroke)] bg-[var(--hover-bg)] px-3 py-2 text-xs text-[var(--text)] outline-none placeholder:text-[var(--text-muted)] focus:border-[var(--accent)]"
+          className="w-full rounded-lg border-2 border-stroke bg-hover px-3 py-2 text-xs text-app-text outline-none placeholder:text-app-muted focus:border-[var(--accent)]"
         />
         <div className="flex gap-2">
           <button
             type="button"
             onClick={() => setShowChange(false)}
-            className="rounded-lg island-shell border border-[var(--stroke)] px-3 py-1.5 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
+            className="rounded-lg island-shell border border-stroke px-3 py-1.5 text-sm text-app-muted hover:text-app-text"
           >
             Back
           </button>
@@ -102,7 +102,7 @@ function MbBadgeContent({
               onClear();
               close();
             }}
-            className="rounded-lg island-shell border border-[var(--stroke)] px-3 py-1.5 text-sm text-red-500 hover:text-red-400"
+            className="rounded-lg island-shell border border-stroke px-3 py-1.5 text-sm text-red-500 hover:text-red-400"
           >
             Clear
           </button>

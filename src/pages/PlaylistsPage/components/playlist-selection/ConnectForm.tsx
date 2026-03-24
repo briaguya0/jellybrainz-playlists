@@ -28,15 +28,15 @@ export function ConnectForm() {
 
   return (
     <div className="island-shell rounded-2xl p-8 w-full max-w-sm rise-in">
-      <h2 className="text-lg font-semibold text-[var(--text)] mb-1">
+      <h2 className="text-lg font-semibold text-app-text mb-1">
         Connect to Jellyfin
       </h2>
-      <p className="text-sm text-[var(--text-muted)] mb-6">
+      <p className="text-sm text-app-muted mb-6">
         Enter your Jellyfin server URL and API key to browse your playlists.
       </p>
       <form onSubmit={handleConnect} className="flex flex-col gap-4">
         <label className="flex flex-col gap-1.5">
-          <span className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide">
+          <span className="text-xs font-semibold text-app-muted uppercase tracking-wide">
             Server URL
           </span>
           <input
@@ -44,12 +44,12 @@ export function ConnectForm() {
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             required
-            className="rounded-lg border border-[var(--stroke)] bg-[var(--surface-strong)] px-3 py-2 text-sm text-[var(--text)] outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
+            className="rounded-lg border border-stroke bg-surface-strong px-3 py-2 text-sm text-app-text outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
             placeholder="http://localhost:8096"
           />
         </label>
         <label className="flex flex-col gap-1.5">
-          <span className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide">
+          <span className="text-xs font-semibold text-app-muted uppercase tracking-wide">
             API Key
           </span>
           <input
@@ -57,7 +57,7 @@ export function ConnectForm() {
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
             required
-            className="rounded-lg border border-[var(--stroke)] bg-[var(--surface-strong)] px-3 py-2 text-sm text-[var(--text)] outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
+            className="rounded-lg border border-stroke bg-surface-strong px-3 py-2 text-sm text-app-text outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
             placeholder="Paste your API key"
           />
         </label>
@@ -67,12 +67,12 @@ export function ConnectForm() {
         <button
           type="submit"
           disabled={connecting}
-          className="island-shell rounded-lg px-4 py-2 text-sm font-semibold text-[var(--accent-text)] enabled:hover:text-[var(--text)] disabled:opacity-50"
+          className="island-shell rounded-lg px-4 py-2 text-sm font-semibold text-accent-text enabled:hover:text-app-text disabled:opacity-50"
         >
           {connecting ? "Connecting…" : "Connect"}
         </button>
       </form>
-      <p className="mt-4 text-xs text-[var(--text-muted)]">
+      <p className="mt-4 text-xs text-app-muted">
         Find your API key in the Jellyfin admin dashboard under{" "}
         <strong>Administration → API Keys</strong>.
       </p>

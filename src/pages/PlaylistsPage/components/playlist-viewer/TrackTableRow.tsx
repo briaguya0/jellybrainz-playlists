@@ -31,16 +31,16 @@ export function TrackTableRow({
       : undefined;
 
   return (
-    <tr className="border-b border-[var(--stroke)] last:border-0 hover:bg-[var(--surface)]/40">
+    <tr className="border-b border-stroke last:border-0 hover:bg-surface/40">
       {/* Jellyfin: thumbnail + title/artist/duration */}
       <td className="px-4 py-3">
         <div className="flex items-center gap-3 min-w-0">
           <ThumbnailTooltip track={track} cfg={cfg} />
           <div className="hidden sm:block min-w-0">
-            <p className="text-sm font-medium text-[var(--text)] truncate">
+            <p className="text-sm font-medium text-app-text truncate">
               {track.Name}
             </p>
-            <p className="text-xs text-[var(--text-muted)] truncate">
+            <p className="text-xs text-app-muted truncate">
               {[
                 track.Artists?.join(", "),
                 track.RunTimeTicks != null

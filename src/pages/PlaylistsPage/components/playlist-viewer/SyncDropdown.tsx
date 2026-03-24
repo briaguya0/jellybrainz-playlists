@@ -108,7 +108,7 @@ export function SyncDropdown({
             setSyncState({ phase: "idle" });
           }
         }}
-        className="island-shell flex items-center gap-1.5 rounded-lg border border-[var(--stroke)] px-3 py-1.5 text-sm font-semibold text-[var(--accent-text)] hover:text-[var(--text)]"
+        className="island-shell flex items-center gap-1.5 rounded-lg border border-stroke px-3 py-1.5 text-sm font-semibold text-accent-text hover:text-app-text"
       >
         <img
           src="/musicbrainz-icon.svg"
@@ -121,27 +121,27 @@ export function SyncDropdown({
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-1 z-40 island-shell rounded-xl border border-[var(--stroke)] p-4 w-72 rise-in">
+        <div className="absolute right-0 top-full mt-1 z-40 island-shell rounded-xl border border-stroke p-4 w-72 rise-in">
           {!mbAuth ? (
             <>
-              <p className="text-sm text-[var(--text-muted)] mb-3">
+              <p className="text-sm text-app-muted mb-3">
                 Log in to MusicBrainz to export this playlist.
               </p>
               <button
                 type="button"
                 onClick={startOAuth}
-                className="w-full island-shell rounded-lg border border-[var(--stroke)] px-3 py-2 text-sm font-semibold text-[var(--accent-text)] hover:text-[var(--accent)]"
+                className="w-full island-shell rounded-lg border border-stroke px-3 py-2 text-sm font-semibold text-accent-text hover:text-[var(--accent)]"
               >
                 Connect MusicBrainz
               </button>
             </>
           ) : syncState.phase === "progress" ? (
-            <p className="text-sm text-[var(--text-muted)]">
+            <p className="text-sm text-app-muted">
               Adding {syncState.total} recordings…
             </p>
           ) : syncState.phase === "done" ? (
             <>
-              <p className="text-sm font-semibold text-[var(--text)] mb-2">
+              <p className="text-sm font-semibold text-app-text mb-2">
                 Sync complete
               </p>
               <a
@@ -159,21 +159,21 @@ export function SyncDropdown({
             </p>
           ) : (
             <>
-              <p className="text-xs text-[var(--text-muted)] mb-3">
+              <p className="text-xs text-app-muted mb-3">
                 Syncing {matchedMbids.length} matched recording
                 {matchedMbids.length === 1 ? "" : "s"} as {mbAuth.username}
               </p>
               <button
                 type="button"
                 onClick={exportToNew}
-                className="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-[var(--surface)] text-[var(--text)]"
+                className="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-surface text-app-text"
               >
                 Export to new collection
               </button>
               {collections && collections.length > 0 && (
                 <>
-                  <hr className="border-[var(--stroke)] my-2" />
-                  <p className="text-xs text-[var(--text-muted)] mb-1 px-1">
+                  <hr className="border-stroke my-2" />
+                  <p className="text-xs text-app-muted mb-1 px-1">
                     Export to existing collection
                   </p>
                   <div className="max-h-48 overflow-y-auto">
@@ -184,7 +184,7 @@ export function SyncDropdown({
                           key={c.id}
                           type="button"
                           onClick={() => exportToExisting(c)}
-                          className="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-[var(--surface)] text-[var(--text)] truncate"
+                          className="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-surface text-app-text truncate"
                         >
                           {c.name}
                         </button>

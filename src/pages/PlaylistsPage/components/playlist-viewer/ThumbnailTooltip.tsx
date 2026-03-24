@@ -23,13 +23,11 @@ export function ThumbnailTooltip({
       className="w-48"
       content={() => (
         <>
-          <p className="text-xs font-medium text-[var(--text)] truncate">
+          <p className="text-xs font-medium text-app-text truncate">
             {track.Name}
           </p>
           {subtitle && (
-            <p className="text-xs text-[var(--text-muted)] truncate">
-              {subtitle}
-            </p>
+            <p className="text-xs text-app-muted truncate">{subtitle}</p>
           )}
         </>
       )}

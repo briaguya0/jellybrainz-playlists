@@ -19,9 +19,7 @@ function UnresolvedContent({
     <>
       {candidates.length > 0 && (
         <>
-          <p className="text-xs text-[var(--text-muted)] mb-2">
-            Possible matches
-          </p>
+          <p className="text-xs text-app-muted mb-2">Possible matches</p>
           <div className="space-y-1 mb-3">
             {candidates.map((rec) => (
               <div key={rec.id} className="flex items-center gap-1">
@@ -31,21 +29,21 @@ function UnresolvedContent({
                     onOverride(rec.id);
                     close();
                   }}
-                  className="flex-1 min-w-0 text-left rounded-lg px-3 py-2 hover:bg-[var(--surface)] text-sm"
+                  className="flex-1 min-w-0 text-left rounded-lg px-3 py-2 hover:bg-surface text-sm"
                 >
-                  <p className="font-medium text-[var(--text)] truncate">
+                  <p className="font-medium text-app-text truncate">
                     {rec.title}
                     {rec.length ? (
-                      <span className="ml-1 font-normal text-[var(--text-muted)]">
+                      <span className="ml-1 font-normal text-app-muted">
                         {msToDisplay(rec.length)}
                       </span>
                     ) : null}
                   </p>
-                  <p className="text-xs text-[var(--text-muted)] truncate">
+                  <p className="text-xs text-app-muted truncate">
                     {formatArtistCredits(rec["artist-credit"])}
                   </p>
                   {rec.releases?.[0] && (
-                    <p className="text-xs text-[var(--text-muted)] truncate opacity-60">
+                    <p className="text-xs text-app-muted truncate opacity-60">
                       {[
                         rec.releases[0].title,
                         rec.releases[0].date?.slice(0, 4),
@@ -61,17 +59,17 @@ function UnresolvedContent({
                   rel="noreferrer"
                   onClick={(e) => e.stopPropagation()}
                   aria-label="View on MusicBrainz"
-                  className="shrink-0 p-1.5 text-[var(--text-muted)] hover:text-[var(--text)] rounded-lg hover:bg-[var(--surface)]"
+                  className="shrink-0 p-1.5 text-app-muted hover:text-app-text rounded-lg hover:bg-surface"
                 >
                   <ExternalLink size={14} />
                 </a>
               </div>
             ))}
           </div>
-          <hr className="border-[var(--stroke)] mb-3" />
+          <hr className="border-stroke mb-3" />
         </>
       )}
-      <p className="text-xs text-[var(--text-muted)] mb-2">
+      <p className="text-xs text-app-muted mb-2">
         Enter MusicBrainz recording ID
       </p>
       <form
@@ -89,7 +87,7 @@ function UnresolvedContent({
           value={manualMbid}
           onChange={(e) => setManualMbid(e.target.value)}
           placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-          className="w-full rounded-lg border-2 border-[var(--stroke)] bg-[var(--hover-bg)] px-3 py-2 text-xs text-[var(--text)] outline-none placeholder:text-[var(--text-muted)] focus:border-[var(--accent)]"
+          className="w-full rounded-lg border-2 border-stroke bg-hover px-3 py-2 text-xs text-app-text outline-none placeholder:text-app-muted focus:border-[var(--accent)]"
         />
         <button
           type="submit"

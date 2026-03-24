@@ -64,7 +64,7 @@ export function PlaylistSelection({
   return (
     <>
       <div className="flex items-center justify-between mb-5">
-        <h1 className="text-xl font-semibold text-[var(--text)] flex items-center gap-2">
+        <h1 className="text-xl font-semibold text-app-text flex items-center gap-2">
           <img
             src="/jellyfin-icon.svg"
             width={22}
@@ -81,8 +81,8 @@ export function PlaylistSelection({
             aria-label="Grid view"
             className={`p-2 rounded-lg border ${
               viewMode === "grid"
-                ? "island-shell border-[var(--accent)] text-[var(--accent-text)]"
-                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text)]"
+                ? "island-shell border-[var(--accent)] text-accent-text"
+                : "border-transparent text-app-muted hover:text-app-text"
             }`}
           >
             <LayoutGrid size={16} />
@@ -93,8 +93,8 @@ export function PlaylistSelection({
             aria-label="List view"
             className={`p-2 rounded-lg border ${
               viewMode === "list"
-                ? "island-shell border-[var(--accent)] text-[var(--accent-text)]"
-                : "border-transparent text-[var(--text-muted)] hover:text-[var(--text)]"
+                ? "island-shell border-[var(--accent)] text-accent-text"
+                : "border-transparent text-app-muted hover:text-app-text"
             }`}
           >
             <List size={16} />
@@ -151,18 +151,18 @@ export function PlaylistSelection({
             type="button"
             onClick={() => setPage((p) => p - 1)}
             disabled={page === 0}
-            className="island-shell rounded-lg border border-[var(--stroke)] px-3 py-1.5 text-sm text-[var(--text-muted)] enabled:hover:text-[var(--text)] disabled:opacity-30"
+            className="island-shell rounded-lg border border-stroke px-3 py-1.5 text-sm text-app-muted enabled:hover:text-app-text disabled:opacity-30"
           >
             ← Prev
           </button>
-          <span className="text-xs text-[var(--text-muted)]">
+          <span className="text-xs text-app-muted">
             {page + 1} / {totalPages}
           </span>
           <button
             type="button"
             onClick={() => setPage((p) => p + 1)}
             disabled={page >= totalPages - 1}
-            className="island-shell rounded-lg border border-[var(--stroke)] px-3 py-1.5 text-sm text-[var(--text-muted)] enabled:hover:text-[var(--text)] disabled:opacity-30"
+            className="island-shell rounded-lg border border-stroke px-3 py-1.5 text-sm text-app-muted enabled:hover:text-app-text disabled:opacity-30"
           >
             Next →
           </button>

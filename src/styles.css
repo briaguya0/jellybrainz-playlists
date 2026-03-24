@@ -6,6 +6,18 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@theme inline {
+  --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+  --color-app-text: var(--text);
+  --color-app-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-text: var(--accent-text);
+  --color-surface: var(--surface);
+  --color-surface-strong: var(--surface-strong);
+  --color-stroke: var(--stroke);
+  --color-hover: var(--hover-bg);
+}
+
 :root {
   --text: #1c1d30;
   --text-muted: #5c5e80;

@@ -11,10 +11,10 @@ export function ThemeSection() {
 
   return (
     <section>
-      <p className="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)] mb-2">
+      <p className="text-xs font-semibold uppercase tracking-wide text-app-muted mb-2">
         Theme
       </p>
-      <div className="flex rounded-lg border border-[var(--stroke)] overflow-hidden">
+      <div className="flex rounded-lg border border-stroke overflow-hidden">
         {THEME_OPTIONS.map(({ value, label }) => (
           <button
             key={value}
@@ -23,7 +23,7 @@ export function ThemeSection() {
             className={`flex-1 py-1.5 text-sm font-semibold transition-colors ${
               mode === value
                 ? "bg-[var(--accent)] text-white"
-                : "text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--hover-bg)]"
+                : "text-app-muted hover:text-app-text hover:bg-hover"
             }`}
           >
             {label}

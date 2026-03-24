@@ -27,15 +27,15 @@ export function SettingsPanel({ onClose }: { onClose: () => void }) {
       <div
         role="dialog"
         aria-label="Settings"
-        className="fixed right-0 top-0 z-50 flex h-full w-80 max-w-full flex-col island-shell border-l border-[var(--stroke)] shadow-2xl animate-slide-in-right overflow-y-auto"
+        className="fixed right-0 top-0 z-50 flex h-full w-80 max-w-full flex-col island-shell border-l border-stroke shadow-2xl animate-slide-in-right overflow-y-auto"
       >
-        <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--stroke)]">
-          <h2 className="text-sm font-semibold text-[var(--text)]">Settings</h2>
+        <div className="flex items-center justify-between px-5 py-4 border-b border-stroke">
+          <h2 className="text-sm font-semibold text-app-text">Settings</h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close settings"
-            className="rounded-lg p-1.5 text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--hover-bg)]"
+            className="rounded-lg p-1.5 text-app-muted hover:text-app-text hover:bg-hover"
           >
             <X size={16} />
           </button>

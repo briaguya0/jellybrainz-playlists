@@ -21,10 +21,10 @@ export function TrackTable({
   onClearOverride: (jellyfinId: string) => void;
 }) {
   return (
-    <div className="island-shell rounded-xl border border-[var(--stroke)]">
+    <div className="island-shell rounded-xl border border-stroke">
       <table className="w-full text-sm table-fixed">
         <thead>
-          <tr className="border-b border-[var(--stroke)]">
+          <tr className="border-b border-stroke">
             <th className="w-[72px] sm:w-1/2 px-4 py-3 text-center">
               <img
                 src="/jellyfin-icon.svg"
@@ -48,10 +48,7 @@ export function TrackTable({
         <tbody>
           {isPending
             ? ["sk-1", "sk-2", "sk-3", "sk-4", "sk-5"].map((k) => (
-                <tr
-                  key={k}
-                  className="border-b border-[var(--stroke)] animate-pulse"
-                >
+                <tr key={k} className="border-b border-stroke animate-pulse">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded bg-[var(--stroke)] shrink-0" />
