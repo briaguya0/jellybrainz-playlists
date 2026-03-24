@@ -52,3 +52,10 @@ export interface MbRecording {
     media?: Array<{ track?: Array<{ id: string }> }>;
   }>;
 }
+
+export type TrackMatchState =
+  | { kind: "loading" }
+  | { kind: "exact"; recording: MbRecording }
+  | { kind: "partial-auto"; recording: MbRecording }
+  | { kind: "override"; recording: MbRecording | undefined }
+  | { kind: "unresolved"; candidates: MbRecording[] };
