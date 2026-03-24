@@ -1,12 +1,8 @@
-import {
-  clearMbAuth,
-  getJellyfinConfig,
-  getMbAuth,
-  setJellyfinConfig,
-} from "@src/lib/config";
+import { useJellyfin } from "@src/contexts/JellyfinContext";
+import { useMbAuth } from "@src/contexts/MbAuthContext";
 import { resolveUserId } from "@src/lib/jellyfin";
 import { buildAuthUrl, generatePkce } from "@src/lib/oauth";
-import type { JellyfinConfig, MbAuth } from "@src/lib/types";
+import type { JellyfinConfig } from "@src/lib/types";
 import { getErrorMessage } from "@src/lib/utils";
 import { X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -67,26 +63,22 @@ function useThemeMode() {
 
 export function SettingsPanel({ onClose }: { onClose: () => void }) {
   const { mode, setAndApply } = useThemeMode();
+  const { cfg: jellyfinConfig, setCfg } = useJellyfin();
+  const { mbAuth, setMbAuth } = useMbAuth();
 
-  const [jellyfinConfig, setJellyfinConfigState] =
-    useState<JellyfinConfig | null>(null);
-  const [mbAuth, setMbAuthState] = useState<MbAuth | null>(null);
-  const [url, setUrl] = useState("");
-  const [apiKey, setApiKey] = useState("");
+  const [url, setUrl] = useState(jellyfinConfig?.url ?? "");
+  const [apiKey, setApiKey] = useState(jellyfinConfig?.apiKey ?? "");
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
+  // Populate form fields once the Jellyfin config hydrates from localStorage.
   useEffect(() => {
-    const cfg = getJellyfinConfig();
-    const auth = getMbAuth();
-    setJellyfinConfigState(cfg);
-    setMbAuthState(auth);
-    if (cfg) {
-      setUrl(cfg.url);
-      setApiKey(cfg.apiKey);
+    if (jellyfinConfig) {
+      setUrl(jellyfinConfig.url);
+      setApiKey(jellyfinConfig.apiKey);
     }
-  }, []);
+  }, [jellyfinConfig]);
 
   // close on Escape
   useEffect(() => {
@@ -103,11 +95,9 @@ export function SettingsPanel({ onClose }: { onClose: () => void }) {
     setSaveError(null);
     setSaveSuccess(false);
     try {
-      const cfg: JellyfinConfig = { url, apiKey };
-      const userId = await resolveUserId(cfg);
-      const updated: JellyfinConfig = { ...cfg, userId };
-      setJellyfinConfig(updated);
-      setJellyfinConfigState(updated);
+      const draft: JellyfinConfig = { url, apiKey };
+      const userId = await resolveUserId(draft);
+      setCfg({ ...draft, userId });
       setSaveSuccess(true);
     } catch (err) {
       setSaveError(getErrorMessage(err, "Failed to connect to Jellyfin"));
@@ -126,8 +116,7 @@ export function SettingsPanel({ onClose }: { onClose: () => void }) {
   }
 
   function disconnectMb() {
-    clearMbAuth();
-    setMbAuthState(null);
+    setMbAuth(null);
   }
 
   const clientId = import.meta.env.VITE_MB_CLIENT_ID as string | undefined;

@@ -1,10 +1,11 @@
+import { useMbAuth } from "@src/contexts/MbAuthContext";
 import {
   addRecordingsToCollection,
   createCollection,
   fetchCollections,
 } from "@src/lib/musicbrainz";
 import { buildAuthUrl, generatePkce } from "@src/lib/oauth";
-import type { MbAuth, MbCollection } from "@src/lib/types";
+import type { MbCollection } from "@src/lib/types";
 import { getErrorMessage } from "@src/lib/utils";
 import { useEffect, useRef, useState } from "react";
 
@@ -15,14 +16,13 @@ type SyncState =
   | { phase: "error"; message: string };
 
 export function SyncDropdown({
-  mbAuth,
   playlistName,
   matchedMbids,
 }: {
-  mbAuth: MbAuth | null;
   playlistName: string;
   matchedMbids: string[];
 }) {
+  const { mbAuth } = useMbAuth();
   const [open, setOpen] = useState(false);
   const [syncState, setSyncState] = useState<SyncState>({ phase: "idle" });
   const [collections, setCollections] = useState<MbCollection[] | null>(null);

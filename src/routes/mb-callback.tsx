@@ -1,4 +1,4 @@
-import { setMbAuth } from "@src/lib/config";
+import { useMbAuth } from "@src/contexts/MbAuthContext";
 import { exchangeCode, fetchMbUsername } from "@src/lib/oauth";
 import { getErrorMessage } from "@src/lib/utils";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
@@ -13,6 +13,7 @@ export const Route = createFileRoute("/mb-callback")({
 });
 
 function MbCallbackPage() {
+  const { setMbAuth } = useMbAuth();
   const navigate = useNavigate();
   const { code, error: oauthError } = Route.useSearch();
   const [status, setStatus] = useState<"pending" | "error">("pending");
@@ -67,7 +68,7 @@ function MbCallbackPage() {
         setStatus("error");
       }
     })();
-  }, [code, oauthError, navigate]);
+  }, [code, oauthError, navigate, setMbAuth]);
 
   if (status === "error") {
     return (

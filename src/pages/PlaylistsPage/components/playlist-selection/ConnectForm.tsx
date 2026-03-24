@@ -1,14 +1,11 @@
-import { setJellyfinConfig as storeJellyfinConfig } from "@src/lib/config";
+import { useJellyfin } from "@src/contexts/JellyfinContext";
 import { resolveUserId } from "@src/lib/jellyfin";
 import type { JellyfinConfig } from "@src/lib/types";
 import { getErrorMessage } from "@src/lib/utils";
 import { useState } from "react";
 
-export function ConnectForm({
-  onConnected,
-}: {
-  onConnected: (cfg: JellyfinConfig) => void;
-}) {
+export function ConnectForm() {
+  const { setCfg } = useJellyfin();
   const [url, setUrl] = useState("http://localhost:8096");
   const [apiKey, setApiKey] = useState("");
   const [connecting, setConnecting] = useState(false);
@@ -21,9 +18,7 @@ export function ConnectForm({
     try {
       const cfg: JellyfinConfig = { url, apiKey };
       const userId = await resolveUserId(cfg);
-      const cfgWithUser: JellyfinConfig = { ...cfg, userId };
-      storeJellyfinConfig(cfgWithUser);
-      onConnected(cfgWithUser);
+      setCfg({ ...cfg, userId });
     } catch (err) {
       setError(getErrorMessage(err, "Failed to connect to Jellyfin"));
     } finally {

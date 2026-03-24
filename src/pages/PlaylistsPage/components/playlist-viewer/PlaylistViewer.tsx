@@ -1,33 +1,36 @@
+import { useJellyfin } from "@src/contexts/JellyfinContext";
 import { useTrackMatching } from "@src/hooks/useTrackMatching";
-import { getMbAuth } from "@src/lib/config";
-import type { JellyfinConfig, MbAuth } from "@src/lib/types";
+import { fetchPlaylists } from "@src/lib/jellyfin";
 import {
   getErrorMessage,
   parseOverrides,
   serializeOverrides,
 } from "@src/lib/utils";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
 import { SyncDropdown } from "./SyncDropdown";
 import { TrackTable } from "./TrackTable";
 
 export function PlaylistViewer({
-  cfg,
   playlistId,
-  playlistName,
 }: {
-  cfg: JellyfinConfig | null;
   playlistId: string | undefined;
-  playlistName: string | undefined;
 }) {
+  const { cfg } = useJellyfin();
   const navigate = useNavigate({ from: "/" });
   const { overrides: rawOverrides } = useSearch({ from: "/" });
   const overrides = parseOverrides(rawOverrides);
-  const [mbAuth, setMbAuth] = useState<MbAuth | null>(null);
 
-  useEffect(() => {
-    setMbAuth(getMbAuth());
-  }, []);
+  // Look up the playlist name from the cached playlists query — no extra network request.
+  const { data: playlists } = useQuery({
+    queryKey: ["playlists", cfg],
+    queryFn: () => {
+      if (!cfg?.userId) throw new Error("No config");
+      return fetchPlaylists(cfg, cfg.userId);
+    },
+    enabled: !!cfg?.userId,
+  });
+  const playlistName = playlists?.find((p) => p.Id === playlistId)?.Name;
 
   const {
     tracks,
@@ -37,11 +40,7 @@ export function PlaylistViewer({
     matchStates,
     matchedMbids,
     totalPartialAuto,
-  } = useTrackMatching(
-    cfg ?? { url: "", apiKey: "" },
-    playlistId ?? "",
-    overrides,
-  );
+  } = useTrackMatching(cfg, playlistId, overrides);
 
   function handleSetOverride(jellyfinId: string, mbid: string) {
     navigate({
@@ -86,7 +85,6 @@ export function PlaylistViewer({
           )}
         </div>
         <SyncDropdown
-          mbAuth={mbAuth}
           playlistName={playlistName ?? ""}
           matchedMbids={matchedMbids}
         />
