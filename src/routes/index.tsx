@@ -1,13 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import {
-	ArrowRight,
-	ChevronDown,
-	LayoutGrid,
-	List,
-	Music,
-	X,
-} from "lucide-react";
+import { ChevronDown, LayoutGrid, List, Music } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import {
 	getJellyfinConfig,
@@ -239,68 +232,6 @@ function PlaylistRow({
 	);
 }
 
-// ─── diagnostic popover ──────────────────────────────────────────────────────
-
-function DiagnosticPopover({
-	track,
-	mbError,
-}: {
-	track: JellyfinTrack;
-	mbError?: Error | null;
-}) {
-	const [open, setOpen] = useState(false);
-	const ref = useRef<HTMLDivElement>(null);
-
-	useEffect(() => {
-		if (!open) return;
-		function close(e: MouseEvent) {
-			if (ref.current && !ref.current.contains(e.target as Node)) {
-				setOpen(false);
-			}
-		}
-		document.addEventListener("mousedown", close);
-		return () => document.removeEventListener("mousedown", close);
-	}, [open]);
-
-	return (
-		<div ref={ref} className="relative inline-block">
-			<button
-				type="button"
-				onClick={() => setOpen((v) => !v)}
-				className="text-xs font-mono text-[var(--sea-ink-soft)] border border-[var(--line)] rounded px-1 leading-4 hover:border-[var(--lagoon)] hover:text-[var(--lagoon-deep)]"
-				aria-label="Show diagnostic info"
-			>
-				?
-			</button>
-			{open && (
-				<div className="absolute left-0 top-full mt-1 z-40 island-shell rounded-lg border border-[var(--line)] p-3 w-72 text-xs rise-in">
-					{mbError ? (
-						<>
-							<p className="font-semibold text-[var(--sea-ink)] mb-1">
-								MusicBrainz lookup failed
-							</p>
-							<p className="text-[var(--sea-ink-soft)]">{mbError.message}</p>
-						</>
-					) : (
-						<>
-							<p className="font-semibold text-[var(--sea-ink)] mb-1">
-								No MusicBrainz recording ID
-							</p>
-							<p className="text-[var(--sea-ink-soft)] mb-2">
-								Raw <code className="text-[0.8em]">ProviderIds</code> from
-								Jellyfin:
-							</p>
-							<pre className="bg-[var(--surface)] rounded p-2 overflow-x-auto text-[0.75rem] text-[var(--sea-ink)]">
-								{JSON.stringify(track.ProviderIds ?? null, null, 2)}
-							</pre>
-						</>
-					)}
-				</div>
-			)}
-		</div>
-	);
-}
-
 // ─── track table row ─────────────────────────────────────────────────────────
 
 function TrackTableRow({
@@ -308,16 +239,13 @@ function TrackTableRow({
 	cfg,
 	recording,
 	mbPending,
-	mbError,
 }: {
 	track: JellyfinTrack;
 	cfg: JellyfinConfig;
 	recording: MbRecording | undefined;
 	mbPending: boolean;
-	mbError: Error | null;
 }) {
 	const mbid = extractMbRecordingId(track);
-	const matched = !!mbid && !!recording;
 
 	return (
 		<tr className="border-b border-[var(--line)] last:border-0 hover:bg-[var(--surface)]/40">
@@ -347,20 +275,7 @@ function TrackTableRow({
 					</div>
 				</div>
 			</td>
-			{/* Link indicator */}
-			<td className="px-4 py-3 w-12 text-center">
-				{mbid && mbPending ? (
-					<div className="h-4 w-4 rounded bg-[var(--line)] animate-pulse mx-auto" />
-				) : matched ? (
-					<ArrowRight size={16} className="text-[var(--lagoon-deep)] mx-auto" />
-				) : (
-					<span className="flex items-center justify-center gap-1">
-						<X size={14} className="text-[var(--sea-ink-soft)] shrink-0" />
-						<DiagnosticPopover track={track} mbError={mbError} />
-					</span>
-				)}
-			</td>
-			{/* MB: title/artist/duration/releases */}
+			{/* MB: title/artist/duration */}
 			<td className="px-4 py-3">
 				{mbid && mbPending && (
 					<div className="animate-pulse">
@@ -631,12 +546,7 @@ function TrackSection({
 		return id ? [id] : [];
 	});
 
-	const {
-		data: recordingMap,
-		isPending: mbPending,
-		isError: mbIsError,
-		error: mbError,
-	} = useQuery({
+	const { data: recordingMap, isPending: mbPending } = useQuery({
 		queryKey: ["playlist-recordings", playlistId, trackMbids],
 		queryFn: () => fetchRecordingsByTrackIds(trackMbids),
 		enabled: trackMbids.length > 0,
@@ -675,14 +585,13 @@ function TrackSection({
 			)}
 
 			<div className="island-shell rounded-xl border border-[var(--line)] overflow-x-auto">
-				<table className="w-full text-sm min-w-[640px]">
+				<table className="w-full text-sm min-w-[640px] table-fixed">
 					<thead>
 						<tr className="border-b border-[var(--line)]">
-							<th className="px-4 py-3 text-left text-xs font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wide">
+							<th className="w-1/2 px-4 py-3 text-left text-xs font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wide">
 								Track
 							</th>
-							<th className="w-12" />
-							<th className="px-4 py-3 text-left text-xs font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wide">
+							<th className="w-1/2 px-4 py-3 text-left text-xs font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wide">
 								MusicBrainz
 							</th>
 						</tr>
@@ -704,7 +613,6 @@ function TrackSection({
 											</div>
 										</td>
 										<td className="px-4 py-3" />
-										<td className="px-4 py-3" />
 									</tr>
 								))
 							: tracks?.map((track) => {
@@ -718,7 +626,6 @@ function TrackSection({
 												trackMbid ? recordingMap?.get(trackMbid) : undefined
 											}
 											mbPending={mbPending && !!trackMbid}
-											mbError={mbIsError ? (mbError as Error) : null}
 										/>
 									);
 								})}
