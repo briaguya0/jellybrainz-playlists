@@ -37,7 +37,7 @@ export function buildAuthUrl(
   url.searchParams.set("response_type", "code");
   url.searchParams.set("client_id", clientId);
   url.searchParams.set("redirect_uri", redirectUri);
-  url.searchParams.set("scope", "collection");
+  url.searchParams.set("scope", "collection profile");
   url.searchParams.set("code_challenge_method", "S256");
   url.searchParams.set("code_challenge", codeChallenge);
   return url.toString();
@@ -48,20 +48,26 @@ export async function exchangeCode(
   codeVerifier: string,
   clientId: string,
   redirectUri: string,
+  clientSecret?: string | null,
 ): Promise<string> {
+
+  const params: Record<string, string> = {
+    grant_type: "authorization_code",
+    code,
+    redirect_uri: redirectUri,
+    client_id: clientId,
+    code_verifier: codeVerifier,
+  };
+  if (clientSecret) params.client_secret = clientSecret;
+
   const resp = await fetch(`${MB_HOST}/oauth2/token`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      grant_type: "authorization_code",
-      code,
-      redirect_uri: redirectUri,
-      client_id: clientId,
-      code_verifier: codeVerifier,
-    }),
+    body: new URLSearchParams(params),
   });
   if (!resp.ok) {
-    throw new Error(`Token exchange failed: ${resp.status} ${resp.statusText}`);
+    const body = await resp.text();
+    throw new Error(`Token exchange failed: ${body}`);
   }
   const data: { access_token: string } = await resp.json();
   return data.access_token;
@@ -72,9 +78,8 @@ export async function fetchMbUsername(accessToken: string): Promise<string> {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
   if (!resp.ok) {
-    throw new Error(
-      `Failed to fetch MB username: ${resp.status} ${resp.statusText}`,
-    );
+    const body = await resp.text();
+    throw new Error(`Failed to fetch MB username: ${body}`);
   }
   const data: { sub: string } = await resp.json();
   return data.sub;

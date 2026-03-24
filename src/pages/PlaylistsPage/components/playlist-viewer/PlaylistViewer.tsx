@@ -84,10 +84,7 @@ export function PlaylistViewer({
             </p>
           )}
         </div>
-        <SyncDropdown
-          playlistName={playlistName ?? ""}
-          matchedMbids={matchedMbids}
-        />
+        <SyncDropdown matchedMbids={matchedMbids} />
       </div>
 
       {isError && (

@@ -1,7 +1,12 @@
 import {
   clearMbAuth,
+  clearMbClientSecret,
   getMbAuth,
+  getMbClientId,
+  getMbClientSecret,
   setMbAuth as storeMbAuth,
+  setMbClientId,
+  setMbClientSecret,
 } from "@src/lib/config";
 import type { MbAuth } from "@src/lib/types";
 import {
@@ -15,15 +20,24 @@ import {
 interface MbAuthContextValue {
   mbAuth: MbAuth | null;
   setMbAuth: (auth: MbAuth | null) => void;
+  clientId: string | null;
+  clientSecret: string | null;
+  setClientId: (id: string) => void;
+  setClientSecret: (secret: string) => void;
+  clearClientSecret: () => void;
 }
 
 const MbAuthContext = createContext<MbAuthContextValue | null>(null);
 
 export function MbAuthProvider({ children }: { children: ReactNode }) {
   const [mbAuth, setMbAuthState] = useState<MbAuth | null>(null);
+  const [clientId, setClientIdState] = useState<string | null>(null);
+  const [clientSecret, setClientSecretState] = useState<string | null>(null);
 
   useEffect(() => {
     setMbAuthState(getMbAuth());
+    setClientIdState(getMbClientId());
+    setClientSecretState(getMbClientSecret());
   }, []);
 
   function setMbAuth(next: MbAuth | null) {
@@ -32,8 +46,35 @@ export function MbAuthProvider({ children }: { children: ReactNode }) {
     setMbAuthState(next);
   }
 
+  function setClientId(id: string) {
+    setMbClientId(id);
+    setClientIdState(id);
+  }
+
+  function setClientSecret(secret: string) {
+    setMbClientSecret(secret);
+    setClientSecretState(secret);
+  }
+
+  function clearClientSecret() {
+    clearMbClientSecret();
+    setClientSecretState(null);
+  }
+
   return (
-    <MbAuthContext value={{ mbAuth, setMbAuth }}>{children}</MbAuthContext>
+    <MbAuthContext
+      value={{
+        mbAuth,
+        setMbAuth,
+        clientId,
+        clientSecret,
+        setClientId,
+        setClientSecret,
+        clearClientSecret,
+      }}
+    >
+      {children}
+    </MbAuthContext>
   );
 }
 
