@@ -89,8 +89,12 @@ export function PlaylistViewer({
           <LbExportButton
             playlistName={playlistName ?? ""}
             matchedMbids={matchedMbids}
+            totalTracks={tracks?.length ?? matchedMbids.length}
           />
-          <SyncDropdown matchedMbids={matchedMbids} />
+          <SyncDropdown
+            matchedMbids={matchedMbids}
+            totalTracks={tracks?.length ?? matchedMbids.length}
+          />
         </div>
       </div>
 
