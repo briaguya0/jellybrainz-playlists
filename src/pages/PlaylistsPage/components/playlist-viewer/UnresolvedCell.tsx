@@ -1,22 +1,21 @@
-import { usePopoverPosition } from "@src/hooks/usePopoverPosition";
+import { Popover } from "@src/components/Popover";
 import { formatArtistCredits, msToDisplay } from "@src/lib/musicbrainz";
 import type { MbRecording } from "@src/lib/types";
 import { ExternalLink } from "lucide-react";
 import { useState } from "react";
-import { createPortal } from "react-dom";
 
-export function UnresolvedCell({
+function UnresolvedContent({
   candidates,
   onOverride,
+  close,
 }: {
   candidates: MbRecording[];
   onOverride: (mbid: string) => void;
+  close: () => void;
 }) {
   const [manualMbid, setManualMbid] = useState("");
-  const { open, setOpen, isMobile, pos, buttonRef, popoverRef, handleToggle } =
-    usePopoverPosition({ placement: "below-left", enableMobile: true });
 
-  const popoverContent = (
+  return (
     <>
       {candidates.length > 0 && (
         <>
@@ -30,7 +29,7 @@ export function UnresolvedCell({
                   type="button"
                   onClick={() => {
                     onOverride(rec.id);
-                    setOpen(false);
+                    close();
                   }}
                   className="flex-1 min-w-0 text-left rounded-lg px-3 py-2 hover:bg-[var(--surface)] text-sm"
                 >
@@ -80,7 +79,7 @@ export function UnresolvedCell({
           e.preventDefault();
           if (manualMbid) {
             onOverride(manualMbid.trim());
-            setOpen(false);
+            close();
           }
         }}
         className="flex flex-col gap-2"
@@ -102,13 +101,30 @@ export function UnresolvedCell({
       </form>
     </>
   );
+}
 
+export function UnresolvedCell({
+  candidates,
+  onOverride,
+}: {
+  candidates: MbRecording[];
+  onOverride: (mbid: string) => void;
+}) {
   return (
-    <div className="relative inline-block">
+    <Popover
+      placement="below-left"
+      enableMobile
+      className="w-80"
+      content={(close) => (
+        <UnresolvedContent
+          candidates={candidates}
+          onOverride={onOverride}
+          close={close}
+        />
+      )}
+    >
       <button
-        ref={buttonRef}
         type="button"
-        onClick={handleToggle}
         aria-label="No MusicBrainz match — click to search or enter MBID"
         className="relative w-8 h-8 cursor-pointer"
       >
@@ -122,34 +138,6 @@ export function UnresolvedCell({
           ?
         </span>
       </button>
-      {open &&
-        createPortal(
-          isMobile ? (
-            <>
-              {/* biome-ignore lint/a11y/noStaticElementInteractions: modal backdrop */}
-              {/* biome-ignore lint/a11y/useKeyWithClickEvents: modal backdrop */}
-              <div
-                className="fixed inset-0 z-50 bg-black/40"
-                onClick={() => setOpen(false)}
-              />
-              <div
-                ref={popoverRef}
-                className="fixed inset-x-0 bottom-0 z-50 island-shell rounded-t-2xl border-t border-[var(--stroke)] p-5 max-h-[80vh] overflow-y-auto rise-in"
-              >
-                {popoverContent}
-              </div>
-            </>
-          ) : (
-            <div
-              ref={popoverRef}
-              style={{ top: pos.top, left: pos.left }}
-              className="fixed z-50 island-shell rounded-xl border border-[var(--stroke)] p-4 w-80 rise-in"
-            >
-              {popoverContent}
-            </div>
-          ),
-          document.body,
-        )}
-    </div>
+    </Popover>
   );
 }
