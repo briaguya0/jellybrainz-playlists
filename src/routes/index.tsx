@@ -1,6 +1,12 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ChevronDown, ExternalLink, LayoutGrid, List, Search } from "lucide-react";
+import {
+  ChevronDown,
+  ExternalLink,
+  LayoutGrid,
+  List,
+  Search,
+} from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
@@ -86,8 +92,8 @@ type TrackMatchState =
 function SkeletonCard() {
   return (
     <div className="island-shell feature-card rounded-xl border p-5 animate-pulse">
-      <div className="h-4 w-3/5 rounded-md bg-[var(--line)] mb-3" />
-      <div className="h-3 w-2/5 rounded-md bg-[var(--line)]" />
+      <div className="h-4 w-3/5 rounded-md bg-[var(--stroke)] mb-3" />
+      <div className="h-3 w-2/5 rounded-md bg-[var(--stroke)]" />
     </div>
   );
 }
@@ -125,15 +131,15 @@ function ConnectForm({
 
   return (
     <div className="island-shell rounded-2xl p-8 w-full max-w-sm rise-in">
-      <h2 className="text-lg font-semibold text-[var(--sea-ink)] mb-1">
+      <h2 className="text-lg font-semibold text-[var(--text)] mb-1">
         Connect to Jellyfin
       </h2>
-      <p className="text-sm text-[var(--sea-ink-soft)] mb-6">
+      <p className="text-sm text-[var(--text-muted)] mb-6">
         Enter your Jellyfin server URL and API key to browse your playlists.
       </p>
       <form onSubmit={handleConnect} className="flex flex-col gap-4">
         <label className="flex flex-col gap-1.5">
-          <span className="text-xs font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wide">
+          <span className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide">
             Server URL
           </span>
           <input
@@ -141,12 +147,12 @@ function ConnectForm({
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             required
-            className="rounded-lg border border-[var(--line)] bg-[var(--surface-strong)] px-3 py-2 text-sm text-[var(--sea-ink)] outline-none focus:border-[var(--lagoon)] focus:ring-1 focus:ring-[var(--lagoon)]"
+            className="rounded-lg border border-[var(--stroke)] bg-[var(--surface-strong)] px-3 py-2 text-sm text-[var(--text)] outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
             placeholder="http://localhost:8096"
           />
         </label>
         <label className="flex flex-col gap-1.5">
-          <span className="text-xs font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wide">
+          <span className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide">
             API Key
           </span>
           <input
@@ -154,7 +160,7 @@ function ConnectForm({
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
             required
-            className="rounded-lg border border-[var(--line)] bg-[var(--surface-strong)] px-3 py-2 text-sm text-[var(--sea-ink)] outline-none focus:border-[var(--lagoon)] focus:ring-1 focus:ring-[var(--lagoon)]"
+            className="rounded-lg border border-[var(--stroke)] bg-[var(--surface-strong)] px-3 py-2 text-sm text-[var(--text)] outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
             placeholder="Paste your API key"
           />
         </label>
@@ -164,12 +170,12 @@ function ConnectForm({
         <button
           type="submit"
           disabled={connecting}
-          className="island-shell rounded-lg px-4 py-2 text-sm font-semibold text-[var(--lagoon-deep)] hover:text-[var(--lagoon)] disabled:opacity-50"
+          className="island-shell rounded-lg px-4 py-2 text-sm font-semibold text-[var(--accent-text)] hover:text-[var(--accent)] disabled:opacity-50"
         >
           {connecting ? "Connecting…" : "Connect"}
         </button>
       </form>
-      <p className="mt-4 text-xs text-[var(--sea-ink-soft)]">
+      <p className="mt-4 text-xs text-[var(--text-muted)]">
         Find your API key in the Jellyfin admin dashboard under{" "}
         <strong>Administration → API Keys</strong>.
       </p>
@@ -205,26 +211,26 @@ function PlaylistCard({
       }
       className={`island-shell feature-card rounded-xl border p-4 text-left w-full rise-in flex items-center gap-3 cursor-pointer ${
         selected
-          ? "border-[var(--lagoon)] ring-2 ring-[var(--lagoon)]/30"
-          : "border-[var(--line)]"
+          ? "border-[var(--accent)] ring-2 ring-[var(--accent)]/30"
+          : "border-[var(--stroke)]"
       }`}
     >
       {imgUrl ? (
         <img
           src={imgUrl}
           alt=""
-          className="w-12 h-12 rounded-lg object-cover shrink-0 bg-[var(--line)]"
+          className="w-12 h-12 rounded-lg object-cover shrink-0 bg-[var(--stroke)]"
           loading="lazy"
         />
       ) : (
-        <div className="w-12 h-12 rounded-lg shrink-0 bg-[var(--line)]" />
+        <div className="w-12 h-12 rounded-lg shrink-0 bg-[var(--stroke)]" />
       )}
       <div className="min-w-0">
-        <p className="font-semibold text-[var(--sea-ink)] truncate">
+        <p className="font-semibold text-[var(--text)] truncate">
           {playlist.Name}
         </p>
         {playlist.ChildCount != null && (
-          <p className="text-xs text-[var(--sea-ink-soft)] mt-0.5">
+          <p className="text-xs text-[var(--text-muted)] mt-0.5">
             {playlist.ChildCount} tracks
           </p>
         )}
@@ -256,15 +262,15 @@ function PlaylistRow({
       }
       className={`island-shell feature-card rounded-lg border px-4 py-3 text-left w-full rise-in flex items-center gap-4 cursor-pointer ${
         selected
-          ? "border-[var(--lagoon)] ring-2 ring-[var(--lagoon)]/30"
-          : "border-[var(--line)]"
+          ? "border-[var(--accent)] ring-2 ring-[var(--accent)]/30"
+          : "border-[var(--stroke)]"
       }`}
     >
-      <span className="font-semibold text-[var(--sea-ink)] flex-1 truncate">
+      <span className="font-semibold text-[var(--text)] flex-1 truncate">
         {playlist.Name}
       </span>
       {playlist.ChildCount != null && (
-        <span className="text-xs text-[var(--sea-ink-soft)] shrink-0">
+        <span className="text-xs text-[var(--text-muted)] shrink-0">
           {playlist.ChildCount} tracks
         </span>
       )}
@@ -282,11 +288,14 @@ function RecordingInfo({ recording }: { recording: MbRecording }) {
       rel="noreferrer"
       className="group min-w-0 flex-1"
     >
-      <p className="text-sm font-medium text-[var(--sea-ink)] truncate flex items-center gap-1">
+      <p className="text-sm font-medium text-[var(--text)] truncate flex items-center gap-1">
         <span className="truncate">{recording.title}</span>
-        <ExternalLink size={10} className="shrink-0 opacity-0 group-hover:opacity-50 transition-opacity" />
+        <ExternalLink
+          size={10}
+          className="shrink-0 opacity-0 group-hover:opacity-50 transition-opacity"
+        />
       </p>
-      <p className="text-xs text-[var(--sea-ink-soft)] truncate">
+      <p className="text-xs text-[var(--text-muted)] truncate">
         {[
           formatArtistCredits(recording["artist-credit"]),
           recording.length != null ? msToDisplay(recording.length) : null,
@@ -382,21 +391,21 @@ function MbBadge({
           <div
             ref={popoverRef}
             style={{ bottom: pos.bottom, right: pos.right }}
-            className="fixed z-50 island-shell rounded-xl border border-[var(--line)] p-4 w-72 rise-in"
+            className="fixed z-50 island-shell rounded-xl border border-[var(--stroke)] p-4 w-72 rise-in"
           >
             {!showChange ? (
               <>
-                <p className="text-xs text-[var(--sea-ink-soft)] mb-2">
+                <p className="text-xs text-[var(--text-muted)] mb-2">
                   {kind === "partial-auto"
                     ? "Matched via artist + title search"
                     : "Manually confirmed"}
                 </p>
                 {recording && (
                   <>
-                    <p className="text-sm font-medium text-[var(--sea-ink)]">
+                    <p className="text-sm font-medium text-[var(--text)]">
                       {recording.title}
                     </p>
-                    <p className="text-xs text-[var(--sea-ink-soft)] mb-3">
+                    <p className="text-xs text-[var(--text-muted)] mb-3">
                       {formatArtistCredits(recording["artist-credit"])}
                     </p>
                   </>
@@ -417,7 +426,7 @@ function MbBadge({
                   <button
                     type="button"
                     onClick={() => setShowChange(true)}
-                    className="flex-1 rounded-lg island-shell border border-[var(--line)] px-3 py-1.5 text-sm text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+                    className="flex-1 rounded-lg island-shell border border-[var(--stroke)] px-3 py-1.5 text-sm text-[var(--text-muted)] hover:text-[var(--text)]"
                   >
                     Change
                   </button>
@@ -425,7 +434,7 @@ function MbBadge({
               </>
             ) : (
               <>
-                <p className="text-xs text-[var(--sea-ink-soft)] mb-2">
+                <p className="text-xs text-[var(--text-muted)] mb-2">
                   Enter MusicBrainz recording ID
                 </p>
                 <form
@@ -445,13 +454,13 @@ function MbBadge({
                     placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
                     // biome-ignore lint/a11y/noAutofocus: intentional focus when user opens change panel
                     autoFocus
-                    className="w-full rounded-lg border border-[var(--line)] bg-[var(--surface-strong)] px-3 py-2 text-xs text-[var(--sea-ink)] outline-none focus:border-[var(--lagoon)]"
+                    className="w-full rounded-lg border border-[var(--stroke)] bg-[var(--surface-strong)] px-3 py-2 text-xs text-[var(--text)] outline-none focus:border-[var(--accent)]"
                   />
                   <div className="flex gap-2">
                     <button
                       type="button"
                       onClick={() => setShowChange(false)}
-                      className="rounded-lg island-shell border border-[var(--line)] px-3 py-1.5 text-sm text-[var(--sea-ink-soft)]"
+                      className="rounded-lg island-shell border border-[var(--stroke)] px-3 py-1.5 text-sm text-[var(--text-muted)]"
                     >
                       Back
                     </button>
@@ -461,14 +470,14 @@ function MbBadge({
                         onClear();
                         setOpen(false);
                       }}
-                      className="rounded-lg island-shell border border-[var(--line)] px-3 py-1.5 text-sm text-red-500 hover:text-red-600"
+                      className="rounded-lg island-shell border border-[var(--stroke)] px-3 py-1.5 text-sm text-red-500 hover:text-red-600"
                     >
                       Clear
                     </button>
                     <button
                       type="submit"
                       disabled={!manualMbid}
-                      className="flex-1 rounded-lg island-shell border border-[var(--line)] px-3 py-1.5 text-sm font-semibold text-[var(--lagoon-deep)] hover:text-[var(--lagoon)] disabled:opacity-30"
+                      className="flex-1 rounded-lg island-shell border border-[var(--stroke)] px-3 py-1.5 text-sm font-semibold text-[var(--accent-text)] hover:text-[var(--accent)] disabled:opacity-30"
                     >
                       Apply
                     </button>
@@ -550,11 +559,11 @@ function UnresolvedCell({
           <div
             ref={popoverRef}
             style={{ top: pos.top, left: pos.left }}
-            className="fixed z-50 island-shell rounded-xl border border-[var(--line)] p-4 w-80 rise-in"
+            className="fixed z-50 island-shell rounded-xl border border-[var(--stroke)] p-4 w-80 rise-in"
           >
             {candidates.length > 0 && (
               <>
-                <p className="text-xs text-[var(--sea-ink-soft)] mb-2">
+                <p className="text-xs text-[var(--text-muted)] mb-2">
                   Possible matches
                 </p>
                 <div className="space-y-1 mb-3">
@@ -568,19 +577,19 @@ function UnresolvedCell({
                         }}
                         className="flex-1 min-w-0 text-left rounded-lg px-3 py-2 hover:bg-[var(--surface)] text-sm"
                       >
-                        <p className="font-medium text-[var(--sea-ink)] truncate">
+                        <p className="font-medium text-[var(--text)] truncate">
                           {rec.title}
                           {rec.length ? (
-                            <span className="ml-1 font-normal text-[var(--sea-ink-soft)]">
+                            <span className="ml-1 font-normal text-[var(--text-muted)]">
                               {msToDisplay(rec.length)}
                             </span>
                           ) : null}
                         </p>
-                        <p className="text-xs text-[var(--sea-ink-soft)] truncate">
+                        <p className="text-xs text-[var(--text-muted)] truncate">
                           {formatArtistCredits(rec["artist-credit"])}
                         </p>
                         {rec.releases?.[0] && (
-                          <p className="text-xs text-[var(--sea-ink-soft)] truncate opacity-60">
+                          <p className="text-xs text-[var(--text-muted)] truncate opacity-60">
                             {[
                               rec.releases[0].title,
                               rec.releases[0].date?.slice(0, 4),
@@ -596,17 +605,17 @@ function UnresolvedCell({
                         rel="noreferrer"
                         onClick={(e) => e.stopPropagation()}
                         aria-label="View on MusicBrainz"
-                        className="shrink-0 p-1.5 text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)] rounded-lg hover:bg-[var(--surface)]"
+                        className="shrink-0 p-1.5 text-[var(--text-muted)] hover:text-[var(--text)] rounded-lg hover:bg-[var(--surface)]"
                       >
                         <ExternalLink size={14} />
                       </a>
                     </div>
                   ))}
                 </div>
-                <hr className="border-[var(--line)] mb-3" />
+                <hr className="border-[var(--stroke)] mb-3" />
               </>
             )}
-            <p className="text-xs text-[var(--sea-ink-soft)] mb-2">
+            <p className="text-xs text-[var(--text-muted)] mb-2">
               Enter MusicBrainz recording ID
             </p>
             <form
@@ -624,12 +633,12 @@ function UnresolvedCell({
                 value={manualMbid}
                 onChange={(e) => setManualMbid(e.target.value)}
                 placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-                className="w-full rounded-lg border border-[var(--line)] bg-[var(--surface-strong)] px-3 py-2 text-xs text-[var(--sea-ink)] outline-none focus:border-[var(--lagoon)]"
+                className="w-full rounded-lg border border-[var(--stroke)] bg-[var(--surface-strong)] px-3 py-2 text-xs text-[var(--text)] outline-none focus:border-[var(--accent)]"
               />
               <button
                 type="submit"
                 disabled={!manualMbid}
-                className="w-full rounded-lg island-shell border border-[var(--line)] px-3 py-1.5 text-sm font-semibold text-[var(--lagoon-deep)] hover:text-[var(--lagoon)] disabled:opacity-30"
+                className="w-full rounded-lg island-shell border border-[var(--stroke)] px-3 py-1.5 text-sm font-semibold text-[var(--accent-text)] hover:text-[var(--accent)] disabled:opacity-30"
               >
                 Apply
               </button>
@@ -664,21 +673,21 @@ function TrackTableRow({
       : undefined;
 
   return (
-    <tr className="border-b border-[var(--line)] last:border-0 hover:bg-[var(--surface)]/40">
+    <tr className="border-b border-[var(--stroke)] last:border-0 hover:bg-[var(--surface)]/40">
       {/* Jellyfin: thumbnail + title/artist/duration */}
       <td className="px-4 py-3">
         <div className="flex items-center gap-3 min-w-0">
           <img
             src={thumbnailUrl(cfg, track)}
             alt=""
-            className="w-10 h-10 rounded shrink-0 bg-[var(--line)] object-cover"
+            className="w-10 h-10 rounded shrink-0 bg-[var(--stroke)] object-cover"
             loading="lazy"
           />
           <div className="min-w-0">
-            <p className="text-sm font-medium text-[var(--sea-ink)] truncate">
+            <p className="text-sm font-medium text-[var(--text)] truncate">
               {track.Name}
             </p>
-            <p className="text-xs text-[var(--sea-ink-soft)] truncate">
+            <p className="text-xs text-[var(--text-muted)] truncate">
               {[
                 track.Artists?.join(", "),
                 track.RunTimeTicks != null
@@ -702,8 +711,8 @@ function TrackTableRow({
               </span>
             </div>
             <div className="min-w-0 flex-1">
-              <div className="h-3 w-32 rounded bg-[var(--line)] mb-1.5" />
-              <div className="h-2.5 w-20 rounded bg-[var(--line)]" />
+              <div className="h-3 w-32 rounded bg-[var(--stroke)] mb-1.5" />
+              <div className="h-2.5 w-20 rounded bg-[var(--stroke)]" />
             </div>
           </div>
         )}
@@ -859,7 +868,7 @@ function SyncDropdown({
             setSyncState({ phase: "idle" });
           }
         }}
-        className="island-shell flex items-center gap-1.5 rounded-lg border border-[var(--line)] px-3 py-1.5 text-sm font-semibold text-[var(--lagoon-deep)] hover:text-[var(--lagoon)]"
+        className="island-shell flex items-center gap-1.5 rounded-lg border border-[var(--stroke)] px-3 py-1.5 text-sm font-semibold text-[var(--accent-text)] hover:text-[var(--accent)]"
       >
         <img
           src="/musicbrainz-icon.svg"
@@ -873,27 +882,27 @@ function SyncDropdown({
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-1 z-40 island-shell rounded-xl border border-[var(--line)] p-4 w-72 rise-in">
+        <div className="absolute right-0 top-full mt-1 z-40 island-shell rounded-xl border border-[var(--stroke)] p-4 w-72 rise-in">
           {!mbAuth ? (
             <>
-              <p className="text-sm text-[var(--sea-ink-soft)] mb-3">
+              <p className="text-sm text-[var(--text-muted)] mb-3">
                 Log in to MusicBrainz to sync this playlist.
               </p>
               <button
                 type="button"
                 onClick={startOAuth}
-                className="w-full island-shell rounded-lg border border-[var(--line)] px-3 py-2 text-sm font-semibold text-[var(--lagoon-deep)] hover:text-[var(--lagoon)]"
+                className="w-full island-shell rounded-lg border border-[var(--stroke)] px-3 py-2 text-sm font-semibold text-[var(--accent-text)] hover:text-[var(--accent)]"
               >
                 Connect MusicBrainz
               </button>
             </>
           ) : syncState.phase === "progress" ? (
-            <p className="text-sm text-[var(--sea-ink-soft)]">
+            <p className="text-sm text-[var(--text-muted)]">
               Adding {syncState.total} recordings…
             </p>
           ) : syncState.phase === "done" ? (
             <>
-              <p className="text-sm font-semibold text-[var(--sea-ink)] mb-2">
+              <p className="text-sm font-semibold text-[var(--text)] mb-2">
                 Sync complete
               </p>
               <a
@@ -911,21 +920,21 @@ function SyncDropdown({
             </p>
           ) : (
             <>
-              <p className="text-xs text-[var(--sea-ink-soft)] mb-3">
+              <p className="text-xs text-[var(--text-muted)] mb-3">
                 Syncing {matchedMbids.length} matched recording
                 {matchedMbids.length === 1 ? "" : "s"} as {mbAuth.username}
               </p>
               <button
                 type="button"
                 onClick={exportToNew}
-                className="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-[var(--surface)] text-[var(--sea-ink)]"
+                className="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-[var(--surface)] text-[var(--text)]"
               >
                 Export to new collection
               </button>
               {collections && collections.length > 0 && (
                 <>
-                  <hr className="border-[var(--line)] my-2" />
-                  <p className="text-xs text-[var(--sea-ink-soft)] mb-1 px-1">
+                  <hr className="border-[var(--stroke)] my-2" />
+                  <p className="text-xs text-[var(--text-muted)] mb-1 px-1">
                     Export to existing collection
                   </p>
                   <div className="max-h-48 overflow-y-auto">
@@ -936,7 +945,7 @@ function SyncDropdown({
                           key={c.id}
                           type="button"
                           onClick={() => exportToExisting(c)}
-                          className="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-[var(--surface)] text-[var(--sea-ink)] truncate"
+                          className="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-[var(--surface)] text-[var(--text)] truncate"
                         >
                           {c.name}
                         </button>
@@ -1150,11 +1159,11 @@ function TrackSection({
     <section className="mt-10 rise-in">
       <div className="flex items-center justify-between mb-3">
         <div>
-          <h2 className="text-base font-semibold text-[var(--sea-ink)]">
+          <h2 className="text-base font-semibold text-[var(--text)]">
             {playlistName}
           </h2>
           {tracks && (
-            <p className="text-xs text-[var(--sea-ink-soft)]">
+            <p className="text-xs text-[var(--text-muted)]">
               {matchedMbids.length}/{tracks.length} matched
               {totalPartialAuto > 0 ? `, ${totalPartialAuto} unconfirmed` : ""}
             </p>
@@ -1173,10 +1182,10 @@ function TrackSection({
         </p>
       )}
 
-      <div className="island-shell rounded-xl border border-[var(--line)] overflow-x-auto">
+      <div className="island-shell rounded-xl border border-[var(--stroke)] overflow-x-auto">
         <table className="w-full text-sm min-w-[640px] table-fixed">
           <thead>
-            <tr className="border-b border-[var(--line)]">
+            <tr className="border-b border-[var(--stroke)]">
               <th className="w-1/2 px-4 py-3 text-center">
                 <img
                   src="/jellyfin-icon.svg"
@@ -1202,14 +1211,14 @@ function TrackSection({
               ? ["sk-1", "sk-2", "sk-3", "sk-4", "sk-5"].map((k) => (
                   <tr
                     key={k}
-                    className="border-b border-[var(--line)] animate-pulse"
+                    className="border-b border-[var(--stroke)] animate-pulse"
                   >
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded bg-[var(--line)]" />
+                        <div className="w-10 h-10 rounded bg-[var(--stroke)]" />
                         <div>
-                          <div className="h-3 w-32 rounded bg-[var(--line)] mb-1.5" />
-                          <div className="h-2.5 w-20 rounded bg-[var(--line)]" />
+                          <div className="h-3 w-32 rounded bg-[var(--stroke)] mb-1.5" />
+                          <div className="h-2.5 w-20 rounded bg-[var(--stroke)]" />
                         </div>
                       </div>
                     </td>
@@ -1298,7 +1307,7 @@ function PlaylistsPage() {
       ) : (
         <>
           <div className="flex items-center justify-between mb-5">
-            <h1 className="text-xl font-semibold text-[var(--sea-ink)] flex items-center gap-2">
+            <h1 className="text-xl font-semibold text-[var(--text)] flex items-center gap-2">
               <img
                 src="/jellyfin-icon.svg"
                 width={22}
@@ -1315,8 +1324,8 @@ function PlaylistsPage() {
                 aria-label="Grid view"
                 className={`p-2 rounded-lg border ${
                   viewMode === "grid"
-                    ? "island-shell border-[var(--lagoon)] text-[var(--lagoon-deep)]"
-                    : "border-transparent text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+                    ? "island-shell border-[var(--accent)] text-[var(--accent-text)]"
+                    : "border-transparent text-[var(--text-muted)] hover:text-[var(--text)]"
                 }`}
               >
                 <LayoutGrid size={16} />
@@ -1327,8 +1336,8 @@ function PlaylistsPage() {
                 aria-label="List view"
                 className={`p-2 rounded-lg border ${
                   viewMode === "list"
-                    ? "island-shell border-[var(--lagoon)] text-[var(--lagoon-deep)]"
-                    : "border-transparent text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)]"
+                    ? "island-shell border-[var(--accent)] text-[var(--accent-text)]"
+                    : "border-transparent text-[var(--text-muted)] hover:text-[var(--text)]"
                 }`}
               >
                 <List size={16} />
@@ -1387,18 +1396,18 @@ function PlaylistsPage() {
                 type="button"
                 onClick={() => setPage((p) => p - 1)}
                 disabled={page === 0}
-                className="island-shell rounded-lg border border-[var(--line)] px-3 py-1.5 text-sm text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)] disabled:opacity-30"
+                className="island-shell rounded-lg border border-[var(--stroke)] px-3 py-1.5 text-sm text-[var(--text-muted)] hover:text-[var(--text)] disabled:opacity-30"
               >
                 ← Prev
               </button>
-              <span className="text-xs text-[var(--sea-ink-soft)]">
+              <span className="text-xs text-[var(--text-muted)]">
                 {page + 1} / {totalPages}
               </span>
               <button
                 type="button"
                 onClick={() => setPage((p) => p + 1)}
                 disabled={page >= totalPages - 1}
-                className="island-shell rounded-lg border border-[var(--line)] px-3 py-1.5 text-sm text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)] disabled:opacity-30"
+                className="island-shell rounded-lg border border-[var(--stroke)] px-3 py-1.5 text-sm text-[var(--text-muted)] hover:text-[var(--text)] disabled:opacity-30"
               >
                 Next →
               </button>
