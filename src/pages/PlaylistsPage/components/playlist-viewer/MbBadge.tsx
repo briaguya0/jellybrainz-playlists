@@ -55,7 +55,7 @@ function MbBadgeContent({
           <button
             type="button"
             onClick={() => setShowChange(true)}
-            className="flex-1 rounded-lg island-shell border border-stroke px-3 py-1.5 text-sm text-app-muted hover:text-app-text"
+            className="flex-1 rounded-lg glass-panel border border-stroke px-3 py-1.5 text-sm text-app-muted hover:text-app-text"
           >
             Change
           </button>
@@ -92,7 +92,7 @@ function MbBadgeContent({
           <button
             type="button"
             onClick={() => setShowChange(false)}
-            className="rounded-lg island-shell border border-stroke px-3 py-1.5 text-sm text-app-muted hover:text-app-text"
+            className="rounded-lg glass-panel border border-stroke px-3 py-1.5 text-sm text-app-muted hover:text-app-text"
           >
             Back
           </button>
@@ -102,7 +102,7 @@ function MbBadgeContent({
               onClear();
               close();
             }}
-            className="rounded-lg island-shell border border-stroke px-3 py-1.5 text-sm text-red-500 hover:text-red-400"
+            className="rounded-lg glass-panel border border-stroke px-3 py-1.5 text-sm text-red-500 hover:text-red-400"
           >
             Clear
           </button>

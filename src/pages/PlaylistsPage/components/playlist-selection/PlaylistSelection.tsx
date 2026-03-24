@@ -81,7 +81,7 @@ export function PlaylistSelection({
             aria-label="Grid view"
             className={`p-2 rounded-lg border ${
               viewMode === "grid"
-                ? "island-shell border-[var(--accent)] text-accent-text"
+                ? "glass-panel border-[var(--accent)] text-accent-text"
                 : "border-transparent text-app-muted hover:text-app-text"
             }`}
           >
@@ -93,7 +93,7 @@ export function PlaylistSelection({
             aria-label="List view"
             className={`p-2 rounded-lg border ${
               viewMode === "list"
-                ? "island-shell border-[var(--accent)] text-accent-text"
+                ? "glass-panel border-[var(--accent)] text-accent-text"
                 : "border-transparent text-app-muted hover:text-app-text"
             }`}
           >
@@ -151,7 +151,7 @@ export function PlaylistSelection({
             type="button"
             onClick={() => setPage((p) => p - 1)}
             disabled={page === 0}
-            className="island-shell rounded-lg border border-stroke px-3 py-1.5 text-sm text-app-muted enabled:hover:text-app-text disabled:opacity-30"
+            className="glass-panel rounded-lg border border-stroke px-3 py-1.5 text-sm text-app-muted enabled:hover:text-app-text disabled:opacity-30"
           >
             ← Prev
           </button>
@@ -162,7 +162,7 @@ export function PlaylistSelection({
             type="button"
             onClick={() => setPage((p) => p + 1)}
             disabled={page >= totalPages - 1}
-            className="island-shell rounded-lg border border-stroke px-3 py-1.5 text-sm text-app-muted enabled:hover:text-app-text disabled:opacity-30"
+            className="glass-panel rounded-lg border border-stroke px-3 py-1.5 text-sm text-app-muted enabled:hover:text-app-text disabled:opacity-30"
           >
             Next →
           </button>
