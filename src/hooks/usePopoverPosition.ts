@@ -1,4 +1,4 @@
-import { MOBILE_BREAKPOINT } from "@src/lib/constants";
+import { useIsMobile } from "@src/hooks/useIsMobile";
 import type { RefObject } from "react";
 import { useEffect, useRef, useState } from "react";
 
@@ -24,7 +24,7 @@ export function usePopoverPosition({
   handleToggle: () => void;
 } {
   const [open, setOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useIsMobile();
   const [pos, setPos] = useState<{
     top?: number;
     bottom?: number;
@@ -50,13 +50,9 @@ export function usePopoverPosition({
 
   function handleToggle() {
     if (!open && buttonRef.current) {
-      if (enableMobile) {
-        const mobile = window.innerWidth < MOBILE_BREAKPOINT;
-        setIsMobile(mobile);
-        if (mobile) {
-          setOpen((v) => !v);
-          return;
-        }
+      if (enableMobile && isMobile) {
+        setOpen((v) => !v);
+        return;
       }
       const r = buttonRef.current.getBoundingClientRect();
       if (placement === "above-right") {
