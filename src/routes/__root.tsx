@@ -1,5 +1,7 @@
 import Footer from "@src/components/Footer";
 import Header from "@src/components/Header";
+import { JellyfinProvider } from "@src/contexts/JellyfinContext";
+import { MbAuthProvider } from "@src/contexts/MbAuthContext";
 import TanStackQueryDevtools from "@src/integrations/tanstack-query/devtools";
 import TanStackQueryProvider from "@src/integrations/tanstack-query/root-provider";
 import appCss from "@src/styles.css?url";
@@ -52,9 +54,13 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body className="font-sans antialiased [overflow-wrap:anywhere] selection:bg-[rgba(79,184,178,0.24)]">
         <TanStackQueryProvider>
-          <Header />
-          {children}
-          <Footer />
+          <JellyfinProvider>
+            <MbAuthProvider>
+              <Header />
+              {children}
+              <Footer />
+            </MbAuthProvider>
+          </JellyfinProvider>
           <TanStackDevtools
             config={{
               position: "bottom-right",
