@@ -376,7 +376,7 @@ export function LbExportButton({
         ) : playlists.length > 0 ? (
           <>
             <hr className="border-stroke my-2" />
-            <p className="text-xs text-app-muted mb-1 px-1">Add to existing playlist</p>
+            <p className="text-xs text-app-muted mb-1 px-1">Export to existing playlist</p>
             <div className="max-h-48 overflow-y-auto">
               {playlists.map((p) => {
                 const mbid = mbidFromIdentifier(p.identifier);
@@ -387,20 +387,23 @@ export function LbExportButton({
                     onClick={() => setView({ kind: "picked", playlist: p })}
                     className="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-hover text-app-text flex items-center gap-1.5"
                   >
-                    <span className="truncate flex-1">{p.title}</span>
+                    <span className="truncate flex-1 flex items-center gap-1">
+                      {p.title}
+                      <a
+                        href={playlistUrl(mbid)}
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="shrink-0 text-app-muted hover:text-app-text"
+                        aria-label={`View ${p.title} on ListenBrainz`}
+                      >
+                        ↗
+                      </a>
+                    </span>
                     {p.track_count !== undefined && (
                       <span className="shrink-0 text-xs text-app-muted">{p.track_count}</span>
                     )}
-                    <a
-                      href={playlistUrl(mbid)}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                      className="shrink-0 text-app-muted hover:text-app-text"
-                      aria-label={`View ${p.title} on ListenBrainz`}
-                    >
-                      ↗
-                    </a>
+                    <span className="shrink-0 text-app-muted">›</span>
                   </button>
                 );
               })}

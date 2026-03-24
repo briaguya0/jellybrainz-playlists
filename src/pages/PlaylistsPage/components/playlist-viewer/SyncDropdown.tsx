@@ -379,22 +379,25 @@ export function SyncDropdown({
                 onClick={() => setView({ kind: "picked", collection: c })}
                 className="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-hover text-app-text flex items-center gap-1.5"
               >
-                <span className="truncate flex-1">{c.name}</span>
+                <span className="truncate flex-1 flex items-center gap-1">
+                  {c.name}
+                  <a
+                    href={`https://musicbrainz.org/collection/${c.id}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="shrink-0 text-app-muted hover:text-app-text"
+                    aria-label={`View ${c.name} on MusicBrainz`}
+                  >
+                    ↗
+                  </a>
+                </span>
                 {c["recording-count"] !== undefined && (
                   <span className="shrink-0 text-xs text-app-muted">
                     {c["recording-count"]}
                   </span>
                 )}
-                <a
-                  href={`https://musicbrainz.org/collection/${c.id}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className="shrink-0 text-app-muted hover:text-app-text"
-                  aria-label={`View ${c.name} on MusicBrainz`}
-                >
-                  ↗
-                </a>
+                <span className="shrink-0 text-app-muted">›</span>
               </button>
             ))}
           </div>
