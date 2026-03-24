@@ -1,10 +1,11 @@
+import pkg from "@root/package.json";
 import type { MbCollection, MbRecording } from "./types";
 
 const MB_HOST =
   (import.meta.env.VITE_MB_BASE_URL as string | undefined) ??
   "https://musicbrainz.org";
 export const MB_BASE = `${MB_HOST}/ws/2`;
-const MB_CLIENT = "jellybrainz-playlists-0.1.0";
+const MB_CLIENT = `jellybrainz-playlists-${pkg.version}`;
 const MB_BATCH = 400;
 function mbHeaders(accessToken?: string): Record<string, string> {
   if (accessToken) return { Authorization: `Bearer ${accessToken}` };
