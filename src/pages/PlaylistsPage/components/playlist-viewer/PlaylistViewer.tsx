@@ -1,5 +1,5 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTrackMatching } from "../../../../hooks/useTrackMatching";
 import { getMbAuth } from "../../../../lib/config";
 import type { JellyfinConfig, MbAuth } from "../../../../lib/types";
@@ -18,7 +18,7 @@ export function PlaylistViewer({
 }) {
   const navigate = useNavigate({ from: "/" });
   const { overrides: rawOverrides } = useSearch({ from: "/" });
-  const overrides = useMemo(() => parseOverrides(rawOverrides), [rawOverrides]);
+  const overrides = parseOverrides(rawOverrides);
   const [mbAuth, setMbAuth] = useState<MbAuth | null>(null);
 
   useEffect(() => {
