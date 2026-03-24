@@ -17,8 +17,8 @@ import type {
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 export function useTrackMatching(
-  cfg: JellyfinConfig,
-  playlistId: string,
+  cfg: JellyfinConfig | null,
+  playlistId: string | undefined,
   overrides: Record<string, string>,
 ): {
   tracks: JellyfinTrack[] | undefined;
@@ -37,10 +37,10 @@ export function useTrackMatching(
   } = useQuery({
     queryKey: ["playlist-tracks", playlistId, cfg],
     queryFn: () => {
-      if (!cfg.userId) throw new Error("No userId");
+      if (!cfg?.userId || !playlistId) throw new Error("No config");
       return fetchPlaylistTracks(cfg, cfg.userId, playlistId);
     },
-    enabled: !!cfg.userId,
+    enabled: !!cfg?.userId && !!playlistId,
   });
 
   const trackMbids = (tracks ?? []).flatMap((t) => {

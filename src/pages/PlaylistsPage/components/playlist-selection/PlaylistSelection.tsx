@@ -1,3 +1,4 @@
+import { useJellyfin } from "@src/contexts/JellyfinContext";
 import { fetchPlaylists } from "@src/lib/jellyfin";
 import type { JellyfinConfig, JellyfinPlaylist } from "@src/lib/types";
 import { useQuery } from "@tanstack/react-query";
@@ -12,16 +13,11 @@ import { SkeletonCard } from "./SkeletonCard";
 const PAGE_SIZE = 12;
 
 export function PlaylistSelection({
-  cfg,
-  hydrated,
   selectedId,
-  onConnect,
 }: {
-  cfg: JellyfinConfig | null;
-  hydrated: boolean;
   selectedId: string | undefined;
-  onConnect: (cfg: JellyfinConfig) => void;
 }) {
+  const { cfg, hydrated } = useJellyfin();
   const navigate = useNavigate({ from: "/" });
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [page, setPage] = useState(0);
@@ -62,7 +58,7 @@ export function PlaylistSelection({
   );
 
   if (showConnect) {
-    return <ConnectForm onConnected={onConnect} />;
+    return <ConnectForm />;
   }
 
   return (
