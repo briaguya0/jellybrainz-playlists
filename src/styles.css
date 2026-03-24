@@ -63,25 +63,25 @@
 }
 
 .dark {
-  --text: #d7ece8;
-  --text-muted: #afcdc8;
-  --accent: #60d7cf;
-  --accent-text: #8de5db;
-  --highlight: #6ec89a;
-  --bg-dim: #0f1a1e;
-  --bg-raised: #101d22;
-  --surface: rgba(16, 30, 34, 0.8);
-  --surface-strong: rgba(15, 27, 31, 0.92);
-  --stroke: rgba(141, 229, 219, 0.18);
-  --glint: rgba(194, 247, 238, 0.14);
-  --label: #b8efe5;
-  --bg: #0a1418;
-  --header-bg: rgba(10, 20, 24, 0.8);
-  --chip-bg: rgba(13, 28, 32, 0.9);
-  --chip-stroke: rgba(141, 229, 219, 0.24);
-  --hover-bg: rgba(24, 44, 49, 0.8);
-  --glow-a: rgba(96, 215, 207, 0.18);
-  --glow-b: rgba(110, 200, 154, 0.12);
+  --text: #dde0f0;
+  --text-muted: #888ba8;
+  --accent: #00a4dc;
+  --accent-text: #38bce8;
+  --highlight: #c45a9e;
+  --bg-dim: #0b0c18;
+  --bg-raised: #0e0f1c;
+  --surface: rgba(14, 15, 28, 0.8);
+  --surface-strong: rgba(11, 12, 22, 0.92);
+  --stroke: rgba(0, 164, 220, 0.14);
+  --glint: rgba(186, 71, 143, 0.1);
+  --label: #60c4ed;
+  --bg: #080910;
+  --header-bg: rgba(8, 9, 16, 0.85);
+  --chip-bg: rgba(14, 15, 28, 0.9);
+  --chip-stroke: rgba(0, 164, 220, 0.2);
+  --hover-bg: rgba(18, 20, 38, 0.8);
+  --glow-a: rgba(0, 164, 220, 0.14);
+  --glow-b: rgba(186, 71, 143, 0.1);
 
   --background: oklch(0.141 0.005 285.823);
   --foreground: oklch(0.985 0 0);
@@ -191,6 +191,13 @@ body::before {
     radial-gradient(circle at 42% 82%, rgba(47, 106, 74, 0.14), transparent 36%);
 }
 
+.dark body::before {
+  background:
+    radial-gradient(circle at 18% 14%, rgba(0, 164, 220, 0.18), transparent 38%),
+    radial-gradient(circle at 80% 22%, rgba(186, 71, 143, 0.14), transparent 44%),
+    radial-gradient(circle at 44% 84%, rgba(0, 164, 220, 0.08), transparent 36%);
+}
+
 body::after {
   content: '';
   position: fixed;
@@ -259,12 +266,26 @@ pre code {
   backdrop-filter: blur(4px);
 }
 
+.dark .island-shell {
+  box-shadow:
+    0 1px 0 var(--glint) inset,
+    0 22px 44px rgba(0, 164, 220, 0.06),
+    0 6px 18px rgba(8, 9, 16, 0.5);
+}
+
 .feature-card {
   background: linear-gradient(165deg, color-mix(in oklab, var(--surface-strong) 93%, white 7%), var(--surface));
   box-shadow:
     0 1px 0 var(--glint) inset,
     0 18px 34px rgba(30, 90, 72, 0.1),
     0 4px 14px rgba(23, 58, 64, 0.06);
+}
+
+.dark .feature-card {
+  box-shadow:
+    0 1px 0 var(--glint) inset,
+    0 18px 34px rgba(0, 164, 220, 0.05),
+    0 4px 14px rgba(8, 9, 16, 0.4);
 }
 
 .feature-card:hover {
