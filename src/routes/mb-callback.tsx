@@ -57,7 +57,10 @@ function MbCallbackPage() {
         const username = await fetchMbUsername(accessToken);
         setMbAuth({ accessToken, username });
         sessionStorage.removeItem("mb_pkce_verifier");
-        navigate({ to: "/", search: { playlist: undefined, overrides: undefined } });
+        navigate({
+          to: "/",
+          search: { playlist: undefined, overrides: undefined },
+        });
       } catch (err) {
         setErrorMsg(
           err instanceof Error ? err.message : "Failed to complete OAuth flow",
