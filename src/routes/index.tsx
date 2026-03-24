@@ -305,11 +305,13 @@ function MbBadge({
   recording,
   onConfirm,
   onOverride,
+  onClear,
 }: {
   kind: "partial-auto" | "override";
   recording: MbRecording | undefined;
   onConfirm?: () => void;
   onOverride: (mbid: string) => void;
+  onClear: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const [showChange, setShowChange] = useState(false);
@@ -449,9 +451,19 @@ function MbBadge({
                     <button
                       type="button"
                       onClick={() => setShowChange(false)}
-                      className="flex-1 rounded-lg island-shell border border-[var(--line)] px-3 py-1.5 text-sm text-[var(--sea-ink-soft)]"
+                      className="rounded-lg island-shell border border-[var(--line)] px-3 py-1.5 text-sm text-[var(--sea-ink-soft)]"
                     >
                       Back
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onClear();
+                        setOpen(false);
+                      }}
+                      className="rounded-lg island-shell border border-[var(--line)] px-3 py-1.5 text-sm text-red-500 hover:text-red-600"
+                    >
+                      Clear
                     </button>
                     <button
                       type="submit"
@@ -636,11 +648,13 @@ function TrackTableRow({
   cfg,
   matchState,
   onSetOverride,
+  onClearOverride,
 }: {
   track: JellyfinTrack;
   cfg: JellyfinConfig;
   matchState: TrackMatchState;
   onSetOverride: (jellyfinId: string, mbid: string) => void;
+  onClearOverride: (jellyfinId: string) => void;
 }) {
   const recording =
     matchState.kind === "exact" ||
@@ -713,12 +727,14 @@ function TrackTableRow({
                     onSetOverride(track.Id, matchState.recording.id)
                   }
                   onOverride={(mbid) => onSetOverride(track.Id, mbid)}
+                  onClear={() => onClearOverride(track.Id)}
                 />
               ) : matchState.recording ? (
                 <MbBadge
                   kind="override"
                   recording={matchState.recording}
                   onOverride={(mbid) => onSetOverride(track.Id, mbid)}
+                  onClear={() => onClearOverride(track.Id)}
                 />
               ) : (
                 // override recording still loading
@@ -1045,6 +1061,17 @@ function TrackSection({
     });
   }
 
+  function handleClearOverride(jellyfinId: string) {
+    navigate({
+      search: (prev) => {
+        const next = { ...parseOverrides(prev.overrides) };
+        delete next[jellyfinId];
+        return { ...prev, overrides: serializeOverrides(next) };
+      },
+      replace: true,
+    });
+  }
+
   // Compute per-track match state
   const matchStates = useMemo((): Map<string, TrackMatchState> => {
     const map = new Map<string, TrackMatchState>();
@@ -1198,6 +1225,7 @@ function TrackSection({
                       matchStates.get(track.Id) ?? { kind: "loading" }
                     }
                     onSetOverride={handleSetOverride}
+                    onClearOverride={handleClearOverride}
                   />
                 ))}
           </tbody>
