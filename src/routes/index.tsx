@@ -592,11 +592,23 @@ function TrackSection({
 				<table className="w-full text-sm min-w-[640px] table-fixed">
 					<thead>
 						<tr className="border-b border-[var(--line)]">
-							<th className="w-1/2 px-4 py-3 text-left text-xs font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wide">
-								Track
+							<th className="w-1/2 px-4 py-3 text-center">
+								<img
+									src="/jellyfin-icon.svg"
+									width={32}
+									height={32}
+									alt="Jellyfin"
+									className="mx-auto"
+								/>
 							</th>
-							<th className="w-1/2 px-4 py-3 text-left text-xs font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wide">
-								MusicBrainz
+							<th className="w-1/2 px-4 py-3 text-center">
+								<img
+									src="/musicbrainz-icon.svg"
+									width={32}
+									height={32}
+									alt="MusicBrainz"
+									className="mx-auto"
+								/>
 							</th>
 						</tr>
 					</thead>
