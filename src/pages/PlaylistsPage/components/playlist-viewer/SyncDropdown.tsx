@@ -43,7 +43,7 @@ export function SyncDropdown({
     if (open && mbAuth && !collections) {
       fetchCollections(mbAuth.username, mbAuth.accessToken).then(
         setCollections,
-        () => {},
+        (err) => console.error("Failed to fetch MB collections:", err),
       );
     }
   }, [open, mbAuth, collections]);
