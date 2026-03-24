@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { setMbAuth } from "../lib/config";
 import { exchangeCode, fetchMbUsername } from "../lib/oauth";
+import { getErrorMessage } from "../lib/utils";
 
 export const Route = createFileRoute("/mb-callback")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -62,9 +63,7 @@ function MbCallbackPage() {
           search: { playlist: undefined, overrides: undefined },
         });
       } catch (err) {
-        setErrorMsg(
-          err instanceof Error ? err.message : "Failed to complete OAuth flow",
-        );
+        setErrorMsg(getErrorMessage(err, "Failed to complete OAuth flow"));
         setStatus("error");
       }
     })();

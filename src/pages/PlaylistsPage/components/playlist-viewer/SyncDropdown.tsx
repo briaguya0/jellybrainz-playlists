@@ -6,6 +6,7 @@ import {
 } from "../../../../lib/musicbrainz";
 import { buildAuthUrl, generatePkce } from "../../../../lib/oauth";
 import type { MbAuth, MbCollection } from "../../../../lib/types";
+import { getErrorMessage } from "../../../../lib/utils";
 
 type SyncState =
   | { phase: "idle" }
@@ -74,7 +75,7 @@ export function SyncDropdown({
     } catch (err) {
       setSyncState({
         phase: "error",
-        message: err instanceof Error ? err.message : "Sync failed",
+        message: getErrorMessage(err, "Sync failed"),
       });
     }
   }
@@ -92,7 +93,7 @@ export function SyncDropdown({
     } catch (err) {
       setSyncState({
         phase: "error",
-        message: err instanceof Error ? err.message : "Sync failed",
+        message: getErrorMessage(err, "Sync failed"),
       });
     }
   }

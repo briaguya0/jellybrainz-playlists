@@ -2,6 +2,7 @@ import { useState } from "react";
 import { setJellyfinConfig as storeJellyfinConfig } from "../../../../lib/config";
 import { resolveUserId } from "../../../../lib/jellyfin";
 import type { JellyfinConfig } from "../../../../lib/types";
+import { getErrorMessage } from "../../../../lib/utils";
 
 export function ConnectForm({
   onConnected,
@@ -24,9 +25,7 @@ export function ConnectForm({
       storeJellyfinConfig(cfgWithUser);
       onConnected(cfgWithUser);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to connect to Jellyfin",
-      );
+      setError(getErrorMessage(err, "Failed to connect to Jellyfin"));
     } finally {
       setConnecting(false);
     }

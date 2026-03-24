@@ -10,6 +10,7 @@ import {
 import { resolveUserId } from "../lib/jellyfin";
 import { buildAuthUrl, generatePkce } from "../lib/oauth";
 import type { JellyfinConfig, MbAuth } from "../lib/types";
+import { getErrorMessage } from "../lib/utils";
 
 // ─── theme logic ──────────────────────────────────────────────────────────────
 
@@ -109,9 +110,7 @@ export function SettingsPanel({ onClose }: { onClose: () => void }) {
       setJellyfinConfigState(updated);
       setSaveSuccess(true);
     } catch (err) {
-      setSaveError(
-        err instanceof Error ? err.message : "Failed to connect to Jellyfin",
-      );
+      setSaveError(getErrorMessage(err, "Failed to connect to Jellyfin"));
     } finally {
       setSaving(false);
     }
