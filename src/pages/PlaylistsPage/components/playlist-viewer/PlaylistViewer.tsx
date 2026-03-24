@@ -67,6 +67,8 @@ export function PlaylistViewer({
     });
   }
 
+  // Early return is intentionally placed after all hook calls — hooks must be
+  // called unconditionally (Rules of React), so the guard can't move to the top.
   if (!cfg || !playlistId) return null;
 
   return (
