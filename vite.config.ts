@@ -4,6 +4,7 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
+import { mockJellyfinPlugin } from "./vite-plugin-mock-jellyfin";
 
 const config = defineConfig({
   plugins: [
@@ -16,6 +17,7 @@ const config = defineConfig({
         plugins: ["babel-plugin-react-compiler"],
       },
     }),
+    mockJellyfinPlugin(),
   ],
 });
 
