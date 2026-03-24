@@ -53,9 +53,11 @@ function mbidFromIdentifier(identifier: string): string {
 export function LbExportButton({
   playlistName,
   matchedMbids,
+  totalTracks,
 }: {
   playlistName: string;
   matchedMbids: string[];
+  totalTracks: number;
 }) {
   const { lbAuth } = useLbAuth();
   const [open, setOpen] = useState(false);
@@ -179,10 +181,16 @@ export function LbExportButton({
       return (
         <>
           <BackButton onClick={() => setView({ kind: "idle" })} />
-          <p className="text-xs text-app-muted mb-3">
+          <p className="text-xs text-app-muted mb-1">
             {matchedMbids.length} recording{matchedMbids.length === 1 ? "" : "s"} ·{" "}
             {lbAuth.username}
           </p>
+          {matchedMbids.length < totalTracks && (
+            <p className="text-xs text-amber-600 dark:text-amber-400 mb-3">
+              {totalTracks - matchedMbids.length} track
+              {totalTracks - matchedMbids.length === 1 ? "" : "s"} unmatched and will be skipped.
+            </p>
+          )}
           <label className="block text-xs text-app-muted mb-1">Playlist name</label>
           <input
             type="text"
@@ -342,10 +350,16 @@ export function LbExportButton({
     // idle
     return (
       <>
-        <p className="text-xs text-app-muted mb-3">
+        <p className="text-xs text-app-muted mb-1">
           {matchedMbids.length} recording{matchedMbids.length === 1 ? "" : "s"} ·{" "}
           {lbAuth.username}
         </p>
+        {matchedMbids.length < totalTracks && (
+          <p className="text-xs text-amber-600 dark:text-amber-400 mb-3">
+            {totalTracks - matchedMbids.length} track
+            {totalTracks - matchedMbids.length === 1 ? "" : "s"} unmatched and will be skipped.
+          </p>
+        )}
         <button
           type="button"
           onClick={() => {

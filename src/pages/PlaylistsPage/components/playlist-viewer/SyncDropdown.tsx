@@ -57,8 +57,10 @@ function DupeWarning({ dupeCount }: { dupeCount: number }) {
 
 export function SyncDropdown({
   matchedMbids,
+  totalTracks,
 }: {
   matchedMbids: string[];
+  totalTracks: number;
 }) {
   const { mbAuth, clientId } = useMbAuth();
   const [open, setOpen] = useState(false);
@@ -356,10 +358,16 @@ export function SyncDropdown({
     // idle
     return (
       <>
-        <p className="text-xs text-app-muted mb-3">
+        <p className="text-xs text-app-muted mb-1">
           {uniqueMbids.length} recording{uniqueMbids.length === 1 ? "" : "s"} ·{" "}
           {mbAuth.username}
         </p>
+        {uniqueMbids.length < totalTracks && (
+          <p className="text-xs text-amber-600 dark:text-amber-400 mb-3">
+            {totalTracks - uniqueMbids.length} track
+            {totalTracks - uniqueMbids.length === 1 ? "" : "s"} unmatched and will be skipped.
+          </p>
+        )}
         {collections === null ? (
           <p className="text-xs text-app-muted">Loading collections…</p>
         ) : recordingCollections && recordingCollections.length > 0 ? (
