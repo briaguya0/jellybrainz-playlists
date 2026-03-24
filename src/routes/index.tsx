@@ -699,6 +699,77 @@ function UnresolvedCell({
 
 // ─── track table row ─────────────────────────────────────────────────────────
 
+function ThumbnailTooltip({
+  track,
+  cfg,
+}: {
+  track: JellyfinTrack;
+  cfg: JellyfinConfig;
+}) {
+  const [open, setOpen] = useState(false);
+  const [pos, setPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
+  const imgRef = useRef<HTMLButtonElement>(null);
+  const tooltipRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function close(e: MouseEvent) {
+      if (tooltipRef.current?.contains(e.target as Node)) return;
+      setOpen(false);
+    }
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, [open]);
+
+  function handleClick() {
+    if (!open && imgRef.current) {
+      const r = imgRef.current.getBoundingClientRect();
+      setPos({ top: r.bottom + 6, left: r.left });
+    }
+    setOpen((v) => !v);
+  }
+
+  const subtitle = [
+    track.Artists?.join(", "),
+    track.RunTimeTicks != null ? ticksToDisplay(track.RunTimeTicks) : null,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
+  return (
+    <>
+      <button
+        ref={imgRef}
+        type="button"
+        onClick={handleClick}
+        className="shrink-0 sm:cursor-default"
+        aria-label={track.Name}
+      >
+        <img
+          src={thumbnailUrl(cfg, track)}
+          alt=""
+          className="w-10 h-10 rounded bg-[var(--stroke)] object-cover"
+          loading="lazy"
+        />
+      </button>
+      {open &&
+        createPortal(
+          <div
+            ref={tooltipRef}
+            style={{ top: pos.top, left: pos.left }}
+            className="fixed z-50 island-shell rounded-lg border border-[var(--stroke)] px-3 py-2 w-48 rise-in shadow-lg"
+          >
+            <p className="text-xs font-medium text-[var(--text)] truncate">{track.Name}</p>
+            {subtitle && (
+              <p className="text-xs text-[var(--text-muted)] truncate">{subtitle}</p>
+            )}
+          </div>,
+          document.body,
+        )}
+    </>
+  );
+}
+
 function TrackTableRow({
   track,
   cfg,
@@ -724,12 +795,7 @@ function TrackTableRow({
       {/* Jellyfin: thumbnail + title/artist/duration */}
       <td className="px-4 py-3">
         <div className="flex items-center gap-3 min-w-0">
-          <img
-            src={thumbnailUrl(cfg, track)}
-            alt=""
-            className="w-10 h-10 rounded shrink-0 bg-[var(--stroke)] object-cover"
-            loading="lazy"
-          />
+          <ThumbnailTooltip track={track} cfg={cfg} />
           <div className="hidden sm:block min-w-0">
             <p className="text-sm font-medium text-[var(--text)] truncate">
               {track.Name}
