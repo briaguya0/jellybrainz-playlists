@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ChevronDown, LayoutGrid, List, Music } from "lucide-react";
+import { ChevronDown, LayoutGrid, List } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import {
 	getJellyfinConfig,
@@ -285,19 +285,23 @@ function TrackTableRow({
 				)}
 				{recording && (
 					<div className="flex items-center gap-2 min-w-0">
-						<Music
-							size={14}
-							className="text-[var(--lagoon-deep)] shrink-0 mt-0.5"
-						/>
+						<a
+							href={`https://musicbrainz.org/recording/${recording.id}`}
+							target="_blank"
+							rel="noreferrer"
+							className="shrink-0"
+						>
+							<img
+								src="/mb-recording-icon.svg"
+								width={32}
+								height={32}
+								alt="View on MusicBrainz"
+							/>
+						</a>
 						<div className="min-w-0 flex-1">
-							<a
-								href={`https://musicbrainz.org/recording/${recording.id}`}
-								target="_blank"
-								rel="noreferrer"
-								className="text-sm font-medium truncate block"
-							>
+							<p className="text-sm font-medium text-[var(--sea-ink)] truncate">
 								{recording.title}
-							</a>
+							</p>
 							<p className="text-xs text-[var(--sea-ink-soft)] truncate">
 								{[
 									formatArtistCredits(recording["artist-credit"]),
