@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ChevronDown, LayoutGrid, List, Search } from "lucide-react";
+import { ChevronDown, ExternalLink, LayoutGrid, List, Search } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
@@ -280,10 +280,11 @@ function RecordingInfo({ recording }: { recording: MbRecording }) {
       href={`https://musicbrainz.org/recording/${recording.id}`}
       target="_blank"
       rel="noreferrer"
-      className="min-w-0 flex-1 hover:underline"
+      className="group min-w-0 flex-1"
     >
-      <p className="text-sm font-medium text-[var(--sea-ink)] truncate">
-        {recording.title}
+      <p className="text-sm font-medium text-[var(--sea-ink)] truncate flex items-center gap-1">
+        <span className="truncate">{recording.title}</span>
+        <ExternalLink size={10} className="shrink-0 opacity-0 group-hover:opacity-50 transition-opacity" />
       </p>
       <p className="text-xs text-[var(--sea-ink-soft)] truncate">
         {[
