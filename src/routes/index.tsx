@@ -547,27 +547,48 @@ function UnresolvedCell({
                 </p>
                 <div className="space-y-1 mb-3">
                   {candidates.map((rec) => (
-                    <button
-                      key={rec.id}
-                      type="button"
-                      onClick={() => {
-                        onOverride(rec.id);
-                        setOpen(false);
-                      }}
-                      className="w-full text-left rounded-lg px-3 py-2 hover:bg-[var(--surface)] text-sm"
-                    >
-                      <p className="font-medium text-[var(--sea-ink)] truncate">
-                        {rec.title}
-                      </p>
-                      <p className="text-xs text-[var(--sea-ink-soft)] truncate">
-                        {[
-                          formatArtistCredits(rec["artist-credit"]),
-                          rec.length ? msToDisplay(rec.length) : null,
-                        ]
-                          .filter(Boolean)
-                          .join(" · ")}
-                      </p>
-                    </button>
+                    <div key={rec.id} className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onOverride(rec.id);
+                          setOpen(false);
+                        }}
+                        className="flex-1 min-w-0 text-left rounded-lg px-3 py-2 hover:bg-[var(--surface)] text-sm"
+                      >
+                        <p className="font-medium text-[var(--sea-ink)] truncate">
+                          {rec.title}
+                          {rec.length ? (
+                            <span className="ml-1 font-normal text-[var(--sea-ink-soft)]">
+                              {msToDisplay(rec.length)}
+                            </span>
+                          ) : null}
+                        </p>
+                        <p className="text-xs text-[var(--sea-ink-soft)] truncate">
+                          {formatArtistCredits(rec["artist-credit"])}
+                        </p>
+                        {rec.releases?.[0] && (
+                          <p className="text-xs text-[var(--sea-ink-soft)] truncate opacity-60">
+                            {[
+                              rec.releases[0].title,
+                              rec.releases[0].date?.slice(0, 4),
+                            ]
+                              .filter(Boolean)
+                              .join(" · ")}
+                          </p>
+                        )}
+                      </button>
+                      <a
+                        href={`https://musicbrainz.org/recording/${rec.id}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        aria-label="View on MusicBrainz"
+                        className="shrink-0 p-1.5 text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)] rounded-lg hover:bg-[var(--surface)]"
+                      >
+                        <ExternalLink size={14} />
+                      </a>
+                    </div>
                   ))}
                 </div>
                 <hr className="border-[var(--line)] mb-3" />
