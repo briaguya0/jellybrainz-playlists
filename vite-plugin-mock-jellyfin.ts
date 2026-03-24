@@ -18,16 +18,16 @@ const MOCK_PLAYLISTS = [
 
 const MOCK_TRACKS = [
   {
-    // Exact match — has MusicBrainzRecording MBID
+    // Exact match — has MusicBrainzTrack MBID
     Id: "dev-exact",
-    Name: "Breakbeat Forest (OC ReMix)",
-    Artists: ["Mazedude"],
+    Name: "united states of smash",
+    Artists: ["bucket 桶"],
     Album: "Test Album 1",
     AlbumId: "dev-album-1",
     AlbumPrimaryImageTag: "mock-tag",
     RunTimeTicks: 2174000000,
     ProviderIds: {
-      MusicBrainzRecording: "63cffd29-87fc-4626-a498-e869772fd26c",
+      MusicBrainzTrack: "7d10ed03-fd20-4254-b1f5-c245dab41f05",
     },
   },
   {
