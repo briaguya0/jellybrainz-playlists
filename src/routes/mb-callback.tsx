@@ -70,14 +70,14 @@ function MbCallbackPage() {
   if (status === "error") {
     return (
       <main className="page-wrap px-4 pb-8 pt-14 flex flex-col items-center gap-4">
-        <div className="island-shell rounded-xl border border-[var(--line)] p-8 max-w-md w-full text-center rise-in">
+        <div className="island-shell rounded-xl border border-[var(--stroke)] p-8 max-w-md w-full text-center rise-in">
           <p className="text-sm font-semibold text-red-600 dark:text-red-400 mb-2">
             Connection failed
           </p>
-          <p className="text-sm text-[var(--sea-ink-soft)] mb-6">{errorMsg}</p>
+          <p className="text-sm text-[var(--text-muted)] mb-6">{errorMsg}</p>
           <a
             href="/"
-            className="text-sm font-semibold text-[var(--lagoon-deep)]"
+            className="text-sm font-semibold text-[var(--accent-text)]"
           >
             ← Back to playlists
           </a>
@@ -88,8 +88,8 @@ function MbCallbackPage() {
 
   return (
     <main className="page-wrap px-4 pb-8 pt-14 flex flex-col items-center gap-4">
-      <div className="island-shell rounded-xl border border-[var(--line)] p-8 max-w-md w-full text-center rise-in">
-        <p className="text-sm text-[var(--sea-ink-soft)]">
+      <div className="island-shell rounded-xl border border-[var(--stroke)] p-8 max-w-md w-full text-center rise-in">
+        <p className="text-sm text-[var(--text-muted)]">
           Connecting to MusicBrainz…
         </p>
       </div>

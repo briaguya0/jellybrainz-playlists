@@ -75,17 +75,17 @@ function SettingsPage() {
 
   return (
     <main className="page-wrap px-4 pb-8 pt-14">
-      <h1 className="text-xl font-semibold text-[var(--sea-ink)] mb-8">
+      <h1 className="text-xl font-semibold text-[var(--text)] mb-8">
         Settings
       </h1>
 
       {/* Jellyfin section */}
-      <section className="island-shell rounded-xl border border-[var(--line)] p-6 mb-6">
-        <h2 className="text-sm font-semibold text-[var(--sea-ink)] mb-4">
+      <section className="island-shell rounded-xl border border-[var(--stroke)] p-6 mb-6">
+        <h2 className="text-sm font-semibold text-[var(--text)] mb-4">
           Jellyfin
         </h2>
         {!jellyfinConfig && (
-          <p className="text-xs text-[var(--sea-ink-soft)] mb-4">
+          <p className="text-xs text-[var(--text-muted)] mb-4">
             Not connected. Go to{" "}
             <a href="/" className="underline">
               Playlists
@@ -95,7 +95,7 @@ function SettingsPage() {
         )}
         <form onSubmit={saveJellyfin} className="flex flex-col gap-4 max-w-sm">
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wide">
+            <span className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide">
               Server URL
             </span>
             <input
@@ -103,12 +103,12 @@ function SettingsPage() {
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               required
-              className="rounded-lg border border-[var(--line)] bg-[var(--surface-strong)] px-3 py-2 text-sm text-[var(--sea-ink)] outline-none focus:border-[var(--lagoon)] focus:ring-1 focus:ring-[var(--lagoon)]"
+              className="rounded-lg border border-[var(--stroke)] bg-[var(--surface-strong)] px-3 py-2 text-sm text-[var(--text)] outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
               placeholder="http://localhost:8096"
             />
           </label>
           <label className="flex flex-col gap-1.5">
-            <span className="text-xs font-semibold text-[var(--sea-ink-soft)] uppercase tracking-wide">
+            <span className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide">
               API Key
             </span>
             <input
@@ -116,7 +116,7 @@ function SettingsPage() {
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
               required
-              className="rounded-lg border border-[var(--line)] bg-[var(--surface-strong)] px-3 py-2 text-sm text-[var(--sea-ink)] outline-none focus:border-[var(--lagoon)] focus:ring-1 focus:ring-[var(--lagoon)]"
+              className="rounded-lg border border-[var(--stroke)] bg-[var(--surface-strong)] px-3 py-2 text-sm text-[var(--text)] outline-none focus:border-[var(--accent)] focus:ring-1 focus:ring-[var(--accent)]"
               placeholder="Paste your API key"
             />
           </label>
@@ -126,12 +126,12 @@ function SettingsPage() {
             </p>
           )}
           {saveSuccess && (
-            <p className="text-sm text-[var(--lagoon-deep)]">Saved.</p>
+            <p className="text-sm text-[var(--accent-text)]">Saved.</p>
           )}
           <button
             type="submit"
             disabled={saving}
-            className="island-shell rounded-lg px-4 py-2 text-sm font-semibold text-[var(--lagoon-deep)] hover:text-[var(--lagoon)] disabled:opacity-50 self-start"
+            className="island-shell rounded-lg px-4 py-2 text-sm font-semibold text-[var(--accent-text)] hover:text-[var(--accent)] disabled:opacity-50 self-start"
           >
             {saving ? "Saving…" : "Save"}
           </button>
@@ -139,19 +139,19 @@ function SettingsPage() {
       </section>
 
       {/* MusicBrainz section */}
-      <section className="island-shell rounded-xl border border-[var(--line)] p-6">
-        <h2 className="text-sm font-semibold text-[var(--sea-ink)] mb-4">
+      <section className="island-shell rounded-xl border border-[var(--stroke)] p-6">
+        <h2 className="text-sm font-semibold text-[var(--text)] mb-4">
           MusicBrainz
         </h2>
         {!clientId ? (
-          <p className="text-xs text-[var(--sea-ink-soft)]">
+          <p className="text-xs text-[var(--text-muted)]">
             <code>VITE_MB_CLIENT_ID</code> is not set. See{" "}
             <code>.env.example</code> for instructions on registering an OAuth
             application.
           </p>
         ) : mbAuth ? (
           <div className="flex items-center gap-4">
-            <p className="text-sm text-[var(--sea-ink)]">
+            <p className="text-sm text-[var(--text)]">
               Connected as{" "}
               <a
                 href={`https://musicbrainz.org/user/${mbAuth.username}`}
@@ -165,20 +165,20 @@ function SettingsPage() {
             <button
               type="button"
               onClick={disconnectMb}
-              className="text-sm text-[var(--sea-ink-soft)] hover:text-[var(--sea-ink)] underline"
+              className="text-sm text-[var(--text-muted)] hover:text-[var(--text)] underline"
             >
               Disconnect
             </button>
           </div>
         ) : (
           <>
-            <p className="text-sm text-[var(--sea-ink-soft)] mb-3">
+            <p className="text-sm text-[var(--text-muted)] mb-3">
               Not connected.
             </p>
             <button
               type="button"
               onClick={connectMb}
-              className="island-shell rounded-lg border border-[var(--line)] px-4 py-2 text-sm font-semibold text-[var(--lagoon-deep)] hover:text-[var(--lagoon)]"
+              className="island-shell rounded-lg border border-[var(--stroke)] px-4 py-2 text-sm font-semibold text-[var(--accent-text)] hover:text-[var(--accent)]"
             >
               Connect MusicBrainz
             </button>
