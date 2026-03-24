@@ -43,6 +43,7 @@ export interface MbRecording {
   id: string;
   title: string;
   length?: number;
+  score?: number;
   "artist-credit"?: MbArtistCredit[];
   releases?: Array<{
     id: string;
