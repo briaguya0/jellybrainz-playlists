@@ -117,6 +117,11 @@ export function TrackTableRow({
                 onClick={() => onSetOverride(track.Id, matchState.recording.id)}
                 aria-label="Confirm match"
                 className="shrink-0 text-app-muted hover:text-green-500 transition-colors mr-1"
+                style={{
+                  opacity: isExpanded ? 0 : 1,
+                  pointerEvents: isExpanded ? "none" : "auto",
+                  transition: isExpanded ? "opacity 200ms" : "opacity 300ms 100ms",
+                }}
               >
                 <Save size={15} />
               </button>
