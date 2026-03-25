@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { extractMbRecordingId, ticksToDisplay } from "./jellyfin";
-import type { JellyfinTrack } from "./types";
+import { extractMbRecordingId, ticksToDisplay } from "@src/lib/jellyfin";
+import type { JellyfinTrack } from "@src/lib/types";
 
 describe("extractMbRecordingId", () => {
   it("returns MusicBrainzTrack when present", () => {
