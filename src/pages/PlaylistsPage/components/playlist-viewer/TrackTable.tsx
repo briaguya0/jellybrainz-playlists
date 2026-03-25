@@ -35,7 +35,7 @@ export function TrackTable({
                 className="mx-auto"
               />
             </th>
-            <th className="sm:w-1/2 px-4 py-3 text-center">
+            <th className="px-4 py-3 text-center">
               <img
                 src={asset("/musicbrainz-icon.svg")}
                 width={32}
@@ -44,7 +44,6 @@ export function TrackTable({
                 className="mx-auto"
               />
             </th>
-            <th className="w-10 px-3 py-3" />
           </tr>
         </thead>
         <tbody>
@@ -61,7 +60,6 @@ export function TrackTable({
                     </div>
                   </td>
                   <td className="px-4 py-3" />
-                  <td className="px-3 py-3 w-10" />
                 </tr>
               ))
             : tracks?.map((track) => (

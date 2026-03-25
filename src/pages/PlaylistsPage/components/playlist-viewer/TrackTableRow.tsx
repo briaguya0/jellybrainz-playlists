@@ -65,71 +65,72 @@ export function TrackTableRow({
         </td>
         {/* MB */}
         <td className="px-4 py-3">
-          {matchState.kind === "loading" && (
-            <div className="flex items-center gap-2 min-w-0 animate-pulse">
-              <div className="relative shrink-0 w-8 h-8">
-                <img src={asset("/mb-blank-icon.svg")} width={32} height={32} alt="" />
-                <span className="absolute inset-0 flex items-center justify-center">
-                  <Search size={16} className="text-white" />
-                </span>
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="h-3 w-32 rounded bg-[var(--stroke)] mb-1.5" />
-                <div className="h-2.5 w-20 rounded bg-[var(--stroke)]" />
-              </div>
-            </div>
-          )}
-          {(matchState.kind === "exact" ||
-            matchState.kind === "partial-auto" ||
-            matchState.kind === "override") && (
-            <div className="flex items-center gap-2 min-w-0">
-              <div className="shrink-0">
-                {matchState.kind === "exact" ? (
-                  <img
-                    src={asset("/mb-recording-icon.svg")}
-                    width={32}
-                    height={32}
-                    alt=""
-                  />
-                ) : matchState.kind === "partial-auto" ? (
-                  <MbBadge kind="partial-auto" />
-                ) : matchState.recording ? (
-                  <MbBadge kind="override" />
-                ) : (
-                  // override recording still loading
-                  <div className="animate-pulse opacity-50 w-8 h-8">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              {matchState.kind === "loading" && (
+                <div className="flex items-center gap-2 min-w-0 animate-pulse flex-1">
+                  <div className="relative shrink-0 w-8 h-8">
                     <img src={asset("/mb-blank-icon.svg")} width={32} height={32} alt="" />
+                    <span className="absolute inset-0 flex items-center justify-center">
+                      <Search size={16} className="text-white" />
+                    </span>
                   </div>
-                )}
-              </div>
-              {recording && <RecordingInfo recording={recording} />}
+                  <div className="min-w-0 flex-1">
+                    <div className="h-3 w-32 rounded bg-[var(--stroke)] mb-1.5" />
+                    <div className="h-2.5 w-20 rounded bg-[var(--stroke)]" />
+                  </div>
+                </div>
+              )}
+              {(matchState.kind === "exact" ||
+                matchState.kind === "partial-auto" ||
+                matchState.kind === "override") && (
+                <div className="flex items-center gap-2 min-w-0 flex-1">
+                  <div className="shrink-0">
+                    {matchState.kind === "exact" ? (
+                      <img
+                        src={asset("/mb-recording-icon.svg")}
+                        width={32}
+                        height={32}
+                        alt=""
+                      />
+                    ) : matchState.kind === "partial-auto" ? (
+                      <MbBadge kind="partial-auto" />
+                    ) : matchState.recording ? (
+                      <MbBadge kind="override" />
+                    ) : (
+                      // override recording still loading
+                      <div className="animate-pulse opacity-50 w-8 h-8">
+                        <img src={asset("/mb-blank-icon.svg")} width={32} height={32} alt="" />
+                      </div>
+                    )}
+                  </div>
+                  {recording && <RecordingInfo recording={recording} />}
+                </div>
+              )}
+              {matchState.kind === "unresolved" && (
+                <UnresolvedCell />
+              )}
             </div>
-          )}
-          {matchState.kind === "unresolved" && (
-            <UnresolvedCell />
-          )}
-        </td>
-        {/* Edit control */}
-        <td className="px-3 py-3 w-10">
-          {isEditable && (
-            <button
-              type="button"
-              onClick={() => setIsExpanded((v) => !v)}
-              aria-label={isExpanded ? "Collapse" : "Edit match"}
-              className="flex items-center gap-0.5 text-app-muted hover:text-app-text transition-colors"
-            >
-              <Pencil size={12} />
-              <ChevronDown
-                size={14}
-                className={`transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
-              />
-            </button>
-          )}
+            {isEditable && (
+              <button
+                type="button"
+                onClick={() => setIsExpanded((v) => !v)}
+                aria-label={isExpanded ? "Collapse" : "Edit match"}
+                className="shrink-0 flex items-center gap-1 text-app-muted hover:text-app-text transition-colors pr-1"
+              >
+                <Pencil size={14} />
+                <ChevronDown
+                  size={16}
+                  className={`transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                />
+              </button>
+            )}
+          </div>
         </td>
       </tr>
       {isExpanded && (
         <tr className="border-b border-stroke last:border-0">
-          <td colSpan={3} className="pb-4 pt-0 px-4">
+          <td colSpan={2} className="pb-4 pt-0 px-4">
             <div className="mx-2 border-t border-stroke/40 pt-3">
               <div className="max-w-xs">
                 {(matchState.kind === "partial-auto" ||
