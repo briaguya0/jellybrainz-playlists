@@ -10,7 +10,7 @@ export function UnresolvedEditContent({
   onCollapse,
 }: {
   candidates: MbRecording[];
-  onOverride: (mbid: string) => void;
+  onOverride: (mbid: string, source: "selected" | "manual") => void;
   onCollapse: () => void;
 }) {
   const [manualMbid, setManualMbid] = useState("");
@@ -26,7 +26,7 @@ export function UnresolvedEditContent({
                 <button
                   type="button"
                   onClick={() => {
-                    onOverride(rec.id);
+                    onOverride(rec.id, "selected");
                     onCollapse();
                   }}
                   className="flex-1 min-w-0 text-left rounded-lg px-3 py-2 hover:bg-surface text-sm"
@@ -76,7 +76,7 @@ export function UnresolvedEditContent({
         onSubmit={(e) => {
           e.preventDefault();
           if (manualMbid) {
-            onOverride(manualMbid.trim());
+            onOverride(manualMbid.trim(), "manual");
             onCollapse();
           }
         }}

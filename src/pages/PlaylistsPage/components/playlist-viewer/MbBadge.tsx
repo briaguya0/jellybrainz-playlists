@@ -5,12 +5,16 @@ import { ExternalLink, Save } from "lucide-react";
 
 export function MbBadgeEditContent({
   kind,
+  matchLabel,
+  overrideSource,
   recording,
   onOverride,
   onClear,
   onCollapse,
 }: {
   kind: "partial-auto" | "override";
+  matchLabel: string;
+  overrideSource?: "confirmed-album" | "confirmed-artist" | "manual" | "selected";
   recording: MbRecording | undefined;
   onOverride: (mbid: string) => void;
   onClear: () => void;
@@ -34,11 +38,25 @@ export function MbBadgeEditContent({
           </a>
         </div>
       )}
-      <p className="text-xs text-app-muted mb-4 pl-1">
-        {kind === "partial-auto"
-          ? "Matched via artist + title search"
-          : "Manually confirmed"}
+      <p className={`text-xs text-app-muted pl-1 ${kind === "override" ? "mb-1" : "mb-4"}`}>
+        {matchLabel}
       </p>
+      {kind === "override" && (
+        <button
+          type="button"
+          onClick={() => {
+            onClear();
+            onCollapse();
+          }}
+          className="text-xs text-red-500 hover:text-red-400 transition-colors pl-1 mb-4"
+        >
+          {overrideSource === "confirmed-album" || overrideSource === "confirmed-artist"
+            ? "Clear confirmation"
+            : overrideSource === "selected"
+              ? "Clear selection"
+              : "Clear entry"}
+        </button>
+      )}
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -68,18 +86,6 @@ export function MbBadgeEditContent({
             <Save size={16} />
           </button>
         </div>
-        {kind === "override" && (
-          <button
-            type="button"
-            onClick={() => {
-              onClear();
-              onCollapse();
-            }}
-            className="mt-2 text-xs text-red-500 hover:text-red-400"
-          >
-            Clear override
-          </button>
-        )}
       </form>
     </>
   );

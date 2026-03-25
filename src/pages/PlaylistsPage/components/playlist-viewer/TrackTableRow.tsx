@@ -2,6 +2,7 @@ import { ticksToDisplay } from "@src/lib/jellyfin";
 import type {
   JellyfinConfig,
   JellyfinTrack,
+  OverrideSource,
   TrackMatchState,
 } from "@src/lib/types";
 import { Search, Pencil, ChevronDown, Save } from "lucide-react";
@@ -22,7 +23,7 @@ export function TrackTableRow({
   track: JellyfinTrack;
   cfg: JellyfinConfig;
   matchState: TrackMatchState;
-  onSetOverride: (jellyfinId: string, mbid: string) => void;
+  onSetOverride: (jellyfinId: string, mbid: string, source: OverrideSource) => void;
   onClearOverride: (jellyfinId: string) => void;
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -114,7 +115,7 @@ export function TrackTableRow({
             {matchState.kind === "partial-auto" && (
               <button
                 type="button"
-                onClick={() => onSetOverride(track.Id, matchState.recording.id)}
+                onClick={() => onSetOverride(track.Id, matchState.recording.id, `confirmed-${matchState.matchSource}` as OverrideSource)}
                 aria-label="Confirm match"
                 className="shrink-0 text-app-muted hover:text-green-500 transition-colors mr-1"
                 style={{
@@ -166,8 +167,22 @@ export function TrackTableRow({
                 matchState.kind === "override") && (
                 <MbBadgeEditContent
                   kind={matchState.kind}
+                  overrideSource={matchState.kind === "override" ? matchState.source : undefined}
+                  matchLabel={
+                    matchState.kind === "partial-auto"
+                      ? matchState.matchSource === "album"
+                        ? "Matched via album + title search"
+                        : "Matched via artist + title search"
+                      : matchState.source === "confirmed-album"
+                        ? "Matched via album + title search (confirmed)"
+                        : matchState.source === "confirmed-artist"
+                          ? "Matched via artist + title search (confirmed)"
+                          : matchState.source === "selected"
+                            ? "Selected from candidates"
+                            : "Manually entered"
+                  }
                   recording={matchState.recording}
-                  onOverride={(mbid) => onSetOverride(track.Id, mbid)}
+                  onOverride={(mbid) => onSetOverride(track.Id, mbid, "manual")}
                   onClear={() => onClearOverride(track.Id)}
                   onCollapse={() => setIsExpanded(false)}
                 />
@@ -175,7 +190,7 @@ export function TrackTableRow({
               {matchState.kind === "unresolved" && (
                 <UnresolvedEditContent
                   candidates={matchState.candidates}
-                  onOverride={(mbid) => onSetOverride(track.Id, mbid)}
+                  onOverride={(mbid, source) => onSetOverride(track.Id, mbid, source)}
                   onCollapse={() => setIsExpanded(false)}
                 />
               )}
