@@ -69,6 +69,10 @@ export function extractMbArtistId(track: JellyfinTrack): string | undefined {
   return track.ProviderIds?.MusicBrainzArtist;
 }
 
+export function extractMbAlbumId(track: JellyfinTrack): string | undefined {
+  return track.ProviderIds?.MusicBrainzAlbum;
+}
+
 /** Convert Jellyfin RunTimeTicks (100ns units) to mm:ss string */
 export function ticksToDisplay(ticks: number): string {
   const totalSeconds = Math.floor(ticks / 10_000_000);
