@@ -1,18 +1,17 @@
-import { Popover } from "@src/components/Popover";
 import { asset } from "@src/lib/utils";
 import { formatArtistCredits, msToDisplay } from "@src/lib/musicbrainz";
 import type { MbRecording } from "@src/lib/types";
 import { ExternalLink } from "lucide-react";
 import { useState } from "react";
 
-function UnresolvedContent({
+export function UnresolvedEditContent({
   candidates,
   onOverride,
-  close,
+  onCollapse,
 }: {
   candidates: MbRecording[];
   onOverride: (mbid: string) => void;
-  close: () => void;
+  onCollapse: () => void;
 }) {
   const [manualMbid, setManualMbid] = useState("");
 
@@ -28,7 +27,7 @@ function UnresolvedContent({
                   type="button"
                   onClick={() => {
                     onOverride(rec.id);
-                    close();
+                    onCollapse();
                   }}
                   className="flex-1 min-w-0 text-left rounded-lg px-3 py-2 hover:bg-surface text-sm"
                 >
@@ -78,7 +77,7 @@ function UnresolvedContent({
           e.preventDefault();
           if (manualMbid) {
             onOverride(manualMbid.trim());
-            close();
+            onCollapse();
           }
         }}
         className="flex flex-col gap-2"
@@ -102,41 +101,18 @@ function UnresolvedContent({
   );
 }
 
-export function UnresolvedCell({
-  candidates,
-  onOverride,
-}: {
-  candidates: MbRecording[];
-  onOverride: (mbid: string) => void;
-}) {
+export function UnresolvedCell() {
   return (
-    <Popover
-      placement="below-left"
-      enableMobile
-      className="w-80"
-      content={(close) => (
-        <UnresolvedContent
-          candidates={candidates}
-          onOverride={onOverride}
-          close={close}
-        />
-      )}
-    >
-      <button
-        type="button"
-        aria-label="No MusicBrainz match — click to search or enter MBID"
-        className="relative w-8 h-8 cursor-pointer"
-      >
-        <img
-          src={asset("/mb-blank-icon.svg")}
-          width={32}
-          height={32}
-          alt="No MusicBrainz match"
-        />
-        <span className="absolute inset-0 flex items-center justify-center text-white text-2xl font-bold leading-none">
-          ?
-        </span>
-      </button>
-    </Popover>
+    <div className="relative w-8 h-8">
+      <img
+        src={asset("/mb-blank-icon.svg")}
+        width={32}
+        height={32}
+        alt="No MusicBrainz match"
+      />
+      <span className="absolute inset-0 flex items-center justify-center text-white text-2xl font-bold leading-none pointer-events-none">
+        ?
+      </span>
+    </div>
   );
 }

@@ -1,23 +1,22 @@
-import { Popover } from "@src/components/Popover";
 import { asset } from "@src/lib/utils";
 import { formatArtistCredits } from "@src/lib/musicbrainz";
 import type { MbRecording } from "@src/lib/types";
 import { useState } from "react";
 
-function MbBadgeContent({
+export function MbBadgeEditContent({
   kind,
   recording,
   onConfirm,
   onOverride,
   onClear,
-  close,
+  onCollapse,
 }: {
   kind: "partial-auto" | "override";
   recording: MbRecording | undefined;
   onConfirm?: () => void;
   onOverride: (mbid: string) => void;
   onClear: () => void;
-  close: () => void;
+  onCollapse: () => void;
 }) {
   const [showChange, setShowChange] = useState(false);
   const [manualMbid, setManualMbid] = useState("");
@@ -46,7 +45,7 @@ function MbBadgeContent({
               type="button"
               onClick={() => {
                 onConfirm?.();
-                close();
+                onCollapse();
               }}
               className="flex-1 rounded-lg px-3 py-1.5 text-sm font-semibold bg-green-500/10 text-green-700 dark:text-green-400 hover:bg-green-500/20"
             >
@@ -75,7 +74,7 @@ function MbBadgeContent({
           e.preventDefault();
           if (manualMbid) {
             onOverride(manualMbid.trim());
-            close();
+            onCollapse();
           }
         }}
         className="flex flex-col gap-2"
@@ -101,7 +100,7 @@ function MbBadgeContent({
             type="button"
             onClick={() => {
               onClear();
-              close();
+              onCollapse();
             }}
             className="rounded-lg glass-panel border border-stroke px-3 py-1.5 text-sm text-red-500 hover:text-red-400"
           >
@@ -122,51 +121,17 @@ function MbBadgeContent({
 
 export function MbBadge({
   kind,
-  recording,
-  onConfirm,
-  onOverride,
-  onClear,
 }: {
   kind: "partial-auto" | "override";
-  recording: MbRecording | undefined;
-  onConfirm?: () => void;
-  onOverride: (mbid: string) => void;
-  onClear: () => void;
 }) {
   return (
     <div className="relative w-8 h-8">
-      <Popover
-        placement="above-right"
-        enableMobile
-        className="w-72"
-        content={(close) => (
-          <MbBadgeContent
-            kind={kind}
-            recording={recording}
-            onConfirm={onConfirm}
-            onOverride={onOverride}
-            onClear={onClear}
-            close={close}
-          />
-        )}
-      >
-        <button
-          type="button"
-          aria-label={
-            kind === "partial-auto"
-              ? "Partial match — click to review"
-              : "Confirmed match — click to change"
-          }
-          className="w-full h-full cursor-pointer"
-        >
-          <img
-            src={asset("/mb-recording-icon.svg")}
-            width={32}
-            height={32}
-            alt="MusicBrainz recording"
-          />
-        </button>
-      </Popover>
+      <img
+        src={asset("/mb-recording-icon.svg")}
+        width={32}
+        height={32}
+        alt="MusicBrainz recording"
+      />
       <span
         className={`absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full border-2 border-[var(--surface)] pointer-events-none ${
           kind === "partial-auto" ? "bg-amber-400" : "bg-green-500"

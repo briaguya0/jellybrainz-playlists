@@ -53,6 +53,7 @@ export function PlaylistViewer({
         }),
       }),
       replace: true,
+      resetScroll: false,
     });
   }
 
@@ -64,6 +65,7 @@ export function PlaylistViewer({
         return { ...prev, overrides: serializeOverrides(next) };
       },
       replace: true,
+      resetScroll: false,
     });
   }
 
