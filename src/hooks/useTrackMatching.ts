@@ -140,7 +140,16 @@ export function useTrackMatching(
     for (const track of tracks ?? []) {
       // User overrides take precedence over all automatic matching.
       if (overrides[track.Id]) {
-        const recording = overrideRecordingsMap?.get(overrides[track.Id]);
+        const overrideMbid = overrides[track.Id];
+        // If the override MBID is already in our candidate results (i.e. the
+        // user confirmed a partial-auto match), use it directly — no fetch needed.
+        const knownCandidates = [
+          ...(albumCandidatesMap?.get(track.Id) ?? []),
+          ...(artistCandidatesMap?.get(track.Id) ?? []),
+        ];
+        const recording =
+          knownCandidates.find((r) => r.id === overrideMbid) ??
+          overrideRecordingsMap?.get(overrideMbid);
         map.set(track.Id, { kind: "override", recording });
         continue;
       }

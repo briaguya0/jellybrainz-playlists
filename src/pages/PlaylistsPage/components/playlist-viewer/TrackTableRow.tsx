@@ -4,7 +4,7 @@ import type {
   JellyfinTrack,
   TrackMatchState,
 } from "@src/lib/types";
-import { Search, Pencil, ChevronDown } from "lucide-react";
+import { Search, Pencil, ChevronDown, Save } from "lucide-react";
 import { useState } from "react";
 import { asset } from "@src/lib/utils";
 import { MbBadge, MbBadgeEditContent } from "./MbBadge";
@@ -111,6 +111,16 @@ export function TrackTableRow({
                 <UnresolvedCell />
               )}
             </div>
+            {matchState.kind === "partial-auto" && (
+              <button
+                type="button"
+                onClick={() => onSetOverride(track.Id, matchState.recording.id)}
+                aria-label="Confirm match"
+                className="shrink-0 text-app-muted hover:text-green-500 transition-colors mr-1"
+              >
+                <Save size={15} />
+              </button>
+            )}
             {isEditable && (
               <button
                 type="button"
