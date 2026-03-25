@@ -1,123 +1,127 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import React from "react";
 import { describe, expect, it, vi } from "vitest";
-import { MbBadge } from "@src/pages/PlaylistsPage/components/playlist-viewer/MbBadge";
+import {
+  MbBadge,
+  MbBadgeEditContent,
+} from "@src/pages/PlaylistsPage/components/playlist-viewer/MbBadge";
 import type { MbRecording } from "@src/lib/types";
 
-vi.mock("@src/components/Popover", () => ({
-  Popover: ({
-    children,
-    content,
-  }: {
-    children: React.ReactNode;
-    content: (close: () => void) => React.ReactNode;
-  }) => (
-    <div>
-      {children}
-      <div data-testid="popover-content">{content(() => {})}</div>
-    </div>
-  ),
-}));
-
 const recording: MbRecording = {
-  id: "rec-1",
+  id: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
   title: "Test Song",
   "artist-credit": [{ name: "Test Artist", artist: { name: "Test Artist" } }],
 };
 
 describe("MbBadge", () => {
-  it("partial-auto: shows Confirm and Change buttons", () => {
-    render(
-      <MbBadge
-        kind="partial-auto"
-        recording={recording}
-        onConfirm={vi.fn()}
-        onOverride={vi.fn()}
-        onClear={vi.fn()}
-      />,
-    );
-    expect(screen.getByRole("button", { name: "Confirm" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Change" })).toBeInTheDocument();
+  it("partial-auto: renders amber dot indicator", () => {
+    const { container } = render(<MbBadge kind="partial-auto" />);
+    expect(container.querySelector(".bg-amber-400")).toBeInTheDocument();
   });
 
-  it("override: shows Change button but no Confirm", () => {
-    render(
-      <MbBadge
-        kind="override"
-        recording={recording}
-        onOverride={vi.fn()}
-        onClear={vi.fn()}
-      />,
-    );
-    expect(screen.queryByRole("button", { name: "Confirm" })).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Change" })).toBeInTheDocument();
+  it("override: renders green dot indicator", () => {
+    const { container } = render(<MbBadge kind="override" />);
+    expect(container.querySelector(".bg-green-500")).toBeInTheDocument();
   });
+});
 
-  it("clicking Change shows MBID input and Clear button", async () => {
-    const user = userEvent.setup();
+describe("MbBadgeEditContent", () => {
+  it("partial-auto: shows label, recording id, input and save button", () => {
     render(
-      <MbBadge
+      <MbBadgeEditContent
         kind="partial-auto"
+        matchLabel="Matched via artist + title search"
         recording={recording}
-        onConfirm={vi.fn()}
         onOverride={vi.fn()}
-        onClear={vi.fn()}
+        onCollapse={vi.fn()}
       />,
     );
-    await user.click(screen.getByRole("button", { name: "Change" }));
+    expect(screen.getByText(recording.id)).toBeInTheDocument();
+    expect(screen.getByText(/artist \+ title search/i)).toBeInTheDocument();
+    expect(screen.getByText(/manually enter recording id/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/xxxx/)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Clear" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Save" })).toBeInTheDocument();
   });
 
-  it("entering MBID and applying calls onOverride", async () => {
+  it("partial-auto: no clear button", () => {
+    render(
+      <MbBadgeEditContent
+        kind="partial-auto"
+        matchLabel="Matched via artist + title search"
+        recording={recording}
+        onOverride={vi.fn()}
+        onCollapse={vi.fn()}
+      />,
+    );
+    expect(screen.queryByText(/clear/i)).not.toBeInTheDocument();
+  });
+
+  it("override with manual source: shows Clear entry button", () => {
+    render(
+      <MbBadgeEditContent
+        kind="override"
+        matchLabel="Manually entered"
+        overrideSource="manual"
+        recording={recording}
+        onOverride={vi.fn()}
+        onClear={vi.fn()}
+        onCollapse={vi.fn()}
+      />,
+    );
+    expect(screen.getByRole("button", { name: /clear entry/i })).toBeInTheDocument();
+  });
+
+  it("override with confirmed source: shows Clear confirmation button", () => {
+    render(
+      <MbBadgeEditContent
+        kind="override"
+        matchLabel="Matched via artist + title search (confirmed)"
+        overrideSource="confirmed-artist"
+        recording={recording}
+        onOverride={vi.fn()}
+        onClear={vi.fn()}
+        onCollapse={vi.fn()}
+      />,
+    );
+    expect(screen.getByRole("button", { name: /clear confirmation/i })).toBeInTheDocument();
+  });
+
+  it("entering MBID and saving calls onOverride and onCollapse", async () => {
     const user = userEvent.setup();
     const onOverride = vi.fn();
+    const onCollapse = vi.fn();
     render(
-      <MbBadge
+      <MbBadgeEditContent
         kind="partial-auto"
+        matchLabel="Matched via artist + title search"
         recording={recording}
-        onConfirm={vi.fn()}
         onOverride={onOverride}
-        onClear={vi.fn()}
+        onCollapse={onCollapse}
       />,
     );
-    await user.click(screen.getByRole("button", { name: "Change" }));
     await user.type(screen.getByPlaceholderText(/xxxx/), "new-mbid-1234");
-    await user.click(screen.getByRole("button", { name: "Apply" }));
+    await user.click(screen.getByRole("button", { name: "Save" }));
     expect(onOverride).toHaveBeenCalledWith("new-mbid-1234");
+    expect(onCollapse).toHaveBeenCalledOnce();
   });
 
-  it("clicking Clear calls onClear", async () => {
+  it("clicking clear button calls onClear and onCollapse", async () => {
     const user = userEvent.setup();
     const onClear = vi.fn();
+    const onCollapse = vi.fn();
     render(
-      <MbBadge
-        kind="partial-auto"
+      <MbBadgeEditContent
+        kind="override"
+        matchLabel="Manually entered"
+        overrideSource="manual"
         recording={recording}
-        onConfirm={vi.fn()}
         onOverride={vi.fn()}
         onClear={onClear}
+        onCollapse={onCollapse}
       />,
     );
-    await user.click(screen.getByRole("button", { name: "Change" }));
-    await user.click(screen.getByRole("button", { name: "Clear" }));
+    await user.click(screen.getByRole("button", { name: /clear entry/i }));
     expect(onClear).toHaveBeenCalledOnce();
-  });
-
-  it("partial-auto: Confirm calls onConfirm", async () => {
-    const user = userEvent.setup();
-    const onConfirm = vi.fn();
-    render(
-      <MbBadge
-        kind="partial-auto"
-        recording={recording}
-        onConfirm={onConfirm}
-        onOverride={vi.fn()}
-        onClear={vi.fn()}
-      />,
-    );
-    await user.click(screen.getByRole("button", { name: "Confirm" }));
-    expect(onConfirm).toHaveBeenCalledOnce();
+    expect(onCollapse).toHaveBeenCalledOnce();
   });
 });

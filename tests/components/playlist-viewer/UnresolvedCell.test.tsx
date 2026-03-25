@@ -1,24 +1,11 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import React from "react";
 import { describe, expect, it, vi } from "vitest";
-import { UnresolvedCell } from "@src/pages/PlaylistsPage/components/playlist-viewer/UnresolvedCell";
+import {
+  UnresolvedCell,
+  UnresolvedCandidates,
+} from "@src/pages/PlaylistsPage/components/playlist-viewer/UnresolvedCell";
 import type { MbRecording } from "@src/lib/types";
-
-vi.mock("@src/components/Popover", () => ({
-  Popover: ({
-    children,
-    content,
-  }: {
-    children: React.ReactNode;
-    content: (close: () => void) => React.ReactNode;
-  }) => (
-    <div>
-      {children}
-      <div data-testid="popover-content">{content(() => {})}</div>
-    </div>
-  ),
-}));
 
 const candidates: MbRecording[] = [
   {
@@ -34,36 +21,46 @@ const candidates: MbRecording[] = [
 ];
 
 describe("UnresolvedCell", () => {
-  it("renders the ? trigger button", () => {
-    render(<UnresolvedCell candidates={[]} onOverride={vi.fn()} />);
-    expect(screen.getByRole("button", { name: /No MusicBrainz match/ })).toBeInTheDocument();
+  it("renders the ? indicator", () => {
+    const { container } = render(<UnresolvedCell />);
+    expect(container.querySelector("img")).toBeInTheDocument();
+    expect(screen.getByText("?")).toBeInTheDocument();
+  });
+});
+
+describe("UnresolvedCandidates", () => {
+  it("returns null when candidates is empty", () => {
+    const { container } = render(
+      <UnresolvedCandidates candidates={[]} onSelect={vi.fn()} />,
+    );
+    expect(container.firstChild).toBeNull();
   });
 
-  it("lists candidate titles in the popover", () => {
-    render(<UnresolvedCell candidates={candidates} onOverride={vi.fn()} />);
+  it("lists candidate titles", () => {
+    render(
+      <UnresolvedCandidates candidates={candidates} onSelect={vi.fn()} />,
+    );
     expect(screen.getByText("Candidate One")).toBeInTheDocument();
     expect(screen.getByText("Candidate Two")).toBeInTheDocument();
   });
 
-  it("clicking a candidate calls onOverride with its id", async () => {
+  it("clicking a candidate calls onSelect with its id", async () => {
     const user = userEvent.setup();
-    const onOverride = vi.fn();
-    render(<UnresolvedCell candidates={candidates} onOverride={onOverride} />);
+    const onSelect = vi.fn();
+    render(<UnresolvedCandidates candidates={candidates} onSelect={onSelect} />);
     await user.click(screen.getByText("Candidate One"));
-    expect(onOverride).toHaveBeenCalledWith("rec-1");
+    expect(onSelect).toHaveBeenCalledWith("rec-1");
   });
 
-  it("entering manual MBID and submitting calls onOverride", async () => {
-    const user = userEvent.setup();
-    const onOverride = vi.fn();
-    render(<UnresolvedCell candidates={[]} onOverride={onOverride} />);
-    await user.type(screen.getByPlaceholderText(/xxxx/), "manual-mbid-5678");
-    await user.click(screen.getByRole("button", { name: "Apply" }));
-    expect(onOverride).toHaveBeenCalledWith("manual-mbid-5678");
-  });
-
-  it("shows manual input even with no candidates", () => {
-    render(<UnresolvedCell candidates={[]} onOverride={vi.fn()} />);
-    expect(screen.getByPlaceholderText(/xxxx/)).toBeInTheDocument();
+  it("highlights the selected candidate", () => {
+    const { container } = render(
+      <UnresolvedCandidates
+        candidates={candidates}
+        selectedMbid="rec-2"
+        onSelect={vi.fn()}
+      />,
+    );
+    const rows = container.querySelectorAll("[class*='border-green']");
+    expect(rows.length).toBeGreaterThan(0);
   });
 });

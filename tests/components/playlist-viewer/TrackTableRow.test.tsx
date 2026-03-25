@@ -9,6 +9,7 @@ vi.mock("@src/pages/PlaylistsPage/components/playlist-viewer/ThumbnailTooltip", 
 }));
 vi.mock("@src/pages/PlaylistsPage/components/playlist-viewer/MbBadge", () => ({
   MbBadge: ({ kind }: { kind: string }) => <div data-testid={`mb-badge-${kind}`} />,
+  MbBadgeEditContent: () => <div data-testid="mb-badge-edit-content" />,
 }));
 vi.mock("@src/pages/PlaylistsPage/components/playlist-viewer/RecordingInfo", () => ({
   RecordingInfo: ({ recording }: { recording: { title: string } }) => (
@@ -17,6 +18,7 @@ vi.mock("@src/pages/PlaylistsPage/components/playlist-viewer/RecordingInfo", () 
 }));
 vi.mock("@src/pages/PlaylistsPage/components/playlist-viewer/UnresolvedCell", () => ({
   UnresolvedCell: () => <div data-testid="unresolved-cell" />,
+  UnresolvedEditContent: () => <div data-testid="unresolved-edit-content" />,
 }));
 
 const cfg: JellyfinConfig = { url: "http://jelly.local", apiKey: "key", userId: "u1" };

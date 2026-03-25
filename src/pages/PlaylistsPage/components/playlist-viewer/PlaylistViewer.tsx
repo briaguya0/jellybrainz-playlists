@@ -1,6 +1,7 @@
 import { useJellyfin } from "@src/contexts/JellyfinContext";
 import { useTrackMatching } from "@src/hooks/useTrackMatching";
 import { fetchPlaylists } from "@src/lib/jellyfin";
+import type { OverrideSource } from "@src/lib/types";
 import {
   getErrorMessage,
   parseOverrides,
@@ -43,16 +44,17 @@ export function PlaylistViewer({
     totalPartialAuto,
   } = useTrackMatching(cfg, playlistId, overrides);
 
-  function handleSetOverride(jellyfinId: string, mbid: string) {
+  function handleSetOverride(jellyfinId: string, mbid: string, source: OverrideSource) {
     navigate({
       search: (prev) => ({
         ...prev,
         overrides: serializeOverrides({
           ...parseOverrides(prev.overrides),
-          [jellyfinId]: mbid,
+          [jellyfinId]: { mbid, source },
         }),
       }),
       replace: true,
+      resetScroll: false,
     });
   }
 
@@ -64,6 +66,7 @@ export function PlaylistViewer({
         return { ...prev, overrides: serializeOverrides(next) };
       },
       replace: true,
+      resetScroll: false,
     });
   }
 
@@ -73,7 +76,7 @@ export function PlaylistViewer({
 
   return (
     <section className="mt-10 rise-in">
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between mb-3 sm:flex-row flex-col sm:items-center items-start gap-2 sm:gap-0">
         <div>
           <h2 className="text-base font-semibold text-app-text">
             {playlistName}

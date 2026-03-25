@@ -1,6 +1,7 @@
 import type {
   JellyfinConfig,
   JellyfinTrack,
+  OverrideSource,
   TrackMatchState,
 } from "@src/lib/types";
 import { asset } from "@src/lib/utils";
@@ -18,7 +19,7 @@ export function TrackTable({
   tracks: JellyfinTrack[] | undefined;
   cfg: JellyfinConfig;
   matchStates: Map<string, TrackMatchState>;
-  onSetOverride: (jellyfinId: string, mbid: string) => void;
+  onSetOverride: (jellyfinId: string, mbid: string, source: OverrideSource) => void;
   onClearOverride: (jellyfinId: string) => void;
 }) {
   return (
@@ -35,7 +36,7 @@ export function TrackTable({
                 className="mx-auto"
               />
             </th>
-            <th className="sm:w-1/2 px-4 py-3 text-center">
+            <th className="px-4 py-3 text-center">
               <img
                 src={asset("/musicbrainz-icon.svg")}
                 width={32}

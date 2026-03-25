@@ -65,9 +65,17 @@ export interface MbRecording {
   }>;
 }
 
+export type OverrideSource =
+  | "confirmed-album"
+  | "confirmed-artist"
+  | "manual"
+  | "selected";
+
+export type OverrideEntry = { mbid: string; source: OverrideSource };
+
 export type TrackMatchState =
   | { kind: "loading" }
   | { kind: "exact"; recording: MbRecording }
-  | { kind: "partial-auto"; recording: MbRecording }
-  | { kind: "override"; recording: MbRecording | undefined }
+  | { kind: "partial-auto"; recording: MbRecording; matchSource: "album" | "artist" }
+  | { kind: "override"; recording: MbRecording | undefined; source: OverrideSource; candidates?: MbRecording[] }
   | { kind: "unresolved"; candidates: MbRecording[] };

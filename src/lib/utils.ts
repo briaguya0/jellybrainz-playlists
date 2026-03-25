@@ -1,20 +1,21 @@
 import type { ClassValue } from "clsx";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import type { OverrideEntry } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function parseOverrides(raw: unknown): Record<string, string> {
+export function parseOverrides(raw: unknown): Record<string, OverrideEntry> {
   if (typeof raw !== "string" || !raw) return {};
   return Object.fromEntries(
-    raw.split(",").flatMap((pair) => {
-      const idx = pair.indexOf(":");
-      if (idx === -1) return [];
-      const k = pair.slice(0, idx);
-      const v = pair.slice(idx + 1);
-      return k && v ? [[k, v]] : [];
+    raw.split(",").flatMap((piece) => {
+      const parts = piece.split(":");
+      if (parts.length < 2) return [];
+      const [k, mbid, source] = parts;
+      if (!k || !mbid) return [];
+      return [[k, { mbid, source: source ?? "manual" }]] as [string, OverrideEntry][];
     }),
   );
 }
@@ -28,9 +29,9 @@ export function asset(path: string): string {
 }
 
 export function serializeOverrides(
-  overrides: Record<string, string>,
+  overrides: Record<string, OverrideEntry>,
 ): string | undefined {
   const entries = Object.entries(overrides);
   if (!entries.length) return undefined;
-  return entries.map(([k, v]) => `${k}:${v}`).join(",");
+  return entries.map(([k, { mbid, source }]) => `${k}:${mbid}:${source}`).join(",");
 }

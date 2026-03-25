@@ -33,24 +33,29 @@ describe("parseOverrides", () => {
     expect(parseOverrides({})).toEqual({});
   });
 
-  it("parses valid k:v pairs", () => {
-    expect(parseOverrides("k1:v1,k2:v2")).toEqual({ k1: "v1", k2: "v2" });
+  it("parses valid k:mbid:source triples", () => {
+    expect(parseOverrides("k1:mbid-1:manual,k2:mbid-2:selected")).toEqual({
+      k1: { mbid: "mbid-1", source: "manual" },
+      k2: { mbid: "mbid-2", source: "selected" },
+    });
+  });
+
+  it("defaults source to manual for legacy k:mbid pairs", () => {
+    expect(parseOverrides("k1:mbid-1")).toEqual({
+      k1: { mbid: "mbid-1", source: "manual" },
+    });
   });
 
   it("skips pair missing colon", () => {
-    expect(parseOverrides("nocolon,k:v")).toEqual({ k: "v" });
+    expect(parseOverrides("nocolon,k:v")).toEqual({ k: { mbid: "v", source: "manual" } });
   });
 
   it("skips pair with empty key", () => {
-    expect(parseOverrides(":value,k:v")).toEqual({ k: "v" });
+    expect(parseOverrides(":value,k:v")).toEqual({ k: { mbid: "v", source: "manual" } });
   });
 
   it("skips pair with empty value", () => {
-    expect(parseOverrides("key:,k:v")).toEqual({ k: "v" });
-  });
-
-  it("uses everything after first colon as value", () => {
-    expect(parseOverrides("k:v:with:colons")).toEqual({ k: "v:with:colons" });
+    expect(parseOverrides("key:,k:v")).toEqual({ k: { mbid: "v", source: "manual" } });
   });
 });
 
@@ -60,18 +65,24 @@ describe("serializeOverrides", () => {
   });
 
   it("serializes non-empty object", () => {
-    expect(serializeOverrides({ k: "v" })).toBe("k:v");
+    expect(serializeOverrides({ k: { mbid: "v", source: "manual" } })).toBe("k:v:manual");
   });
 
   it("joins multiple entries with comma", () => {
-    const result = serializeOverrides({ k1: "v1", k2: "v2" });
-    expect(result).toContain("k1:v1");
-    expect(result).toContain("k2:v2");
+    const result = serializeOverrides({
+      k1: { mbid: "v1", source: "manual" },
+      k2: { mbid: "v2", source: "selected" },
+    });
+    expect(result).toContain("k1:v1:manual");
+    expect(result).toContain("k2:v2:selected");
     expect(result).toContain(",");
   });
 
   it("round-trips with parseOverrides", () => {
-    const original = { abc: "def", xyz: "123" };
+    const original = {
+      abc: { mbid: "def", source: "manual" as const },
+      xyz: { mbid: "123", source: "confirmed-artist" as const },
+    };
     const serialized = serializeOverrides(original);
     expect(parseOverrides(serialized)).toEqual(original);
   });

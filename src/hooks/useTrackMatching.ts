@@ -14,6 +14,7 @@ import type {
   JellyfinConfig,
   JellyfinTrack,
   MbRecording,
+  OverrideEntry,
   TrackMatchState,
 } from "@src/lib/types";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
@@ -21,7 +22,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 export function useTrackMatching(
   cfg: JellyfinConfig | null,
   playlistId: string | undefined,
-  overrides: Record<string, string>,
+  overrides: Record<string, OverrideEntry>,
 ): {
   tracks: JellyfinTrack[] | undefined;
   isPending: boolean;
@@ -63,7 +64,9 @@ export function useTrackMatching(
       : tracks.filter((t) => {
           const mbid = extractMbRecordingId(t);
           if (mbid && recordingMap.get(mbid)) return false;
-          if (overrides[t.Id]) return false;
+          // Keep "selected" overrides in the search so their candidates stay cached.
+          const override = overrides[t.Id];
+          if (override && override.source !== "selected") return false;
           return !!extractMbArtistId(t);
         });
 
@@ -124,7 +127,7 @@ export function useTrackMatching(
     placeholderData: keepPreviousData,
   });
 
-  const overrideMbids = Object.values(overrides);
+  const overrideMbids = Object.values(overrides).map((e) => e.mbid);
   const overrideMbidsKey = overrideMbids.slice().sort().join(",");
 
   const { data: overrideRecordingsMap } = useQuery({
@@ -140,8 +143,22 @@ export function useTrackMatching(
     for (const track of tracks ?? []) {
       // User overrides take precedence over all automatic matching.
       if (overrides[track.Id]) {
-        const recording = overrideRecordingsMap?.get(overrides[track.Id]);
-        map.set(track.Id, { kind: "override", recording });
+        const { mbid: overrideMbid, source } = overrides[track.Id];
+        // If the override MBID is already in our candidate results (i.e. the
+        // user confirmed a partial-auto match), use it directly — no fetch needed.
+        const knownCandidates = [
+          ...(albumCandidatesMap?.get(track.Id) ?? []),
+          ...(artistCandidatesMap?.get(track.Id) ?? []),
+        ];
+        const recording =
+          knownCandidates.find((r) => r.id === overrideMbid) ??
+          overrideRecordingsMap?.get(overrideMbid);
+        map.set(track.Id, {
+          kind: "override",
+          recording,
+          source,
+          candidates: source === "selected" ? knownCandidates : undefined,
+        });
         continue;
       }
 
@@ -170,7 +187,7 @@ export function useTrackMatching(
           }
           const albumCandidates = albumCandidatesMap?.get(track.Id) ?? [];
           if (albumCandidates.length === 1) {
-            map.set(track.Id, { kind: "partial-auto", recording: albumCandidates[0] });
+            map.set(track.Id, { kind: "partial-auto", recording: albumCandidates[0], matchSource: "album" });
             continue;
           }
           // Album search didn't resolve uniquely — fall through to artist search.
@@ -184,7 +201,7 @@ export function useTrackMatching(
           map.set(
             track.Id,
             candidates.length === 1
-              ? { kind: "partial-auto", recording: candidates[0] }
+              ? { kind: "partial-auto", recording: candidates[0], matchSource: "artist" }
               : { kind: "unresolved", candidates },
           );
         }
