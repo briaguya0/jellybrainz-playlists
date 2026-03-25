@@ -93,6 +93,43 @@ SPA mode is configured (`spa: { enabled: true }` in vite.config.ts, outputs `dis
 - `_redirects` / `404.html` fallback so all routes serve `/_shell.html`
 - `base` path config if hosted at a subpath (e.g. `/<repo-name>/`)
 
+## Refactor: file structure after inline row expansion
+
+The inline row expansion PR converted match editing from popovers on badge buttons into inline expanded rows. This left some files with names and structure that no longer match their responsibility.
+
+### 1. Rename and split `MbBadge.tsx`
+
+`MbBadge.tsx` exports four components, but the file name only describes `MbBadge` — the 20-line dot-badge icon. The other three (`MbBadgeStatus`, `MbBadgeManualEntry`, `MbBadgeEditContent`) are expanded-panel UI, not badge-related. They were named during the popover era; that context no longer exists.
+
+Split into two files:
+
+- **`MbBadge.tsx`** — keep only `MbBadge` (the icon with colored dot).
+- **`MatchEditPanel.tsx`** (new) — move and rename the three panel components:
+  - `MbBadgeStatus` → `RecordingMatchStatus`
+  - `MbBadgeManualEntry` → `ManualMbidEntry`
+  - `MbBadgeEditContent` → `ConfirmedMatchPanel`
+
+Update imports in `TrackTableRow.tsx` and test files.
+
+### 2. Extract expanded row content from `TrackTableRow.tsx`
+
+The unresolved/selected-override expanded content (lines 189–231) uses an IIFE to scope locals — a sign it should be its own component. Extract to **`CandidateSelectionPanel.tsx`**, accepting the relevant `matchState` slice plus `onSetOverride`, `onClearOverride`, `onCollapse` callbacks.
+
+The partial-auto/confirmed-override branch (lines 165–187) can then be expressed as a direct `<ConfirmedMatchPanel .../>` once item 1 is done, reducing `TrackTableRow` to a coordinator that picks which panel to render.
+
+### 3. Evaluate inlining `MbBadgeEditContent` / `ConfirmedMatchPanel`
+
+After item 1, `ConfirmedMatchPanel` is a two-line composition of `RecordingMatchStatus` + `ManualMbidEntry` with one usage site. Decide whether it's worth keeping as a named export or just rendering the two components directly at the call site.
+
+### 4. Consider barrel file or subdirectory structure for `playlist-viewer/`
+
+The folder currently has 9 flat files; items 1–2 will add more. Options:
+
+- Flat barrel (`index.ts`) re-exporting public components so siblings import from `"./index"`.
+- Subdirectory: move `TrackTableRow` and its panel files into `track-row/`, keeping `PlaylistViewer`, `TrackTable`, `SyncDropdown`, `LbExportButton` at the top level.
+
+Low priority — best done alongside items 1–2 to batch the import updates.
+
 ## MusicBrainz collections — track order
 
 MB collections are unordered sets. The ListenBrainz export preserves order via JSPF playlists, but there's no equivalent for MB. Consider surfacing this distinction in the UI — perhaps a tooltip or note on the MB export button.
