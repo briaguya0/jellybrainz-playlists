@@ -1,0 +1,64 @@
+{
+  "_note": "Response from GET /ws/2/recording/?query=arid%3A6a8b1fe9-ce02-47c4-90e3-6a2ec3e25490+AND+recording%3A%22Super+Mario+64+%27The+Alternate+Route%27+OC+ReMix%22&limit=5&fmt=json — current ParagonX9 MBID, returns 1 recording. 'created' timestamp stripped.",
+  "count": 1,
+  "offset": 0,
+  "recordings": [
+    {
+      "id": "c01dcf9c-502c-4bd1-97c0-dbf91f84028c",
+      "score": 100,
+      "artist-credit-id": "57a00f40-43ce-3b06-860a-74a164b3e5c8",
+      "title": "Super Mario 64 'The Alternate Route' OC ReMix",
+      "length": 260000,
+      "video": null,
+      "artist-credit": [
+        {
+          "name": "ParagonX9",
+          "artist": {
+            "id": "6a8b1fe9-ce02-47c4-90e3-6a2ec3e25490",
+            "name": "ParagonX9",
+            "sort-name": "ParagonX9",
+            "disambiguation": "Jermain Blume",
+            "aliases": [
+              {
+                "sort-name": "Chaoz",
+                "name": "Chaoz",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              },
+              {
+                "sort-name": "Paragon X9",
+                "name": "Paragon X9",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              },
+              {
+                "sort-name": "Paragon X 9",
+                "name": "Paragon X 9",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              },
+              {
+                "sort-name": "Paragon X nine",
+                "name": "Paragon X nine",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

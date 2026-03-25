@@ -1,0 +1,26 @@
+{
+  "_note": "UserData and ServerId excluded — UserData contains personal playback history; ServerId uniquely identifies the server instance.",
+  "Name": "Kirby's Dream Land 2 'Breakbeat Forest' OC ReMix",
+  "Id": "3dcfc39cca08172a4734bdcb9f7d7acb",
+  "PlaylistItemId": "3dcfc39cca08172a4734bdcb9f7d7acb",
+  "HasLyrics": false,
+  "PremiereDate": "2007-03-27T00:00:00.0000000Z",
+  "ChannelId": null,
+  "RunTimeTicks": 2431253248,
+  "ProductionYear": 2007,
+  "IndexNumber": 0,
+  "ParentIndexNumber": 0,
+  "ProviderIds": {
+    "MusicBrainzArtist": "98ed5c6d-947f-45b6-9da0-fd537482dec9"
+  },
+  "IsFolder": false,
+  "Type": "Audio",
+  "Artists": ["Tepid"],
+  "ArtistItems": [{ "Name": "Tepid", "Id": "0098101a4c47756f23819c752831b56c" }],
+  "Album": "Kirby's Dream Land 2 'Breakbeat Forest' OC ReMix",
+  "AlbumId": "f7020e70fff7d5b2a6127da93f2389bd",
+  "AlbumArtist": "Tepid",
+  "AlbumArtists": [{ "Name": "Tepid", "Id": "0098101a4c47756f23819c752831b56c" }],
+  "LocationType": "FileSystem",
+  "MediaType": "Audio"
+}

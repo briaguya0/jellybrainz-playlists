@@ -1,0 +1,6 @@
+{
+  "_note": "Response from GET /ws/2/recording/?query=tid%3A27744954-087c-437a-ba34-447971a4f671&limit=1&fmt=json — stale track MBID, returns 0 results. 'created' timestamp stripped.",
+  "count": 0,
+  "offset": 0,
+  "recordings": []
+}

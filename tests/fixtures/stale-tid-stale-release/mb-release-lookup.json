@@ -1,0 +1,64 @@
+{
+  "_note": "Response from GET /ws/2/release/403735a0-3901-4b19-b10a-d8d4b46132f5?fmt=json — stale release MBID redirects to current id 'a27c4e85-9ed7-4fc4-8367-90ee32ddd8b6' in response body.",
+  "id": "a27c4e85-9ed7-4fc4-8367-90ee32ddd8b6",
+  "title": "Beat the Champ",
+  "status": "Official",
+  "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+  "date": "2015-04-03",
+  "country": "AU",
+  "barcode": "673855051628",
+  "asin": "B00SM797Y8",
+  "disambiguation": "",
+  "quality": "normal",
+  "packaging": "Jewel Case",
+  "packaging-id": "ec27701a-4a22-37f4-bfac-6616e0f9750a",
+  "text-representation": {
+    "language": "eng",
+    "script": "Latn"
+  },
+  "release-events": [
+    {
+      "date": "2015-04-03",
+      "area": {
+        "id": "106e0bec-b638-3b37-b731-f53d507dc00e",
+        "name": "Australia",
+        "sort-name": "Australia",
+        "type": null,
+        "type-id": null,
+        "disambiguation": "",
+        "iso-3166-1-codes": ["AU"]
+      }
+    },
+    {
+      "date": "2015-04-07",
+      "area": {
+        "id": "489ce91b-6658-3307-9877-795b68554c98",
+        "name": "United States",
+        "sort-name": "United States",
+        "type": null,
+        "type-id": null,
+        "disambiguation": "",
+        "iso-3166-1-codes": ["US"]
+      }
+    },
+    {
+      "date": "2015-04-13",
+      "area": {
+        "id": "8a754a16-0027-3a29-b6d7-2b40ea0481ed",
+        "name": "United Kingdom",
+        "sort-name": "United Kingdom",
+        "type": null,
+        "type-id": null,
+        "disambiguation": "",
+        "iso-3166-1-codes": ["GB"]
+      }
+    }
+  ],
+  "cover-art-archive": {
+    "artwork": true,
+    "front": true,
+    "back": true,
+    "count": 6,
+    "darkened": false
+  }
+}

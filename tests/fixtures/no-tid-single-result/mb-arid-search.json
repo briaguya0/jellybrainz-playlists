@@ -1,0 +1,36 @@
+{
+  "_note": "Response from GET /ws/2/recording/?query=arid%3A98ed5c6d-947f-45b6-9da0-fd537482dec9+AND+recording%3A%22Kirby%27s+Dream+Land+2+%27Breakbeat+Forest%27+OC+ReMix%22&limit=5&fmt=json — 'created' timestamp stripped as it changes per request.",
+  "count": 1,
+  "offset": 0,
+  "recordings": [
+    {
+      "id": "63cffd29-87fc-4626-a498-e869772fd26c",
+      "score": 100,
+      "artist-credit-id": "9c856d0b-1e09-3941-97c2-e16aefa25839",
+      "title": "Kirby's Dream Land 2 'Breakbeat Forest' OC ReMix",
+      "length": 245000,
+      "video": null,
+      "artist-credit": [
+        {
+          "name": "Tepid",
+          "artist": {
+            "id": "98ed5c6d-947f-45b6-9da0-fd537482dec9",
+            "name": "Tepid",
+            "sort-name": "Tepid",
+            "aliases": [
+              {
+                "sort-name": "vergo890",
+                "name": "vergo890",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

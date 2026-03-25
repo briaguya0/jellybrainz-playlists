@@ -1,0 +1,58 @@
+{
+  "_note": "UserData and ServerId excluded — UserData contains personal playback history; ServerId uniquely identifies the server instance. MusicBrainzTrack, MusicBrainzAlbum, MusicBrainzAlbumArtist, and MusicBrainzReleaseGroup removed from ProviderIds to simulate no-tid case.",
+  "Name": "Lingus",
+  "Id": "834d3eb65f965f77a9f56e98f3c2c89c",
+  "PlaylistItemId": "834d3eb65f965f77a9f56e98f3c2c89c",
+  "HasLyrics": false,
+  "PremiereDate": "2014-02-25T00:00:00.0000000Z",
+  "ChannelId": null,
+  "RunTimeTicks": 6457200128,
+  "ProductionYear": 2014,
+  "IndexNumber": 8,
+  "ParentIndexNumber": 1,
+  "ProviderIds": {
+    "MusicBrainzArtist": "fe85367e-4036-43c1-874b-b91af81cb4f3"
+  },
+  "IsFolder": false,
+  "Type": "Audio",
+  "ParentLogoItemId": "eca80b36ce9bbcbc7b4cac121e15429f",
+  "ParentBackdropItemId": "eca80b36ce9bbcbc7b4cac121e15429f",
+  "ParentBackdropImageTags": [
+    "19a92c34b415f31c97b1857c29189633"
+  ],
+  "Artists": [
+    "Snarky Puppy"
+  ],
+  "ArtistItems": [
+    {
+      "Name": "Snarky Puppy",
+      "Id": "eca80b36ce9bbcbc7b4cac121e15429f"
+    }
+  ],
+  "Album": "We Like It Here",
+  "AlbumId": "cf2537eabaf0550969877fc400fd561a",
+  "AlbumPrimaryImageTag": "4a026799a5b395dd2bfd8fccb43d5bc6",
+  "AlbumArtist": "Snarky Puppy",
+  "AlbumArtists": [
+    {
+      "Name": "Snarky Puppy",
+      "Id": "eca80b36ce9bbcbc7b4cac121e15429f"
+    }
+  ],
+  "ImageTags": {},
+  "BackdropImageTags": [],
+  "ParentLogoImageTag": "9e7b19b01c9e6ecb62ba7994405acc51",
+  "ImageBlurHashes": {
+    "Logo": {
+      "9e7b19b01c9e6ecb62ba7994405acc51": "OxQT4Mof~qof9Foft7offQoffQWBayj[t7ayRjj[ofayj["
+    },
+    "Backdrop": {
+      "19a92c34b415f31c97b1857c29189633": "W36%~POZ#6wHEL^Q~WAbM_Io9[oz-;I;s7M|rWpH?co#nz56rWpJ"
+    },
+    "Primary": {
+      "4a026799a5b395dd2bfd8fccb43d5bc6": "VCG-VII]N2W[9ktDxtR$aw-fx7oct7oLR:SiWBj?oeR."
+    }
+  },
+  "LocationType": "FileSystem",
+  "MediaType": "Audio"
+}
