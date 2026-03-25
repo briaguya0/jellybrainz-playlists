@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { buildAuthUrl, generatePkce } from "@src/lib/oauth";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { buildAuthUrl, exchangeCode, fetchMbUsername, generatePkce } from "@src/lib/oauth";
 
 describe("generatePkce", () => {
   it("returns codeVerifier and codeChallenge strings", async () => {
@@ -55,5 +55,81 @@ describe("buildAuthUrl", () => {
       buildAuthUrl("cid", "http://localhost:3000/mb-callback", "ch"),
     );
     expect(url.pathname).toBe("/oauth2/authorize");
+  });
+});
+
+function mockFetch(response: { ok: boolean; status?: number; json?: () => Promise<unknown>; text?: () => Promise<string> }) {
+  return vi.fn().mockResolvedValue({
+    ok: response.ok,
+    status: response.status ?? 200,
+    json: response.json ?? (() => Promise.resolve({})),
+    text: response.text ?? (() => Promise.resolve("")),
+  });
+}
+
+describe("exchangeCode", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("sends correct params in POST body", async () => {
+    const fetchMock = mockFetch({
+      ok: true,
+      json: () => Promise.resolve({ access_token: "tok" }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    await exchangeCode("code123", "verifier456", "client-id", "http://localhost/cb");
+    const body = new URLSearchParams(fetchMock.mock.calls[0][1].body as string);
+    expect(body.get("grant_type")).toBe("authorization_code");
+    expect(body.get("code")).toBe("code123");
+    expect(body.get("redirect_uri")).toBe("http://localhost/cb");
+    expect(body.get("code_verifier")).toBe("verifier456");
+    expect(body.get("client_id")).toBe("client-id");
+  });
+
+  it("returns access_token from response", async () => {
+    vi.stubGlobal("fetch", mockFetch({
+      ok: true,
+      json: () => Promise.resolve({ access_token: "my-token" }),
+    }));
+    await expect(exchangeCode("code", "verifier", "cid", "http://localhost/cb")).resolves.toBe("my-token");
+  });
+
+  it("throws on non-ok response", async () => {
+    vi.stubGlobal("fetch", mockFetch({
+      ok: false,
+      status: 400,
+      text: () => Promise.resolve("bad request"),
+    }));
+    await expect(exchangeCode("code", "verifier", "cid", "http://localhost/cb")).rejects.toThrow("bad request");
+  });
+});
+
+describe("fetchMbUsername", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("sends Authorization: Bearer header", async () => {
+    const fetchMock = mockFetch({
+      ok: true,
+      json: () => Promise.resolve({ sub: "mb-user" }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    await fetchMbUsername("my-access-token");
+    expect(fetchMock.mock.calls[0][1].headers.Authorization).toBe("Bearer my-access-token");
+  });
+
+  it("returns sub field from response", async () => {
+    vi.stubGlobal("fetch", mockFetch({
+      ok: true,
+      json: () => Promise.resolve({ sub: "mb-user" }),
+    }));
+    await expect(fetchMbUsername("tok")).resolves.toBe("mb-user");
+  });
+
+  it("throws on non-ok response", async () => {
+    vi.stubGlobal("fetch", mockFetch({
+      ok: false,
+      status: 401,
+      text: () => Promise.resolve("unauthorized"),
+    }));
+    await expect(fetchMbUsername("bad-tok")).rejects.toThrow("unauthorized");
   });
 });
