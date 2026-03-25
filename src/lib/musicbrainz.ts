@@ -242,10 +242,10 @@ export async function searchRecordingsByRelease(
   return searchByReid(data.id, title, limit);
 }
 
-export async function searchRecordingsByArtist(
+async function searchByArid(
   artistMbid: string,
   title: string,
-  limit = 5,
+  limit: number,
 ): Promise<MbRecording[]> {
   const escapedTitle = title.replace(/"/g, '\\"');
   const url = new URL(`${MB_BASE}/recording/`);
@@ -263,6 +263,27 @@ export async function searchRecordingsByArtist(
   }
   const data: { recordings: MbRecording[] } = await resp.json();
   return data.recordings ?? [];
+}
+
+export async function searchRecordingsByArtist(
+  artistMbid: string,
+  title: string,
+  limit = 5,
+): Promise<MbRecording[]> {
+  const candidates = await searchByArid(artistMbid, title, limit);
+  if (candidates.length > 0) return candidates;
+
+  // Stale MBID — resolve current via lookup API
+  await sleep(1100);
+  const url = new URL(`${MB_BASE}/artist/${artistMbid}`);
+  url.searchParams.set("fmt", "json");
+  const resp = await fetch(url.toString(), { headers: mbHeaders() });
+  if (!resp.ok) return [];
+  const data: { id: string } = await resp.json();
+  if (data.id === artistMbid) return [];
+
+  await sleep(1100);
+  return searchByArid(data.id, title, limit);
 }
 
 export async function fetchRecordingsByRecordingIds(
