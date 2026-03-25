@@ -8,7 +8,7 @@ import type {
 import { Search, Pencil, ChevronDown, Save } from "lucide-react";
 import { useState } from "react";
 import { asset } from "@src/lib/utils";
-import { MbBadge, MbBadgeEditContent } from "./MbBadge";
+import { MbBadge, MbBadgeEditContent, MbBadgeManualEntry, MbBadgeStatus } from "./MbBadge";
 import { RecordingInfo } from "./RecordingInfo";
 import { ThumbnailTooltip } from "./ThumbnailTooltip";
 import { UnresolvedCell, UnresolvedCandidates } from "./UnresolvedCell";
@@ -164,7 +164,7 @@ export function TrackTableRow({
             <div className="mx-[5%] border-t border-stroke/70 pt-3">
               {(matchState.kind === "partial-auto" ||
                 (matchState.kind === "override" && matchState.source !== "selected")) && (
-                <div className="ml-[50%] max-w-sm pl-4">
+                <div className="sm:ml-[50%] max-w-sm sm:pl-4">
                   <MbBadgeEditContent
                     kind={matchState.kind}
                     overrideSource={matchState.kind === "override" ? matchState.source : undefined}
@@ -187,35 +187,48 @@ export function TrackTableRow({
                 </div>
               )}
               {(matchState.kind === "unresolved" ||
-                (matchState.kind === "override" && matchState.source === "selected")) && (
-                <div className="flex gap-4">
-                  <div className="w-1/2 min-w-0">
-                    <UnresolvedCandidates
-                      candidates={
-                        matchState.kind === "override"
-                          ? (matchState.candidates ?? [])
-                          : matchState.candidates
-                      }
-                      selectedMbid={matchState.kind === "override" ? matchState.recording?.id : undefined}
-                      onSelect={(mbid) => {
-                        onSetOverride(track.Id, mbid, "selected");
-                        setIsExpanded(false);
-                      }}
-                    />
-                  </div>
-                  <div className="w-1/2 pl-4 border-l border-stroke/70">
-                    <MbBadgeEditContent
-                      kind={matchState.kind === "override" ? "override" : "partial-auto"}
-                      overrideSource={matchState.kind === "override" ? matchState.source : undefined}
-                      matchLabel={matchState.kind === "override" ? "Selected from candidates" : "No match selected"}
-                      recording={matchState.kind === "override" ? matchState.recording : undefined}
-                      onOverride={(mbid) => onSetOverride(track.Id, mbid, "manual")}
-                      onClear={() => onClearOverride(track.Id)}
-                      onCollapse={() => setIsExpanded(false)}
-                    />
-                  </div>
-                </div>
-              )}
+                (matchState.kind === "override" && matchState.source === "selected")) && (() => {
+                  const statusProps = {
+                    kind: (matchState.kind === "override" ? "override" : "partial-auto") as "partial-auto" | "override",
+                    overrideSource: matchState.kind === "override" ? matchState.source : undefined,
+                    matchLabel: matchState.kind === "override" ? "Selected from candidates" : "No match selected",
+                    recording: matchState.kind === "override" ? matchState.recording : undefined,
+                    onClear: () => onClearOverride(track.Id),
+                    onCollapse: () => setIsExpanded(false),
+                  };
+                  const candidates = matchState.kind === "override"
+                    ? (matchState.candidates ?? [])
+                    : matchState.candidates;
+                  const manualEntryProps = {
+                    onOverride: (mbid: string) => onSetOverride(track.Id, mbid, "manual"),
+                    onCollapse: () => setIsExpanded(false),
+                  };
+                  const onSelect = (mbid: string) => {
+                    onSetOverride(track.Id, mbid, "selected");
+                    setIsExpanded(false);
+                  };
+                  const selectedMbid = matchState.kind === "override" ? matchState.recording?.id : undefined;
+                  return (
+                    <>
+                      {/* Mobile: stacked */}
+                      <div className="sm:hidden flex flex-col gap-3">
+                        <MbBadgeStatus {...statusProps} />
+                        <UnresolvedCandidates candidates={candidates} selectedMbid={selectedMbid} onSelect={onSelect} />
+                        <MbBadgeManualEntry {...manualEntryProps} />
+                      </div>
+                      {/* Desktop: two columns */}
+                      <div className="hidden sm:flex gap-4">
+                        <div className="w-1/2 min-w-0">
+                          <UnresolvedCandidates candidates={candidates} selectedMbid={selectedMbid} onSelect={onSelect} />
+                        </div>
+                        <div className="w-1/2 pl-4 border-l border-stroke/70">
+                          <MbBadgeStatus {...statusProps} />
+                          <MbBadgeManualEntry {...manualEntryProps} />
+                        </div>
+                      </div>
+                    </>
+                  );
+                })()}
             </div>
           </td>
         </tr>

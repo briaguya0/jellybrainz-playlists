@@ -1,7 +1,7 @@
 import { asset } from "@src/lib/utils";
 import { formatArtistCredits, msToDisplay } from "@src/lib/musicbrainz";
 import type { MbRecording } from "@src/lib/types";
-import { Check, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 
 export function UnresolvedCandidates({
   candidates,
@@ -15,18 +15,15 @@ export function UnresolvedCandidates({
   if (candidates.length === 0) return null;
 
   return (
-    <>
+    <div>
       <p className="text-xs text-app-muted mb-2 pl-1">Possible matches</p>
       <div className="space-y-1">
         {candidates.map((rec) => (
-          <div key={rec.id} className="relative flex items-center gap-1">
-            {rec.id === selectedMbid && (
-              <Check size={20} className="text-green-500 absolute -left-8 top-1/2 -translate-y-1/2" />
-            )}
+          <div key={rec.id} className={`relative flex items-center gap-1 max-sm:-mx-3 max-sm:px-3 sm:-ml-2 sm:pl-2 ${rec.id === selectedMbid ? "bg-linear-to-r from-green-500/15 to-transparent rounded-sm border-l-3 border-r-0 border-green-500" : ""}`}>
             <button
               type="button"
               onClick={() => onSelect(rec.id)}
-              className="flex-1 min-w-0 text-left rounded-lg pl-1 pr-3 py-2 hover:bg-surface text-sm"
+              className="flex-1 min-w-0 text-left pl-1 pr-3 py-2 text-sm"
             >
               <p className="font-medium text-app-text truncate">
                 {rec.title}
@@ -63,7 +60,7 @@ export function UnresolvedCandidates({
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 }
 
