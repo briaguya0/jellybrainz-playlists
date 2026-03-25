@@ -76,7 +76,7 @@ export function PlaylistViewer({
 
   return (
     <section className="mt-10 rise-in">
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between mb-3 sm:flex-row flex-col sm:items-center items-start gap-2 sm:gap-0">
         <div>
           <h2 className="text-base font-semibold text-app-text">
             {playlistName}
