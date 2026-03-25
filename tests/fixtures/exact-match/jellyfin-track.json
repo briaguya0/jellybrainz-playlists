@@ -1,0 +1,38 @@
+{
+  "_note": "UserData and ServerId excluded — UserData contains personal playback history; ServerId uniquely identifies the server instance.",
+  "Name": "we've never met but, can we have a coffee or something",
+  "Id": "b5f148448b2e89b4c0b65783027aad35",
+  "PlaylistItemId": "b5f148448b2e89b4c0b65783027aad35",
+  "HasLyrics": false,
+  "PremiereDate": "2016-03-03T00:00:00.0000000Z",
+  "ChannelId": null,
+  "RunTimeTicks": 1996039680,
+  "ProductionYear": 2016,
+  "IndexNumber": 1,
+  "ParentIndexNumber": 1,
+  "ProviderIds": {
+    "MusicBrainzAlbum": "d735354d-b2dc-401d-a2d2-c858562d55b5",
+    "MusicBrainzAlbumArtist": "ddcc8335-d46f-4699-94c2-39356a24555b",
+    "MusicBrainzArtist": "ddcc8335-d46f-4699-94c2-39356a24555b",
+    "MusicBrainzReleaseGroup": "937e2f42-992f-4ac0-b8e5-4007df5239f4",
+    "MusicBrainzTrack": "f479bcd8-866b-478d-a250-cb82d300f596"
+  },
+  "IsFolder": false,
+  "Type": "Audio",
+  "Artists": ["In Love With a Ghost"],
+  "ArtistItems": [],
+  "Album": "let's go",
+  "AlbumId": "58d7f65f1dc0e62161fb8c3997e8b8c2",
+  "AlbumPrimaryImageTag": "e26af892ec1bbe4ce3b4a2814d86c118",
+  "AlbumArtist": "In Love With a Ghost",
+  "AlbumArtists": [],
+  "ImageTags": {},
+  "BackdropImageTags": [],
+  "ImageBlurHashes": {
+    "Primary": {
+      "e26af892ec1bbe4ce3b4a2814d86c118": "eCD90YK3AA$kSOE2aLIVxaxZ0_ba=}OSoJ55v~s.RoI:?If~NFnPsq"
+    }
+  },
+  "LocationType": "FileSystem",
+  "MediaType": "Audio"
+}

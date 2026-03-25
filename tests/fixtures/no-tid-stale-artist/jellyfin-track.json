@@ -1,0 +1,46 @@
+{
+  "_note": "UserData and ServerId excluded. MusicBrainzArtist replaced with the stale Chaoz MBID (e0ba3adc-206a-424c-97b1-09ff3a4a74a6) to simulate a track whose artist ID is stale — Chaoz was merged into ParagonX9 (MB edit #141783328). The track has no MusicBrainzTrack or MusicBrainzAlbum IDs.",
+  "Name": "Super Mario 64 'The Alternate Route' OC ReMix",
+  "Id": "09a1e08c10679e52bbff8e1773eb62d0",
+  "PlaylistItemId": "09a1e08c10679e52bbff8e1773eb62d0",
+  "HasLyrics": false,
+  "PremiereDate": "2004-10-11T00:00:00.0000000Z",
+  "ChannelId": null,
+  "RunTimeTicks": 2591165696,
+  "ProductionYear": 2004,
+  "IndexNumber": 0,
+  "ParentIndexNumber": 0,
+  "ProviderIds": {
+    "MusicBrainzArtist": "e0ba3adc-206a-424c-97b1-09ff3a4a74a6"
+  },
+  "IsFolder": false,
+  "Type": "Audio",
+  "Artists": [
+    "ParagonX9"
+  ],
+  "ArtistItems": [
+    {
+      "Name": "ParagonX9",
+      "Id": "e9fea3b40abe5632253e8ff872f191ae"
+    }
+  ],
+  "Album": "Super Mario 64 'The Alternate Route' OC ReMix",
+  "AlbumId": "c4a1cef27e22693fe175368f902054ff",
+  "AlbumPrimaryImageTag": "4a86faf8b1984f46974cea180b7b29a9",
+  "AlbumArtist": "ParagonX9",
+  "AlbumArtists": [
+    {
+      "Name": "ParagonX9",
+      "Id": "e9fea3b40abe5632253e8ff872f191ae"
+    }
+  ],
+  "ImageTags": {},
+  "BackdropImageTags": [],
+  "ImageBlurHashes": {
+    "Primary": {
+      "4a86faf8b1984f46974cea180b7b29a9": "eKA]Q^n%0dNttOX5jtaffkof4:bH%eo0aQi|bFkUWBWCk%WUVzogt3"
+    }
+  },
+  "LocationType": "FileSystem",
+  "MediaType": "Audio"
+}

@@ -1,0 +1,48 @@
+{
+  "_note": "UserData and ServerId excluded — UserData contains personal playback history; ServerId uniquely identifies the server instance.",
+  "Name": "Foreign Object",
+  "Id": "47e35a708cdf17dd92c3cbda254283b7",
+  "PlaylistItemId": "47e35a708cdf17dd92c3cbda254283b7",
+  "HasLyrics": false,
+  "PremiereDate": "2014-04-07T00:00:00.0000000Z",
+  "ChannelId": null,
+  "RunTimeTicks": 1714800000,
+  "ProductionYear": 2014,
+  "IndexNumber": 3,
+  "ParentIndexNumber": 1,
+  "ProviderIds": {
+    "MusicBrainzAlbum": "403735a0-3901-4b19-b10a-d8d4b46132f5",
+    "MusicBrainzAlbumArtist": "9639cd52-c351-4a17-9797-58880e95a7ef",
+    "MusicBrainzArtist": "9639cd52-c351-4a17-9797-58880e95a7ef",
+    "MusicBrainzReleaseGroup": "b745f2d5-e41c-415c-bc4e-ce0fbb262dc1",
+    "MusicBrainzTrack": "3df09218-acba-4be0-9ffb-5d6f9ef77d1a"
+  },
+  "IsFolder": false,
+  "Type": "Audio",
+  "ParentLogoItemId": "5269bd428d7b53a8f83f8328ebbd224a",
+  "ParentBackdropItemId": "5269bd428d7b53a8f83f8328ebbd224a",
+  "ParentBackdropImageTags": ["50c6dcb68f1bab942733078b996a46a8"],
+  "Artists": ["The Mountain Goats"],
+  "ArtistItems": [{ "Name": "The Mountain Goats", "Id": "5269bd428d7b53a8f83f8328ebbd224a" }],
+  "Album": "Beat the Champ",
+  "AlbumId": "8668f7ce3e03c7837373f8d162c6cedb",
+  "AlbumPrimaryImageTag": "5747621c219adddf357be80b5f1c409d",
+  "AlbumArtist": "The Mountain Goats",
+  "AlbumArtists": [{ "Name": "The Mountain Goats", "Id": "5269bd428d7b53a8f83f8328ebbd224a" }],
+  "ImageTags": {},
+  "BackdropImageTags": [],
+  "ParentLogoImageTag": "7124dc134b16a8fda2094377a43a7de4",
+  "ImageBlurHashes": {
+    "Logo": {
+      "7124dc134b16a8fda2094377a43a7de4": "OpOWvnRj~qxu-;t7IUD%WBxuj[oft7t7%MWBRjt7WBayWB"
+    },
+    "Backdrop": {
+      "50c6dcb68f1bab942733078b996a46a8": "WTDu}LKg5+-:bvJ7~Ce.IpoLRkn*r@rssAVtM|s:kWoKsoozofRj"
+    },
+    "Primary": {
+      "5747621c219adddf357be80b5f1c409d": "eHIEFYRj5QxCR-D%S5%3%1WX0#xuwIIpfk-;rqxZS5s,nNs:I;ofxC"
+    }
+  },
+  "LocationType": "FileSystem",
+  "MediaType": "Audio"
+}

@@ -1,0 +1,346 @@
+{
+  "_note": "Response from GET /ws/2/recording/?query=arid:fe85367e-4036-43c1-874b-b91af81cb4f3%20AND%20recording:%22Lingus%22&limit=5&fmt=json — 'created' timestamp stripped as it changes per request.",
+  "count": 29,
+  "offset": 0,
+  "recordings": [
+    {
+      "id": "4b1dab69-705b-45d6-9795-f1252572d214",
+      "score": 100,
+      "artist-credit-id": "9b5eebfb-daaf-31c3-b957-48c7353f78e6",
+      "title": "Lingus",
+      "video": null,
+      "artist-credit": [
+        {
+          "name": "Snarky Puppy",
+          "artist": {
+            "id": "fe85367e-4036-43c1-874b-b91af81cb4f3",
+            "name": "Snarky Puppy",
+            "sort-name": "Snarky Puppy"
+          }
+        }
+      ],
+      "first-release-date": "2016-03",
+      "releases": [
+        {
+          "id": "6fa8c1fb-2572-464a-87ad-4c74b55e597e",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "count": 32,
+          "title": "World Tour 2015 Collector's Edition Box Set",
+          "status": "Official",
+          "release-group": {
+            "id": "700ddfce-9142-4737-936f-a2bd8029a5fa",
+            "type-id": "dd2a21e1-0c00-3729-a7a0-de60b84eb5d1",
+            "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+            "title": "World Tour 2015 Box Set",
+            "primary-type": "Album",
+            "secondary-types": ["Compilation"],
+            "secondary-type-ids": ["dd2a21e1-0c00-3729-a7a0-de60b84eb5d1"]
+          },
+          "date": "2016-03",
+          "country": "US",
+          "release-events": [
+            {
+              "date": "2016-03",
+              "area": {
+                "id": "489ce91b-6658-3307-9877-795b68554c98",
+                "name": "United States",
+                "sort-name": "United States",
+                "iso-3166-1-codes": ["US"]
+              }
+            }
+          ],
+          "track-count": 276,
+          "media": [
+            {
+              "id": "a00d96f9-b6bd-3096-814c-9448fc946c87",
+              "position": 1,
+              "format": "CD",
+              "track": [
+                {
+                  "id": "f7e85f8d-f9b1-4daa-bf94-9d847f6407a4",
+                  "number": "130",
+                  "title": "Lingus"
+                }
+              ],
+              "track-count": 140,
+              "track-offset": 129
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "5ee98a49-1b0c-40cb-8b95-6e245ce09091",
+      "score": 100,
+      "artist-credit-id": "9b5eebfb-daaf-31c3-b957-48c7353f78e6",
+      "title": "Lingus",
+      "video": null,
+      "artist-credit": [
+        {
+          "name": "Snarky Puppy",
+          "artist": {
+            "id": "fe85367e-4036-43c1-874b-b91af81cb4f3",
+            "name": "Snarky Puppy",
+            "sort-name": "Snarky Puppy"
+          }
+        }
+      ],
+      "first-release-date": "2016-03",
+      "releases": [
+        {
+          "id": "6fa8c1fb-2572-464a-87ad-4c74b55e597e",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "count": 32,
+          "title": "World Tour 2015 Collector's Edition Box Set",
+          "status": "Official",
+          "release-group": {
+            "id": "700ddfce-9142-4737-936f-a2bd8029a5fa",
+            "type-id": "dd2a21e1-0c00-3729-a7a0-de60b84eb5d1",
+            "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+            "title": "World Tour 2015 Box Set",
+            "primary-type": "Album",
+            "secondary-types": ["Compilation"],
+            "secondary-type-ids": ["dd2a21e1-0c00-3729-a7a0-de60b84eb5d1"]
+          },
+          "date": "2016-03",
+          "country": "US",
+          "release-events": [
+            {
+              "date": "2016-03",
+              "area": {
+                "id": "489ce91b-6658-3307-9877-795b68554c98",
+                "name": "United States",
+                "sort-name": "United States",
+                "iso-3166-1-codes": ["US"]
+              }
+            }
+          ],
+          "track-count": 276,
+          "media": [
+            {
+              "id": "a00d96f9-b6bd-3096-814c-9448fc946c87",
+              "position": 1,
+              "format": "CD",
+              "track": [
+                {
+                  "id": "c02299e9-604b-4d4f-8d99-f787621acc34",
+                  "number": "56",
+                  "title": "Lingus"
+                }
+              ],
+              "track-count": 140,
+              "track-offset": 55
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "60a817cd-26c0-42d9-89d4-2c55031339cb",
+      "score": 100,
+      "artist-credit-id": "9b5eebfb-daaf-31c3-b957-48c7353f78e6",
+      "title": "Lingus",
+      "length": 834000,
+      "disambiguation": "2015-10-06: Hammersmith Apollo, London, UK",
+      "video": null,
+      "artist-credit": [
+        {
+          "name": "Snarky Puppy",
+          "artist": {
+            "id": "fe85367e-4036-43c1-874b-b91af81cb4f3",
+            "name": "Snarky Puppy",
+            "sort-name": "Snarky Puppy"
+          }
+        }
+      ],
+      "first-release-date": "2015-10-06",
+      "releases": [
+        {
+          "id": "a678a617-9dc0-4644-8fc3-8d6eb003f865",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "count": 3,
+          "title": "2015-10-06: Hammersmith Apollo, London, UK",
+          "status": "Official",
+          "release-group": {
+            "id": "891b979c-a504-4835-be3c-46959808d42a",
+            "type-id": "6fd474e2-6b58-3102-9d17-d6f7eb7da0a0",
+            "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+            "title": "2015-10-06: Hammersmith Apollo, London, UK",
+            "primary-type": "Album",
+            "secondary-types": ["Live"],
+            "secondary-type-ids": ["6fd474e2-6b58-3102-9d17-d6f7eb7da0a0"]
+          },
+          "date": "2015-10-06",
+          "country": "XW",
+          "release-events": [
+            {
+              "date": "2015-10-06",
+              "area": {
+                "id": "525d4e18-3d00-31b9-a58b-a146a916de8f",
+                "name": "[Worldwide]",
+                "sort-name": "[Worldwide]",
+                "iso-3166-1-codes": ["XW"]
+              }
+            }
+          ],
+          "track-count": 9,
+          "media": [
+            {
+              "id": "c63b11fb-f154-34aa-9161-9744072af40a",
+              "position": 1,
+              "format": "Digital Media",
+              "track": [
+                {
+                  "id": "8985107b-c3a4-4148-9dc0-bcba4d7ea510",
+                  "number": "7",
+                  "title": "Lingus",
+                  "length": 834000
+                }
+              ],
+              "track-count": 7,
+              "track-offset": 6
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "b7b11f98-e56d-45c8-a286-6cd18cbd097f",
+      "score": 100,
+      "artist-credit-id": "9b5eebfb-daaf-31c3-b957-48c7353f78e6",
+      "title": "Lingus",
+      "length": 895000,
+      "disambiguation": "2015-11-15: Niceto Club, Buenos Aires, Argentina",
+      "video": null,
+      "artist-credit": [
+        {
+          "name": "Snarky Puppy",
+          "artist": {
+            "id": "fe85367e-4036-43c1-874b-b91af81cb4f3",
+            "name": "Snarky Puppy",
+            "sort-name": "Snarky Puppy"
+          }
+        }
+      ],
+      "first-release-date": "2015-11-15",
+      "releases": [
+        {
+          "id": "14ec2d80-5b59-43be-b77d-9dd24f275472",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "count": 3,
+          "title": "2015-11-15: Niceto Club, Buenos Aires, Argentina",
+          "status": "Official",
+          "release-group": {
+            "id": "0d1aa07f-950f-40e0-acf5-36274ff74be9",
+            "type-id": "6fd474e2-6b58-3102-9d17-d6f7eb7da0a0",
+            "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+            "title": "2015-11-15: Niceto Club, Buenos Aires, Argentina",
+            "primary-type": "Album",
+            "secondary-types": ["Live"],
+            "secondary-type-ids": ["6fd474e2-6b58-3102-9d17-d6f7eb7da0a0"]
+          },
+          "date": "2015-11-15",
+          "country": "XW",
+          "release-events": [
+            {
+              "date": "2015-11-15",
+              "area": {
+                "id": "525d4e18-3d00-31b9-a58b-a146a916de8f",
+                "name": "[Worldwide]",
+                "sort-name": "[Worldwide]",
+                "iso-3166-1-codes": ["XW"]
+              }
+            }
+          ],
+          "track-count": 10,
+          "media": [
+            {
+              "id": "8e922d2f-37dc-3dbb-ae1f-04e19cf3190f",
+              "position": 2,
+              "format": "Digital Media",
+              "track": [
+                {
+                  "id": "140509f1-a217-45f2-bea8-2676cd0d23a1",
+                  "number": "1",
+                  "title": "Lingus",
+                  "length": 895000
+                }
+              ],
+              "track-count": 1,
+              "track-offset": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c87298b3-7b98-4a98-8638-b1da80757f58",
+      "score": 100,
+      "artist-credit-id": "9b5eebfb-daaf-31c3-b957-48c7353f78e6",
+      "title": "Lingus",
+      "length": 908000,
+      "disambiguation": "2015-09-12: Historic Scoot Inn, Austin, TX, USA",
+      "video": null,
+      "artist-credit": [
+        {
+          "name": "Snarky Puppy",
+          "artist": {
+            "id": "fe85367e-4036-43c1-874b-b91af81cb4f3",
+            "name": "Snarky Puppy",
+            "sort-name": "Snarky Puppy"
+          }
+        }
+      ],
+      "first-release-date": "2015-12-09",
+      "releases": [
+        {
+          "id": "ceb1f641-fd8c-45a8-8324-b2a87fa9f2e8",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "count": 3,
+          "title": "2015-09-12: Historic Scoot Inn, Austin, TX, USA",
+          "status": "Official",
+          "release-group": {
+            "id": "30663a65-a67d-45c5-8426-c5f5dfcb14f5",
+            "type-id": "6fd474e2-6b58-3102-9d17-d6f7eb7da0a0",
+            "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+            "title": "2015-09-12: Historic Scoot Inn, Austin, TX, USA",
+            "primary-type": "Album",
+            "secondary-types": ["Live"],
+            "secondary-type-ids": ["6fd474e2-6b58-3102-9d17-d6f7eb7da0a0"]
+          },
+          "date": "2015-12-09",
+          "country": "US",
+          "release-events": [
+            {
+              "date": "2015-12-09",
+              "area": {
+                "id": "489ce91b-6658-3307-9877-795b68554c98",
+                "name": "United States",
+                "sort-name": "United States",
+                "iso-3166-1-codes": ["US"]
+              }
+            }
+          ],
+          "track-count": 10,
+          "media": [
+            {
+              "id": "044929c9-fac0-3e2e-be5f-2d38191caf6e",
+              "position": 2,
+              "format": "Digital Media",
+              "track": [
+                {
+                  "id": "891f8e35-a1fd-4dd2-b843-4a60caf30137",
+                  "number": "4",
+                  "title": "Lingus",
+                  "length": 908000
+                }
+              ],
+              "track-count": 4,
+              "track-offset": 3
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,337 @@
+{
+  "_note": "Response from GET /ws/2/recording/?query=reid%3Aa27c4e85-9ed7-4fc4-8367-90ee32ddd8b6+AND+recording%3A%22Luna%22&limit=5&fmt=json — current release MBID, returns 1 result. 'created' timestamp stripped.",
+  "count": 1,
+  "offset": 0,
+  "recordings": [
+    {
+      "id": "4303da20-e041-409f-a58f-e170392252a6",
+      "score": 100,
+      "artist-credit-id": "7a4b76a8-9012-33d4-9b49-9fbe39217684",
+      "title": "Luna",
+      "length": 207000,
+      "video": null,
+      "artist-credit": [
+        {
+          "name": "The Mountain Goats",
+          "artist": {
+            "id": "9639cd52-c351-4a17-9797-58880e95a7ef",
+            "name": "The Mountain Goats",
+            "sort-name": "Mountain Goats, The",
+            "aliases": [
+              {
+                "sort-name": "The Orange Trees",
+                "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc",
+                "name": "The Orange Trees",
+                "locale": null,
+                "type": "Artist name",
+                "primary": null,
+                "begin-date": "1994",
+                "end-date": "1994"
+              },
+              {
+                "sort-name": "Mountain Goats",
+                "name": "Mountain Goats",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              }
+            ]
+          }
+        }
+      ],
+      "first-release-date": "2015-04-03",
+      "releases": [
+        {
+          "id": "af0b75c3-e174-42a3-8fdf-335b1709819c",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "artist-credit-id": "7a4b76a8-9012-33d4-9b49-9fbe39217684",
+          "count": 2,
+          "title": "Beat the Champ",
+          "status": "Official",
+          "artist-credit": [
+            {
+              "name": "The Mountain Goats",
+              "artist": {
+                "id": "9639cd52-c351-4a17-9797-58880e95a7ef",
+                "name": "The Mountain Goats",
+                "sort-name": "Mountain Goats, The"
+              }
+            }
+          ],
+          "release-group": {
+            "id": "b745f2d5-e41c-415c-bc4e-ce0fbb262dc1",
+            "type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+            "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+            "title": "Beat the Champ",
+            "primary-type": "Album"
+          },
+          "track-count": 15,
+          "media": [
+            {
+              "id": "c9f9b722-0058-3be9-b54b-86618c100d1e",
+              "position": 1,
+              "format": "Digital Media",
+              "track": [
+                {
+                  "id": "ab203bf5-82d1-440c-b0d6-7011e762544d",
+                  "number": "10",
+                  "title": "Luna",
+                  "length": 207000
+                }
+              ],
+              "track-count": 13,
+              "track-offset": 9
+            }
+          ]
+        },
+        {
+          "id": "2188a510-9cc3-4aa5-a102-51485b72d157",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "artist-credit-id": "7a4b76a8-9012-33d4-9b49-9fbe39217684",
+          "count": 1,
+          "title": "Beat the Champ",
+          "status": "Official",
+          "artist-credit": [
+            {
+              "name": "The Mountain Goats",
+              "artist": {
+                "id": "9639cd52-c351-4a17-9797-58880e95a7ef",
+                "name": "The Mountain Goats",
+                "sort-name": "Mountain Goats, The"
+              }
+            }
+          ],
+          "release-group": {
+            "id": "b745f2d5-e41c-415c-bc4e-ce0fbb262dc1",
+            "type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+            "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+            "title": "Beat the Champ",
+            "primary-type": "Album"
+          },
+          "date": "2015-04-07",
+          "country": "US",
+          "release-events": [
+            {
+              "date": "2015-04-07",
+              "area": {
+                "id": "489ce91b-6658-3307-9877-795b68554c98",
+                "name": "United States",
+                "sort-name": "United States",
+                "iso-3166-1-codes": ["US"]
+              }
+            }
+          ],
+          "track-count": 13,
+          "media": [
+            {
+              "id": "655e7fcf-f818-352b-bf72-5fbaffb3b943",
+              "position": 1,
+              "format": "Digital Media",
+              "track": [
+                {
+                  "id": "8d3f57e9-d767-4efc-b2fb-5462ed8b32a0",
+                  "number": "10",
+                  "title": "Luna",
+                  "length": 207000
+                }
+              ],
+              "track-count": 13,
+              "track-offset": 9
+            }
+          ]
+        },
+        {
+          "id": "a27c4e85-9ed7-4fc4-8367-90ee32ddd8b6",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "artist-credit-id": "7a4b76a8-9012-33d4-9b49-9fbe39217684",
+          "count": 1,
+          "title": "Beat the Champ",
+          "status": "Official",
+          "artist-credit": [
+            {
+              "name": "The Mountain Goats",
+              "artist": {
+                "id": "9639cd52-c351-4a17-9797-58880e95a7ef",
+                "name": "The Mountain Goats",
+                "sort-name": "Mountain Goats, The"
+              }
+            }
+          ],
+          "release-group": {
+            "id": "b745f2d5-e41c-415c-bc4e-ce0fbb262dc1",
+            "type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+            "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+            "title": "Beat the Champ",
+            "primary-type": "Album"
+          },
+          "date": "2015-04-03",
+          "country": "AU",
+          "release-events": [
+            {
+              "date": "2015-04-03",
+              "area": {
+                "id": "106e0bec-b638-3b37-b731-f53d507dc00e",
+                "name": "Australia",
+                "sort-name": "Australia",
+                "iso-3166-1-codes": ["AU"]
+              }
+            },
+            {
+              "date": "2015-04-13",
+              "area": {
+                "id": "8a754a16-0027-3a29-b6d7-2b40ea0481ed",
+                "name": "United Kingdom",
+                "sort-name": "United Kingdom",
+                "iso-3166-1-codes": ["GB"]
+              }
+            },
+            {
+              "date": "2015-04-07",
+              "area": {
+                "id": "489ce91b-6658-3307-9877-795b68554c98",
+                "name": "United States",
+                "sort-name": "United States",
+                "iso-3166-1-codes": ["US"]
+              }
+            }
+          ],
+          "track-count": 13,
+          "media": [
+            {
+              "id": "390c1fad-16d8-37c5-bd27-1c2f8d9b7f9b",
+              "position": 1,
+              "format": "CD",
+              "track": [
+                {
+                  "id": "cae29c42-6ca7-41ce-a0dc-80c968250f20",
+                  "number": "10",
+                  "title": "Luna",
+                  "length": 207000
+                }
+              ],
+              "track-count": 13,
+              "track-offset": 9
+            }
+          ]
+        },
+        {
+          "id": "f74f3e1c-e6a3-4936-89e1-de4bda4bf03e",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "artist-credit-id": "7a4b76a8-9012-33d4-9b49-9fbe39217684",
+          "count": 1,
+          "title": "Beat the Champ",
+          "status": "Official",
+          "artist-credit": [
+            {
+              "name": "The Mountain Goats",
+              "artist": {
+                "id": "9639cd52-c351-4a17-9797-58880e95a7ef",
+                "name": "The Mountain Goats",
+                "sort-name": "Mountain Goats, The"
+              }
+            }
+          ],
+          "release-group": {
+            "id": "b745f2d5-e41c-415c-bc4e-ce0fbb262dc1",
+            "type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+            "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+            "title": "Beat the Champ",
+            "primary-type": "Album"
+          },
+          "date": "2015-04-03",
+          "country": "AU",
+          "release-events": [
+            {
+              "date": "2015-04-03",
+              "area": {
+                "id": "106e0bec-b638-3b37-b731-f53d507dc00e",
+                "name": "Australia",
+                "sort-name": "Australia",
+                "iso-3166-1-codes": ["AU"]
+              }
+            }
+          ],
+          "track-count": 13,
+          "media": [
+            {
+              "id": "54427c9a-b320-33d2-9997-655c7c81b3a5",
+              "position": 1,
+              "format": "CD",
+              "track": [
+                {
+                  "id": "8a3218fa-2900-4187-b760-2ffba5144fd3",
+                  "number": "10",
+                  "title": "Luna",
+                  "length": 208000
+                }
+              ],
+              "track-count": 13,
+              "track-offset": 9
+            }
+          ]
+        },
+        {
+          "id": "fd7a364f-6b4a-4332-8305-9810ab874ded",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "artist-credit-id": "7a4b76a8-9012-33d4-9b49-9fbe39217684",
+          "count": 3,
+          "title": "Beat the Champ",
+          "status": "Official",
+          "disambiguation": "deluxe LP",
+          "artist-credit": [
+            {
+              "name": "The Mountain Goats",
+              "artist": {
+                "id": "9639cd52-c351-4a17-9797-58880e95a7ef",
+                "name": "The Mountain Goats",
+                "sort-name": "Mountain Goats, The"
+              }
+            }
+          ],
+          "release-group": {
+            "id": "b745f2d5-e41c-415c-bc4e-ce0fbb262dc1",
+            "type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+            "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+            "title": "Beat the Champ",
+            "primary-type": "Album"
+          },
+          "date": "2015-04-07",
+          "country": "US",
+          "release-events": [
+            {
+              "date": "2015-04-07",
+              "area": {
+                "id": "489ce91b-6658-3307-9877-795b68554c98",
+                "name": "United States",
+                "sort-name": "United States",
+                "iso-3166-1-codes": ["US"]
+              }
+            }
+          ],
+          "track-count": 15,
+          "media": [
+            {
+              "id": "f1ca892c-c5e3-3432-ba81-3387e8b189cd",
+              "position": 2,
+              "format": "12\" Vinyl",
+              "track": [
+                {
+                  "id": "604399e7-28ba-499a-b9a6-ea93e92605c6",
+                  "number": "C4",
+                  "title": "Luna",
+                  "length": 207000
+                }
+              ],
+              "track-count": 7,
+              "track-offset": 3
+            }
+          ]
+        }
+      ],
+      "isrcs": ["USMRG1551610"],
+      "tags": [{ "count": 1, "name": "indie rock" }]
+    }
+  ]
+}

@@ -1,0 +1,153 @@
+{
+  "_note": "Response from GET /ws/2/recording/?query=tid%3Af479bcd8-866b-478d-a250-cb82d300f596&limit=1&fmt=json — valid current track MBID, returns 1 recording. 'created' timestamp stripped.",
+  "count": 1,
+  "offset": 0,
+  "recordings": [
+    {
+      "id": "798a01be-abb8-47c3-a4da-778045cad06e",
+      "score": 100,
+      "artist-credit-id": "ec5d5f26-191e-3941-8d54-347d1f7cde82",
+      "title": "we've never met but, can we have a coffee or something",
+      "length": 199604,
+      "video": null,
+      "artist-credit": [
+        {
+          "name": "In Love With a Ghost",
+          "artist": {
+            "id": "ddcc8335-d46f-4699-94c2-39356a24555b",
+            "name": "In Love With a Ghost",
+            "sort-name": "In Love With a Ghost",
+            "aliases": [
+              {
+                "sort-name": "Mael Madec",
+                "type-id": "d4dcd0c0-b341-3612-a332-c0ce797b25cf",
+                "name": "Maël Madec",
+                "locale": "fr",
+                "type": "Legal name",
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              }
+            ]
+          }
+        }
+      ],
+      "first-release-date": "2016-03-03",
+      "releases": [
+        {
+          "id": "080e9cc6-40ed-4f88-8b87-3a31fb37e0e1",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "artist-credit-id": "ec5d5f26-191e-3941-8d54-347d1f7cde82",
+          "count": 1,
+          "title": "let's go",
+          "status": "Official",
+          "artist-credit": [
+            {
+              "name": "In Love With a Ghost",
+              "artist": {
+                "id": "ddcc8335-d46f-4699-94c2-39356a24555b",
+                "name": "In Love With a Ghost",
+                "sort-name": "In Love With a Ghost"
+              }
+            }
+          ],
+          "release-group": {
+            "id": "937e2f42-992f-4ac0-b8e5-4007df5239f4",
+            "type-id": "6d0c5bf6-7a33-3420-a519-44fc63eedebf",
+            "primary-type-id": "6d0c5bf6-7a33-3420-a519-44fc63eedebf",
+            "title": "let's go",
+            "primary-type": "EP"
+          },
+          "date": "2016-04-20",
+          "country": "XW",
+          "release-events": [
+            {
+              "date": "2016-04-20",
+              "area": {
+                "id": "525d4e18-3d00-31b9-a58b-a146a916de8f",
+                "name": "[Worldwide]",
+                "sort-name": "[Worldwide]",
+                "iso-3166-1-codes": ["XW"]
+              }
+            }
+          ],
+          "track-count": 4,
+          "media": [
+            {
+              "id": "a35ef3ca-e4ad-3914-9167-5e5b0999e37a",
+              "position": 1,
+              "format": "Cassette",
+              "track": [
+                {
+                  "id": "a257629f-aa40-484f-bcb8-89aab4e93252",
+                  "number": "1",
+                  "title": "we've never met but, can we have a coffee or something",
+                  "length": 199604
+                }
+              ],
+              "track-count": 4,
+              "track-offset": 0
+            }
+          ]
+        },
+        {
+          "id": "d735354d-b2dc-401d-a2d2-c858562d55b5",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "artist-credit-id": "ec5d5f26-191e-3941-8d54-347d1f7cde82",
+          "count": 1,
+          "title": "let's go",
+          "status": "Official",
+          "artist-credit": [
+            {
+              "name": "In Love With a Ghost",
+              "artist": {
+                "id": "ddcc8335-d46f-4699-94c2-39356a24555b",
+                "name": "In Love With a Ghost",
+                "sort-name": "In Love With a Ghost"
+              }
+            }
+          ],
+          "release-group": {
+            "id": "937e2f42-992f-4ac0-b8e5-4007df5239f4",
+            "type-id": "6d0c5bf6-7a33-3420-a519-44fc63eedebf",
+            "primary-type-id": "6d0c5bf6-7a33-3420-a519-44fc63eedebf",
+            "title": "let's go",
+            "primary-type": "EP"
+          },
+          "date": "2016-03-03",
+          "country": "XW",
+          "release-events": [
+            {
+              "date": "2016-03-03",
+              "area": {
+                "id": "525d4e18-3d00-31b9-a58b-a146a916de8f",
+                "name": "[Worldwide]",
+                "sort-name": "[Worldwide]",
+                "iso-3166-1-codes": ["XW"]
+              }
+            }
+          ],
+          "track-count": 4,
+          "media": [
+            {
+              "id": "7e1c133e-5927-3b17-bd38-8efb3da0f5ea",
+              "position": 1,
+              "format": "Digital Media",
+              "track": [
+                {
+                  "id": "f479bcd8-866b-478d-a250-cb82d300f596",
+                  "number": "1",
+                  "title": "we've never met but, can we have a coffee or something",
+                  "length": 199604
+                }
+              ],
+              "track-count": 4,
+              "track-offset": 0
+            }
+          ]
+        }
+      ],
+      "isrcs": ["GBSMU2629433"]
+    }
+  ]
+}

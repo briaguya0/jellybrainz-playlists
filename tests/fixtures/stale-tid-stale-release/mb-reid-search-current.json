@@ -1,0 +1,448 @@
+{
+  "_note": "Response from GET /ws/2/recording/?query=reid%3Aa27c4e85-9ed7-4fc4-8367-90ee32ddd8b6+AND+recording%3A%22Foreign+Object%22&limit=5&fmt=json — current release MBID (resolved via lookup), returns 1 result. 'created' timestamp stripped.",
+  "count": 1,
+  "offset": 0,
+  "recordings": [
+    {
+      "id": "fc8d08c7-85f4-4798-9243-dfab562bdd21",
+      "score": 100,
+      "artist-credit-id": "7a4b76a8-9012-33d4-9b49-9fbe39217684",
+      "title": "Foreign Object",
+      "length": 171000,
+      "video": null,
+      "artist-credit": [
+        {
+          "name": "The Mountain Goats",
+          "artist": {
+            "id": "9639cd52-c351-4a17-9797-58880e95a7ef",
+            "name": "The Mountain Goats",
+            "sort-name": "Mountain Goats, The",
+            "aliases": [
+              {
+                "sort-name": "The Orange Trees",
+                "type-id": "894afba6-2816-3c24-8072-eadb66bd04bc",
+                "name": "The Orange Trees",
+                "locale": null,
+                "type": "Artist name",
+                "primary": null,
+                "begin-date": "1994",
+                "end-date": "1994"
+              },
+              {
+                "sort-name": "Mountain Goats",
+                "name": "Mountain Goats",
+                "locale": null,
+                "type": null,
+                "primary": null,
+                "begin-date": null,
+                "end-date": null
+              }
+            ]
+          }
+        }
+      ],
+      "first-release-date": "2015-04-03",
+      "releases": [
+        {
+          "id": "c912a283-b342-4673-b503-e46e35f632e1",
+          "status-id": "518ffc83-5cde-34df-8627-81bff5093d92",
+          "artist-credit-id": "949a7fd5-fe73-3e8f-922e-01ff4ca958f7",
+          "count": 1,
+          "title": "Merge Records Sampler / 2015",
+          "status": "Promotion",
+          "artist-credit": [
+            {
+              "name": "Various Artists",
+              "artist": {
+                "id": "89ad4ac3-39f7-470e-963a-56509c546377",
+                "name": "Various Artists",
+                "sort-name": "Various Artists",
+                "disambiguation": "add compilations to this artist"
+              }
+            }
+          ],
+          "release-group": {
+            "id": "576ecf88-351b-4a89-b067-166a07b75405",
+            "type-id": "dd2a21e1-0c00-3729-a7a0-de60b84eb5d1",
+            "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+            "title": "Merge Records Sampler / 2015",
+            "primary-type": "Album",
+            "secondary-types": ["Compilation"],
+            "secondary-type-ids": ["dd2a21e1-0c00-3729-a7a0-de60b84eb5d1"]
+          },
+          "date": "2015",
+          "country": "XE",
+          "release-events": [
+            {
+              "date": "2015",
+              "area": {
+                "id": "89a675c2-3e37-3518-b83c-418bad59a85a",
+                "name": "Europe",
+                "sort-name": "Europe",
+                "iso-3166-1-codes": ["XE"]
+              }
+            }
+          ],
+          "track-count": 20,
+          "media": [
+            {
+              "id": "c398eb5b-f146-3c2f-b505-e5142375549b",
+              "position": 1,
+              "format": "CD",
+              "track": [
+                {
+                  "id": "65bcea38-a100-41c5-8a52-c5352dc3dc92",
+                  "number": "2",
+                  "title": "Foreign Object"
+                }
+              ],
+              "track-count": 20,
+              "track-offset": 1
+            }
+          ]
+        },
+        {
+          "id": "af0b75c3-e174-42a3-8fdf-335b1709819c",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "artist-credit-id": "7a4b76a8-9012-33d4-9b49-9fbe39217684",
+          "count": 2,
+          "title": "Beat the Champ",
+          "status": "Official",
+          "artist-credit": [
+            {
+              "name": "The Mountain Goats",
+              "artist": {
+                "id": "9639cd52-c351-4a17-9797-58880e95a7ef",
+                "name": "The Mountain Goats",
+                "sort-name": "Mountain Goats, The"
+              }
+            }
+          ],
+          "release-group": {
+            "id": "b745f2d5-e41c-415c-bc4e-ce0fbb262dc1",
+            "type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+            "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+            "title": "Beat the Champ",
+            "primary-type": "Album"
+          },
+          "track-count": 15,
+          "media": [
+            {
+              "id": "c9f9b722-0058-3be9-b54b-86618c100d1e",
+              "position": 1,
+              "format": "Digital Media",
+              "track": [
+                {
+                  "id": "5f844008-a3b1-4c28-898f-34fa5a8ded26",
+                  "number": "3",
+                  "title": "Foreign Object",
+                  "length": 171000
+                }
+              ],
+              "track-count": 13,
+              "track-offset": 2
+            }
+          ]
+        },
+        {
+          "id": "2188a510-9cc3-4aa5-a102-51485b72d157",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "artist-credit-id": "7a4b76a8-9012-33d4-9b49-9fbe39217684",
+          "count": 1,
+          "title": "Beat the Champ",
+          "status": "Official",
+          "artist-credit": [
+            {
+              "name": "The Mountain Goats",
+              "artist": {
+                "id": "9639cd52-c351-4a17-9797-58880e95a7ef",
+                "name": "The Mountain Goats",
+                "sort-name": "Mountain Goats, The"
+              }
+            }
+          ],
+          "release-group": {
+            "id": "b745f2d5-e41c-415c-bc4e-ce0fbb262dc1",
+            "type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+            "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+            "title": "Beat the Champ",
+            "primary-type": "Album"
+          },
+          "date": "2015-04-07",
+          "country": "US",
+          "release-events": [
+            {
+              "date": "2015-04-07",
+              "area": {
+                "id": "489ce91b-6658-3307-9877-795b68554c98",
+                "name": "United States",
+                "sort-name": "United States",
+                "iso-3166-1-codes": ["US"]
+              }
+            }
+          ],
+          "track-count": 13,
+          "media": [
+            {
+              "id": "655e7fcf-f818-352b-bf72-5fbaffb3b943",
+              "position": 1,
+              "format": "Digital Media",
+              "track": [
+                {
+                  "id": "7e4ec75a-5a25-4b6e-9aee-a0672fc8ba03",
+                  "number": "3",
+                  "title": "Foreign Object",
+                  "length": 171000
+                }
+              ],
+              "track-count": 13,
+              "track-offset": 2
+            }
+          ]
+        },
+        {
+          "id": "a27c4e85-9ed7-4fc4-8367-90ee32ddd8b6",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "artist-credit-id": "7a4b76a8-9012-33d4-9b49-9fbe39217684",
+          "count": 1,
+          "title": "Beat the Champ",
+          "status": "Official",
+          "artist-credit": [
+            {
+              "name": "The Mountain Goats",
+              "artist": {
+                "id": "9639cd52-c351-4a17-9797-58880e95a7ef",
+                "name": "The Mountain Goats",
+                "sort-name": "Mountain Goats, The"
+              }
+            }
+          ],
+          "release-group": {
+            "id": "b745f2d5-e41c-415c-bc4e-ce0fbb262dc1",
+            "type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+            "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+            "title": "Beat the Champ",
+            "primary-type": "Album"
+          },
+          "date": "2015-04-03",
+          "country": "AU",
+          "release-events": [
+            {
+              "date": "2015-04-03",
+              "area": {
+                "id": "106e0bec-b638-3b37-b731-f53d507dc00e",
+                "name": "Australia",
+                "sort-name": "Australia",
+                "iso-3166-1-codes": ["AU"]
+              }
+            },
+            {
+              "date": "2015-04-13",
+              "area": {
+                "id": "8a754a16-0027-3a29-b6d7-2b40ea0481ed",
+                "name": "United Kingdom",
+                "sort-name": "United Kingdom",
+                "iso-3166-1-codes": ["GB"]
+              }
+            },
+            {
+              "date": "2015-04-07",
+              "area": {
+                "id": "489ce91b-6658-3307-9877-795b68554c98",
+                "name": "United States",
+                "sort-name": "United States",
+                "iso-3166-1-codes": ["US"]
+              }
+            }
+          ],
+          "track-count": 13,
+          "media": [
+            {
+              "id": "390c1fad-16d8-37c5-bd27-1c2f8d9b7f9b",
+              "position": 1,
+              "format": "CD",
+              "track": [
+                {
+                  "id": "82b013a7-d31c-4322-9ece-7a942a3c9f6b",
+                  "number": "3",
+                  "title": "Foreign Object",
+                  "length": 171000
+                }
+              ],
+              "track-count": 13,
+              "track-offset": 2
+            }
+          ]
+        },
+        {
+          "id": "f74f3e1c-e6a3-4936-89e1-de4bda4bf03e",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "artist-credit-id": "7a4b76a8-9012-33d4-9b49-9fbe39217684",
+          "count": 1,
+          "title": "Beat the Champ",
+          "status": "Official",
+          "artist-credit": [
+            {
+              "name": "The Mountain Goats",
+              "artist": {
+                "id": "9639cd52-c351-4a17-9797-58880e95a7ef",
+                "name": "The Mountain Goats",
+                "sort-name": "Mountain Goats, The"
+              }
+            }
+          ],
+          "release-group": {
+            "id": "b745f2d5-e41c-415c-bc4e-ce0fbb262dc1",
+            "type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+            "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+            "title": "Beat the Champ",
+            "primary-type": "Album"
+          },
+          "date": "2015-04-03",
+          "country": "AU",
+          "release-events": [
+            {
+              "date": "2015-04-03",
+              "area": {
+                "id": "106e0bec-b638-3b37-b731-f53d507dc00e",
+                "name": "Australia",
+                "sort-name": "Australia",
+                "iso-3166-1-codes": ["AU"]
+              }
+            }
+          ],
+          "track-count": 13,
+          "media": [
+            {
+              "id": "54427c9a-b320-33d2-9997-655c7c81b3a5",
+              "position": 1,
+              "format": "CD",
+              "track": [
+                {
+                  "id": "5b1abe45-06a3-452a-9dd5-feab2b123aff",
+                  "number": "3",
+                  "title": "Foreign Object",
+                  "length": 171000
+                }
+              ],
+              "track-count": 13,
+              "track-offset": 2
+            }
+          ]
+        },
+        {
+          "id": "fd7a364f-6b4a-4332-8305-9810ab874ded",
+          "status-id": "4e304316-386d-3409-af2e-78857eec5cfe",
+          "artist-credit-id": "7a4b76a8-9012-33d4-9b49-9fbe39217684",
+          "count": 3,
+          "title": "Beat the Champ",
+          "status": "Official",
+          "disambiguation": "deluxe LP",
+          "artist-credit": [
+            {
+              "name": "The Mountain Goats",
+              "artist": {
+                "id": "9639cd52-c351-4a17-9797-58880e95a7ef",
+                "name": "The Mountain Goats",
+                "sort-name": "Mountain Goats, The"
+              }
+            }
+          ],
+          "release-group": {
+            "id": "b745f2d5-e41c-415c-bc4e-ce0fbb262dc1",
+            "type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+            "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+            "title": "Beat the Champ",
+            "primary-type": "Album"
+          },
+          "date": "2015-04-07",
+          "country": "US",
+          "release-events": [
+            {
+              "date": "2015-04-07",
+              "area": {
+                "id": "489ce91b-6658-3307-9877-795b68554c98",
+                "name": "United States",
+                "sort-name": "United States",
+                "iso-3166-1-codes": ["US"]
+              }
+            }
+          ],
+          "track-count": 15,
+          "media": [
+            {
+              "id": "f2ee7486-85e8-35c9-83b3-630c964e19e0",
+              "position": 1,
+              "format": "12\" Vinyl",
+              "track": [
+                {
+                  "id": "d664dd57-32bb-4c0e-a945-a99a14184fda",
+                  "number": "A3",
+                  "title": "Foreign Object",
+                  "length": 171000
+                }
+              ],
+              "track-count": 6,
+              "track-offset": 2
+            }
+          ]
+        },
+        {
+          "id": "cd78931e-36e1-44b5-a79a-5ce6c6861f82",
+          "status-id": "518ffc83-5cde-34df-8627-81bff5093d92",
+          "artist-credit-id": "f59c1f64-11e0-3a4e-a772-28ad1487dfcf",
+          "count": 1,
+          "title": "We Who Walk Behind the Rows: 2016 Tour Sampler",
+          "status": "Promotion",
+          "artist-credit": [
+            {
+              "joinphrase": " / ",
+              "name": "Oh Pep!",
+              "artist": {
+                "id": "c3d548fe-438a-4a71-8e04-63f8b6b61acc",
+                "name": "Oh Pep!",
+                "sort-name": "Oh Pep!"
+              }
+            },
+            {
+              "name": "The Mountain Goats",
+              "artist": {
+                "id": "9639cd52-c351-4a17-9797-58880e95a7ef",
+                "name": "The Mountain Goats",
+                "sort-name": "Mountain Goats, The"
+              }
+            }
+          ],
+          "release-group": {
+            "id": "22e8f5e7-7f71-4070-a737-e4809d6374ae",
+            "type-id": "dd2a21e1-0c00-3729-a7a0-de60b84eb5d1",
+            "primary-type-id": "f529b476-6e62-324f-b0aa-1f3e33d313fc",
+            "title": "We Who Walk Behind the Rows: 2016 Tour Sampler",
+            "primary-type": "Album",
+            "secondary-types": ["Compilation"],
+            "secondary-type-ids": ["dd2a21e1-0c00-3729-a7a0-de60b84eb5d1"]
+          },
+          "track-count": 8,
+          "media": [
+            {
+              "id": "f8e6f11d-eefc-3324-bdcd-41de93ac6b0c",
+              "position": 1,
+              "format": "Digital Media",
+              "track": [
+                {
+                  "id": "d49d1a5e-192b-41c7-b9b8-542515f45b4e",
+                  "number": "4",
+                  "title": "Foreign Object",
+                  "length": 171551
+                }
+              ],
+              "track-count": 8,
+              "track-offset": 3
+            }
+          ]
+        }
+      ],
+      "isrcs": ["USMRG1551603"]
+    }
+  ]
+}
