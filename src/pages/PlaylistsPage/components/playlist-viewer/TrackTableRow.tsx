@@ -161,30 +161,25 @@ export function TrackTableRow({
         <tr className="border-b border-stroke last:border-0">
           <td colSpan={2} className="pb-4 pt-0 px-4">
             <div className="mx-[5%] border-t border-stroke/70 pt-3">
-              <div className="max-w-xs">
-                {(matchState.kind === "partial-auto" ||
-                  matchState.kind === "override") && (
-                  <MbBadgeEditContent
-                    kind={matchState.kind}
-                    recording={matchState.recording}
-                    onConfirm={
-                      matchState.kind === "partial-auto"
-                        ? () => onSetOverride(track.Id, matchState.recording.id)
-                        : undefined
-                    }
-                    onOverride={(mbid) => onSetOverride(track.Id, mbid)}
-                    onClear={() => onClearOverride(track.Id)}
-                    onCollapse={() => setIsExpanded(false)}
-                  />
-                )}
-                {matchState.kind === "unresolved" && (
-                  <UnresolvedEditContent
-                    candidates={matchState.candidates}
-                    onOverride={(mbid) => onSetOverride(track.Id, mbid)}
-                    onCollapse={() => setIsExpanded(false)}
-                  />
-                )}
-              </div>
+              <div className="ml-[50%] max-w-sm pl-4">
+              {(matchState.kind === "partial-auto" ||
+                matchState.kind === "override") && (
+                <MbBadgeEditContent
+                  kind={matchState.kind}
+                  recording={matchState.recording}
+                  onOverride={(mbid) => onSetOverride(track.Id, mbid)}
+                  onClear={() => onClearOverride(track.Id)}
+                  onCollapse={() => setIsExpanded(false)}
+                />
+              )}
+              {matchState.kind === "unresolved" && (
+                <UnresolvedEditContent
+                  candidates={matchState.candidates}
+                  onOverride={(mbid) => onSetOverride(track.Id, mbid)}
+                  onCollapse={() => setIsExpanded(false)}
+                />
+              )}
+            </div>
             </div>
           </td>
         </tr>

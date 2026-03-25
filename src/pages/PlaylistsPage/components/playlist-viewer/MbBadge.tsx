@@ -1,73 +1,43 @@
 import { asset } from "@src/lib/utils";
-import { formatArtistCredits } from "@src/lib/musicbrainz";
 import type { MbRecording } from "@src/lib/types";
 import { useState } from "react";
+import { ExternalLink, Save } from "lucide-react";
 
 export function MbBadgeEditContent({
   kind,
   recording,
-  onConfirm,
   onOverride,
   onClear,
   onCollapse,
 }: {
   kind: "partial-auto" | "override";
   recording: MbRecording | undefined;
-  onConfirm?: () => void;
   onOverride: (mbid: string) => void;
   onClear: () => void;
   onCollapse: () => void;
 }) {
-  const [showChange, setShowChange] = useState(false);
   const [manualMbid, setManualMbid] = useState("");
-
-  if (!showChange) {
-    return (
-      <>
-        <p className="text-xs text-app-muted mb-2">
-          {kind === "partial-auto"
-            ? "Matched via artist + title search"
-            : "Manually confirmed"}
-        </p>
-        {recording && (
-          <>
-            <p className="text-sm font-medium text-app-text">
-              {recording.title}
-            </p>
-            <p className="text-xs text-app-muted mb-3">
-              {formatArtistCredits(recording["artist-credit"])}
-            </p>
-          </>
-        )}
-        <div className="flex gap-2">
-          {kind === "partial-auto" && (
-            <button
-              type="button"
-              onClick={() => {
-                onConfirm?.();
-                onCollapse();
-              }}
-              className="flex-1 rounded-lg px-3 py-1.5 text-sm font-semibold bg-green-500/10 text-green-700 dark:text-green-400 hover:bg-green-500/20"
-            >
-              Confirm
-            </button>
-          )}
-          <button
-            type="button"
-            onClick={() => setShowChange(true)}
-            className="flex-1 rounded-lg glass-panel border border-stroke px-3 py-1.5 text-sm text-app-muted hover:text-app-text"
-          >
-            Change
-          </button>
-        </div>
-      </>
-    );
-  }
 
   return (
     <>
-      <p className="text-xs text-app-muted mb-2">
-        Enter MusicBrainz recording ID
+      {recording && (
+        <div className="flex items-center gap-1 mb-1 pl-1 group">
+          <span className="text-xs text-app-text font-mono font-bold truncate">{recording.id}</span>
+          <a
+            href={`https://musicbrainz.org/recording/${recording.id}`}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="View on MusicBrainz"
+            className="shrink-0 text-app-muted opacity-0 group-hover:opacity-60 hover:!opacity-100 transition-opacity"
+          >
+            <ExternalLink size={11} />
+          </a>
+        </div>
+      )}
+      <p className="text-xs text-app-muted mb-4 pl-1">
+        {kind === "partial-auto"
+          ? "Matched via artist + title search"
+          : "Manually confirmed"}
       </p>
       <form
         onSubmit={(e) => {
@@ -77,43 +47,39 @@ export function MbBadgeEditContent({
             onCollapse();
           }
         }}
-        className="flex flex-col gap-2"
       >
-        <input
-          type="text"
-          value={manualMbid}
-          onChange={(e) => setManualMbid(e.target.value)}
-          placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-          // biome-ignore lint/a11y/noAutofocus: intentional focus when user opens change panel
-          autoFocus
-          className="w-full rounded-lg border-2 border-stroke bg-hover px-3 py-2 text-xs text-app-text outline-none placeholder:text-app-muted focus:border-[var(--accent)]"
-        />
-        <div className="flex gap-2">
+        <p className="text-sm font-semibold text-app-text mb-1 pl-1">New Recording ID</p>
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            value={manualMbid}
+            onChange={(e) => setManualMbid(e.target.value)}
+            placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+            // biome-ignore lint/a11y/noAutofocus: intentional focus when user opens change panel
+            autoFocus
+            className="flex-1 min-w-0 rounded-lg border-2 border-stroke bg-hover px-3 py-1.5 text-xs text-app-text outline-none placeholder:text-app-muted focus:border-[var(--accent)]"
+          />
           <button
-            type="button"
-            onClick={() => setShowChange(false)}
-            className="rounded-lg glass-panel border border-stroke px-3 py-1.5 text-sm text-app-muted hover:text-app-text"
+            type="submit"
+            disabled={!manualMbid}
+            aria-label="Save"
+            className="shrink-0 text-app-muted enabled:hover:text-app-text disabled:opacity-30 transition-colors"
           >
-            Back
+            <Save size={16} />
           </button>
+        </div>
+        {kind === "override" && (
           <button
             type="button"
             onClick={() => {
               onClear();
               onCollapse();
             }}
-            className="rounded-lg glass-panel border border-stroke px-3 py-1.5 text-sm text-red-500 hover:text-red-400"
+            className="mt-2 text-xs text-red-500 hover:text-red-400"
           >
-            Clear
+            Clear override
           </button>
-          <button
-            type="submit"
-            disabled={!manualMbid}
-            className="flex-1 rounded-lg border border-[var(--accent)] bg-[var(--accent)] px-3 py-1.5 text-sm font-semibold text-white enabled:hover:opacity-90 disabled:opacity-30"
-          >
-            Apply
-          </button>
-        </div>
+        )}
       </form>
     </>
   );
