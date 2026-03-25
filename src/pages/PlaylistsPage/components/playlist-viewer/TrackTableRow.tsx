@@ -116,12 +116,26 @@ export function TrackTableRow({
                 type="button"
                 onClick={() => setIsExpanded((v) => !v)}
                 aria-label={isExpanded ? "Collapse" : "Edit match"}
-                className="shrink-0 flex items-center gap-1 text-app-muted hover:text-app-text transition-colors pr-1"
+                className="shrink-0 relative w-4 h-4 text-app-muted hover:text-app-text transition-colors mr-1"
               >
-                <Pencil size={14} />
+                <Pencil
+                  size={15}
+                  className="absolute inset-0"
+                  style={{
+                    opacity: isExpanded ? 0 : 1,
+                    transition: isExpanded ? "opacity 300ms" : "opacity 500ms 300ms",
+                  }}
+                />
                 <ChevronDown
-                  size={16}
-                  className={`transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                  size={15}
+                  className="absolute inset-0"
+                  style={{
+                    opacity: isExpanded ? 1 : 0,
+                    transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)",
+                    transition: isExpanded
+                      ? "opacity 300ms, transform 300ms"
+                      : "transform 300ms, opacity 300ms 300ms",
+                  }}
                 />
               </button>
             )}
