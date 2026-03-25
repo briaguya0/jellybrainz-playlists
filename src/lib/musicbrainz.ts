@@ -196,6 +196,52 @@ export function formatArtistCredits(
   return credits.map((c) => c.name + (c.joinphrase ?? "")).join("");
 }
 
+async function searchByReid(
+  releaseMbid: string,
+  title: string,
+  limit: number,
+): Promise<MbRecording[]> {
+  const escapedTitle = title.replace(/"/g, '\\"');
+  const url = new URL(`${MB_BASE}/recording/`);
+  url.searchParams.set(
+    "query",
+    `reid:${releaseMbid} AND recording:"${escapedTitle}"`,
+  );
+  url.searchParams.set("limit", String(limit));
+  url.searchParams.set("fmt", "json");
+  const resp = await fetch(url.toString(), { headers: mbHeaders() });
+  if (!resp.ok) {
+    throw new Error(
+      `MB recording search failed: ${resp.status} ${resp.statusText}`,
+    );
+  }
+  const data: { recordings: MbRecording[] } = await resp.json();
+  return data.recordings ?? [];
+}
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+export async function searchRecordingsByRelease(
+  releaseMbid: string,
+  title: string,
+  limit = 5,
+): Promise<MbRecording[]> {
+  const candidates = await searchByReid(releaseMbid, title, limit);
+  if (candidates.length > 0) return candidates;
+
+  // Stale MBID — resolve current via lookup API
+  await sleep(1100);
+  const url = new URL(`${MB_BASE}/release/${releaseMbid}`);
+  url.searchParams.set("fmt", "json");
+  const resp = await fetch(url.toString(), { headers: mbHeaders() });
+  if (!resp.ok) return [];
+  const data: { id: string } = await resp.json();
+  if (data.id === releaseMbid) return [];
+
+  await sleep(1100);
+  return searchByReid(data.id, title, limit);
+}
+
 export async function searchRecordingsByArtist(
   artistMbid: string,
   title: string,
