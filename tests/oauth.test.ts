@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildAuthUrl, generatePkce } from "./oauth";
+import { buildAuthUrl, generatePkce } from "@src/lib/oauth";
 
 describe("generatePkce", () => {
   it("returns codeVerifier and codeChallenge strings", async () => {
@@ -45,7 +45,7 @@ describe("buildAuthUrl", () => {
     expect(url.searchParams.get("redirect_uri")).toBe(
       "http://localhost:3000/mb-callback",
     );
-    expect(url.searchParams.get("scope")).toBe("collection");
+    expect(url.searchParams.get("scope")).toBe("collection profile");
     expect(url.searchParams.get("code_challenge_method")).toBe("S256");
     expect(url.searchParams.get("code_challenge")).toBe("abc123");
   });
