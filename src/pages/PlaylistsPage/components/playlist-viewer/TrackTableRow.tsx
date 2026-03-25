@@ -41,7 +41,7 @@ export function TrackTableRow({
 
   return (
     <>
-      <tr className="border-b border-stroke last:border-0 hover:bg-surface/40">
+      <tr className={`${isExpanded ? "" : "border-b border-stroke last:border-0"} hover:bg-surface/40`}>
         {/* Jellyfin: thumbnail + title/artist/duration */}
         <td className="px-4 py-3">
           <div className="flex items-center gap-3 min-w-0">
@@ -131,7 +131,7 @@ export function TrackTableRow({
       {isExpanded && (
         <tr className="border-b border-stroke last:border-0">
           <td colSpan={2} className="pb-4 pt-0 px-4">
-            <div className="mx-2 border-t border-stroke/40 pt-3">
+            <div className="mx-[5%] border-t border-stroke/70 pt-3">
               <div className="max-w-xs">
                 {(matchState.kind === "partial-auto" ||
                   matchState.kind === "override") && (
