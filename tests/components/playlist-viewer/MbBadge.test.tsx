@@ -26,47 +26,64 @@ describe("MbBadge", () => {
 });
 
 describe("MbBadgeEditContent", () => {
-  it("partial-auto: shows label, recording id link, input and save button", () => {
+  it("partial-auto: shows label, recording id, input and save button", () => {
     render(
       <MbBadgeEditContent
         kind="partial-auto"
+        matchLabel="Matched via artist + title search"
         recording={recording}
         onOverride={vi.fn()}
-        onClear={vi.fn()}
         onCollapse={vi.fn()}
       />,
     );
     expect(screen.getByText(recording.id)).toBeInTheDocument();
     expect(screen.getByText(/artist \+ title search/i)).toBeInTheDocument();
-    expect(screen.getByText(/new recording id/i)).toBeInTheDocument();
+    expect(screen.getByText(/manually enter recording id/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/xxxx/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Save" })).toBeInTheDocument();
   });
 
-  it("partial-auto: no Clear override button", () => {
+  it("partial-auto: no clear button", () => {
     render(
       <MbBadgeEditContent
         kind="partial-auto"
+        matchLabel="Matched via artist + title search"
         recording={recording}
         onOverride={vi.fn()}
-        onClear={vi.fn()}
         onCollapse={vi.fn()}
       />,
     );
-    expect(screen.queryByText(/clear override/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/clear/i)).not.toBeInTheDocument();
   });
 
-  it("override: shows Clear override button", () => {
+  it("override with manual source: shows Clear entry button", () => {
     render(
       <MbBadgeEditContent
         kind="override"
+        matchLabel="Manually entered"
+        overrideSource="manual"
         recording={recording}
         onOverride={vi.fn()}
         onClear={vi.fn()}
         onCollapse={vi.fn()}
       />,
     );
-    expect(screen.getByText(/clear override/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /clear entry/i })).toBeInTheDocument();
+  });
+
+  it("override with confirmed source: shows Clear confirmation button", () => {
+    render(
+      <MbBadgeEditContent
+        kind="override"
+        matchLabel="Matched via artist + title search (confirmed)"
+        overrideSource="confirmed-artist"
+        recording={recording}
+        onOverride={vi.fn()}
+        onClear={vi.fn()}
+        onCollapse={vi.fn()}
+      />,
+    );
+    expect(screen.getByRole("button", { name: /clear confirmation/i })).toBeInTheDocument();
   });
 
   it("entering MBID and saving calls onOverride and onCollapse", async () => {
@@ -76,9 +93,9 @@ describe("MbBadgeEditContent", () => {
     render(
       <MbBadgeEditContent
         kind="partial-auto"
+        matchLabel="Matched via artist + title search"
         recording={recording}
         onOverride={onOverride}
-        onClear={vi.fn()}
         onCollapse={onCollapse}
       />,
     );
@@ -88,20 +105,22 @@ describe("MbBadgeEditContent", () => {
     expect(onCollapse).toHaveBeenCalledOnce();
   });
 
-  it("clicking Clear override calls onClear and onCollapse", async () => {
+  it("clicking clear button calls onClear and onCollapse", async () => {
     const user = userEvent.setup();
     const onClear = vi.fn();
     const onCollapse = vi.fn();
     render(
       <MbBadgeEditContent
         kind="override"
+        matchLabel="Manually entered"
+        overrideSource="manual"
         recording={recording}
         onOverride={vi.fn()}
         onClear={onClear}
         onCollapse={onCollapse}
       />,
     );
-    await user.click(screen.getByText(/clear override/i));
+    await user.click(screen.getByRole("button", { name: /clear entry/i }));
     expect(onClear).toHaveBeenCalledOnce();
     expect(onCollapse).toHaveBeenCalledOnce();
   });

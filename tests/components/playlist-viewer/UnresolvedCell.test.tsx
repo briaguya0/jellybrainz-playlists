@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import {
   UnresolvedCell,
-  UnresolvedEditContent,
+  UnresolvedCandidates,
 } from "@src/pages/PlaylistsPage/components/playlist-viewer/UnresolvedCell";
 import type { MbRecording } from "@src/lib/types";
 
@@ -28,60 +28,39 @@ describe("UnresolvedCell", () => {
   });
 });
 
-describe("UnresolvedEditContent", () => {
+describe("UnresolvedCandidates", () => {
+  it("returns null when candidates is empty", () => {
+    const { container } = render(
+      <UnresolvedCandidates candidates={[]} onSelect={vi.fn()} />,
+    );
+    expect(container.firstChild).toBeNull();
+  });
+
   it("lists candidate titles", () => {
     render(
-      <UnresolvedEditContent
-        candidates={candidates}
-        onOverride={vi.fn()}
-        onCollapse={vi.fn()}
-      />,
+      <UnresolvedCandidates candidates={candidates} onSelect={vi.fn()} />,
     );
     expect(screen.getByText("Candidate One")).toBeInTheDocument();
     expect(screen.getByText("Candidate Two")).toBeInTheDocument();
   });
 
-  it("clicking a candidate calls onOverride with its id and onCollapse", async () => {
+  it("clicking a candidate calls onSelect with its id", async () => {
     const user = userEvent.setup();
-    const onOverride = vi.fn();
-    const onCollapse = vi.fn();
-    render(
-      <UnresolvedEditContent
-        candidates={candidates}
-        onOverride={onOverride}
-        onCollapse={onCollapse}
-      />,
-    );
+    const onSelect = vi.fn();
+    render(<UnresolvedCandidates candidates={candidates} onSelect={onSelect} />);
     await user.click(screen.getByText("Candidate One"));
-    expect(onOverride).toHaveBeenCalledWith("rec-1");
-    expect(onCollapse).toHaveBeenCalledOnce();
+    expect(onSelect).toHaveBeenCalledWith("rec-1");
   });
 
-  it("entering manual MBID and submitting calls onOverride and onCollapse", async () => {
-    const user = userEvent.setup();
-    const onOverride = vi.fn();
-    const onCollapse = vi.fn();
-    render(
-      <UnresolvedEditContent
-        candidates={[]}
-        onOverride={onOverride}
-        onCollapse={onCollapse}
+  it("highlights the selected candidate", () => {
+    const { container } = render(
+      <UnresolvedCandidates
+        candidates={candidates}
+        selectedMbid="rec-2"
+        onSelect={vi.fn()}
       />,
     );
-    await user.type(screen.getByPlaceholderText(/xxxx/), "manual-mbid-5678");
-    await user.click(screen.getByRole("button", { name: "Apply" }));
-    expect(onOverride).toHaveBeenCalledWith("manual-mbid-5678");
-    expect(onCollapse).toHaveBeenCalledOnce();
-  });
-
-  it("shows manual input even with no candidates", () => {
-    render(
-      <UnresolvedEditContent
-        candidates={[]}
-        onOverride={vi.fn()}
-        onCollapse={vi.fn()}
-      />,
-    );
-    expect(screen.getByPlaceholderText(/xxxx/)).toBeInTheDocument();
+    const rows = container.querySelectorAll("[class*='border-green']");
+    expect(rows.length).toBeGreaterThan(0);
   });
 });
