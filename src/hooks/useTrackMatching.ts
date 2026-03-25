@@ -64,7 +64,9 @@ export function useTrackMatching(
       : tracks.filter((t) => {
           const mbid = extractMbRecordingId(t);
           if (mbid && recordingMap.get(mbid)) return false;
-          if (overrides[t.Id]) return false;
+          // Keep "selected" overrides in the search so their candidates stay cached.
+          const override = overrides[t.Id];
+          if (override && override.source !== "selected") return false;
           return !!extractMbArtistId(t);
         });
 
@@ -151,7 +153,12 @@ export function useTrackMatching(
         const recording =
           knownCandidates.find((r) => r.id === overrideMbid) ??
           overrideRecordingsMap?.get(overrideMbid);
-        map.set(track.Id, { kind: "override", recording, source });
+        map.set(track.Id, {
+          kind: "override",
+          recording,
+          source,
+          candidates: source === "selected" ? knownCandidates : undefined,
+        });
         continue;
       }
 

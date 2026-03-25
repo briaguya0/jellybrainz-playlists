@@ -77,5 +77,5 @@ export type TrackMatchState =
   | { kind: "loading" }
   | { kind: "exact"; recording: MbRecording }
   | { kind: "partial-auto"; recording: MbRecording; matchSource: "album" | "artist" }
-  | { kind: "override"; recording: MbRecording | undefined; source: OverrideSource }
+  | { kind: "override"; recording: MbRecording | undefined; source: OverrideSource; candidates?: MbRecording[] }
   | { kind: "unresolved"; candidates: MbRecording[] };

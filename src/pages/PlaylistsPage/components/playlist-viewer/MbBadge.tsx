@@ -17,16 +17,18 @@ export function MbBadgeEditContent({
   overrideSource?: "confirmed-album" | "confirmed-artist" | "manual" | "selected";
   recording: MbRecording | undefined;
   onOverride: (mbid: string) => void;
-  onClear: () => void;
+  onClear?: () => void;
   onCollapse: () => void;
 }) {
   const [manualMbid, setManualMbid] = useState("");
 
   return (
     <>
-      {recording && (
-        <div className="flex items-center gap-1 mb-1 pl-1 group">
-          <span className="text-xs text-app-text font-mono font-bold truncate">{recording.id}</span>
+      <div className="flex items-center gap-1 mb-1 pl-1 group">
+        <span className="text-xs text-app-text font-mono font-bold truncate">
+          {recording ? recording.id : "????????-????-????-????-????????????"}
+        </span>
+        {recording && (
           <a
             href={`https://musicbrainz.org/recording/${recording.id}`}
             target="_blank"
@@ -36,8 +38,8 @@ export function MbBadgeEditContent({
           >
             <ExternalLink size={11} />
           </a>
-        </div>
-      )}
+        )}
+      </div>
       <p className={`text-xs text-app-muted pl-1 ${kind === "override" ? "mb-1" : "mb-4"}`}>
         {matchLabel}
       </p>
@@ -45,7 +47,7 @@ export function MbBadgeEditContent({
         <button
           type="button"
           onClick={() => {
-            onClear();
+            onClear?.();
             onCollapse();
           }}
           className="text-xs text-red-500 hover:text-red-400 transition-colors pl-1 mb-4"
@@ -66,7 +68,7 @@ export function MbBadgeEditContent({
           }
         }}
       >
-        <p className="text-sm font-semibold text-app-text mb-1 pl-1">New Recording ID</p>
+        <p className="text-sm font-semibold text-app-text mb-1 pl-1">Manually enter recording ID</p>
         <div className="flex items-center gap-2">
           <input
             type="text"
