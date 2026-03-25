@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { PlaylistRow } from "@src/pages/PlaylistsPage/components/playlist-selection/PlaylistRow";
@@ -21,12 +22,13 @@ describe("PlaylistRow", () => {
     expect(screen.getByText("3 tracks")).toBeInTheDocument();
   });
 
-  it("fires onClick when clicked", () => {
+  it("fires onClick when clicked", async () => {
+    const user = userEvent.setup();
     const onClick = vi.fn();
     render(
       <PlaylistRow playlist={playlist} selected={false} disabled={false} onClick={onClick} />,
     );
-    fireEvent.click(screen.getByRole("button"));
+    await user.click(screen.getByRole("button"));
     expect(onClick).toHaveBeenCalledOnce();
   });
 

@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { MbSection } from "@src/components/settings/MbSection";
@@ -56,7 +57,8 @@ describe("MbSection", () => {
     expect(screen.getByRole("button", { name: "Disconnect" })).toBeInTheDocument();
   });
 
-  it("disconnect button calls setMbAuth(null)", () => {
+  it("disconnect button calls setMbAuth(null)", async () => {
+    const user = userEvent.setup();
     mockSetMbAuth.mockClear();
     mockUseMbAuth.mockReturnValue({
       ...noAuthCtx,
@@ -64,7 +66,7 @@ describe("MbSection", () => {
       mbAuth: { accessToken: "tok", username: "mbuser" },
     });
     render(<MbSection />);
-    fireEvent.click(screen.getByRole("button", { name: "Disconnect" }));
+    await user.click(screen.getByRole("button", { name: "Disconnect" }));
     expect(mockSetMbAuth).toHaveBeenCalledWith(null);
   });
 });

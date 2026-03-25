@@ -1,4 +1,5 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { JellyfinSection } from "@src/components/settings/JellyfinSection";
@@ -42,18 +43,15 @@ describe("JellyfinSection", () => {
   });
 
   it("save button calls resolveUserId then setCfg with resolved userId", async () => {
+    const user = userEvent.setup();
     mockUseJellyfin.mockReturnValue(defaultCtx);
     mockResolveUserId.mockResolvedValue("resolved-user-id");
     mockSetCfg.mockClear();
     render(<JellyfinSection />);
 
-    fireEvent.change(screen.getByPlaceholderText("http://localhost:8096"), {
-      target: { value: "http://jellyfin.local" },
-    });
-    fireEvent.change(screen.getByPlaceholderText("Paste your API key"), {
-      target: { value: "my-key" },
-    });
-    fireEvent.click(screen.getByRole("button", { name: "Connect" }));
+    await user.type(screen.getByPlaceholderText("http://localhost:8096"), "http://jellyfin.local");
+    await user.type(screen.getByPlaceholderText("Paste your API key"), "my-key");
+    await user.click(screen.getByRole("button", { name: "Connect" }));
 
     await waitFor(() =>
       expect(mockSetCfg).toHaveBeenCalledWith({
@@ -65,17 +63,14 @@ describe("JellyfinSection", () => {
   });
 
   it("shows error message when resolveUserId throws", async () => {
+    const user = userEvent.setup();
     mockUseJellyfin.mockReturnValue(defaultCtx);
     mockResolveUserId.mockRejectedValue(new Error("Connection failed"));
     render(<JellyfinSection />);
 
-    fireEvent.change(screen.getByPlaceholderText("http://localhost:8096"), {
-      target: { value: "http://jellyfin.local" },
-    });
-    fireEvent.change(screen.getByPlaceholderText("Paste your API key"), {
-      target: { value: "bad-key" },
-    });
-    fireEvent.click(screen.getByRole("button", { name: "Connect" }));
+    await user.type(screen.getByPlaceholderText("http://localhost:8096"), "http://jellyfin.local");
+    await user.type(screen.getByPlaceholderText("Paste your API key"), "bad-key");
+    await user.click(screen.getByRole("button", { name: "Connect" }));
 
     await waitFor(() =>
       expect(screen.getByText("Connection failed")).toBeInTheDocument(),

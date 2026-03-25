@@ -1,4 +1,5 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { LbSection } from "@src/components/settings/LbSection";
@@ -28,14 +29,14 @@ describe("LbSection", () => {
   });
 
   it("save calls fetchLbUsername then setLbAuth", async () => {
+    const user = userEvent.setup();
     mockUseLbAuth.mockReturnValue({ lbAuth: null, setLbAuth: mockSetLbAuth });
     mockFetchLbUsername.mockResolvedValue("lbuser");
     mockSetLbAuth.mockClear();
     render(<LbSection />);
 
-    const passwordInput = document.querySelector("input[type=password]") as HTMLInputElement;
-    fireEvent.change(passwordInput, { target: { value: "my-token" } });
-    fireEvent.click(screen.getByRole("button", { name: "Connect ListenBrainz" }));
+    await user.type(document.querySelector("input[type=password]") as HTMLElement, "my-token");
+    await user.click(screen.getByRole("button", { name: "Connect ListenBrainz" }));
 
     await waitFor(() =>
       expect(mockSetLbAuth).toHaveBeenCalledWith({ token: "my-token", username: "lbuser" }),
@@ -43,13 +44,13 @@ describe("LbSection", () => {
   });
 
   it("shows error message on fetch failure", async () => {
+    const user = userEvent.setup();
     mockUseLbAuth.mockReturnValue({ lbAuth: null, setLbAuth: mockSetLbAuth });
     mockFetchLbUsername.mockRejectedValue(new Error("Invalid token"));
     render(<LbSection />);
 
-    const passwordInput = document.querySelector("input[type=password]") as HTMLInputElement;
-    fireEvent.change(passwordInput, { target: { value: "bad-token" } });
-    fireEvent.click(screen.getByRole("button", { name: "Connect ListenBrainz" }));
+    await user.type(document.querySelector("input[type=password]") as HTMLElement, "bad-token");
+    await user.click(screen.getByRole("button", { name: "Connect ListenBrainz" }));
 
     await waitFor(() => expect(screen.getByText("Invalid token")).toBeInTheDocument());
   });
@@ -64,14 +65,15 @@ describe("LbSection", () => {
     expect(screen.getByRole("button", { name: "Disconnect" })).toBeInTheDocument();
   });
 
-  it("disconnect button calls setLbAuth(null)", () => {
+  it("disconnect button calls setLbAuth(null)", async () => {
+    const user = userEvent.setup();
     mockSetLbAuth.mockClear();
     mockUseLbAuth.mockReturnValue({
       lbAuth: { token: "tok", username: "lbuser" },
       setLbAuth: mockSetLbAuth,
     });
     render(<LbSection />);
-    fireEvent.click(screen.getByRole("button", { name: "Disconnect" }));
+    await user.click(screen.getByRole("button", { name: "Disconnect" }));
     expect(mockSetLbAuth).toHaveBeenCalledWith(null);
   });
 });

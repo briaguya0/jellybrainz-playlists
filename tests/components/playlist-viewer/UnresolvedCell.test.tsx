@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { UnresolvedCell } from "@src/pages/PlaylistsPage/components/playlist-viewer/UnresolvedCell";
@@ -44,20 +45,20 @@ describe("UnresolvedCell", () => {
     expect(screen.getByText("Candidate Two")).toBeInTheDocument();
   });
 
-  it("clicking a candidate calls onOverride with its id", () => {
+  it("clicking a candidate calls onOverride with its id", async () => {
+    const user = userEvent.setup();
     const onOverride = vi.fn();
     render(<UnresolvedCell candidates={candidates} onOverride={onOverride} />);
-    fireEvent.click(screen.getByText("Candidate One"));
+    await user.click(screen.getByText("Candidate One"));
     expect(onOverride).toHaveBeenCalledWith("rec-1");
   });
 
-  it("entering manual MBID and submitting calls onOverride", () => {
+  it("entering manual MBID and submitting calls onOverride", async () => {
+    const user = userEvent.setup();
     const onOverride = vi.fn();
     render(<UnresolvedCell candidates={[]} onOverride={onOverride} />);
-    fireEvent.change(screen.getByPlaceholderText(/xxxx/), {
-      target: { value: "manual-mbid-5678" },
-    });
-    fireEvent.click(screen.getByRole("button", { name: "Apply" }));
+    await user.type(screen.getByPlaceholderText(/xxxx/), "manual-mbid-5678");
+    await user.click(screen.getByRole("button", { name: "Apply" }));
     expect(onOverride).toHaveBeenCalledWith("manual-mbid-5678");
   });
 

@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { PlaylistCard } from "@src/pages/PlaylistsPage/components/playlist-selection/PlaylistCard";
@@ -40,7 +41,6 @@ describe("PlaylistCard", () => {
     const { container } = render(
       <PlaylistCard playlist={playlist} cfg={cfg} selected={false} disabled={false} onClick={vi.fn()} />,
     );
-    // No img element, but a placeholder div exists
     expect(screen.queryByRole("img")).not.toBeInTheDocument();
     expect(container.querySelector("div.w-12.h-12")).toBeInTheDocument();
   });
@@ -55,13 +55,14 @@ describe("PlaylistCard", () => {
     expect(btn.style.filter).toContain("grayscale");
   });
 
-  it("fires onClick when clicked", () => {
+  it("fires onClick when clicked", async () => {
+    const user = userEvent.setup();
     mockPlaylistThumbnailUrl.mockReturnValue(null);
     const onClick = vi.fn();
     render(
       <PlaylistCard playlist={playlist} cfg={cfg} selected={false} disabled={false} onClick={onClick} />,
     );
-    fireEvent.click(screen.getByRole("button"));
+    await user.click(screen.getByRole("button"));
     expect(onClick).toHaveBeenCalledOnce();
   });
 });

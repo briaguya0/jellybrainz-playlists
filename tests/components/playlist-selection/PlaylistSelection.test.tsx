@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -84,12 +85,12 @@ describe("PlaylistSelection", () => {
       hydrated: true,
     });
     render(<PlaylistSelection selectedId={undefined} />, { wrapper });
-    // Wait for cards to appear
     await screen.findAllByTestId("playlist-card");
     expect(screen.getAllByTestId("playlist-card")).toHaveLength(2);
   });
 
   it("switches to list view and renders PlaylistRows", async () => {
+    const user = userEvent.setup();
     const playlists = [{ Id: "p1", Name: "Alpha", ChildCount: 2 }];
     mockFetchPlaylists.mockResolvedValue(playlists);
     mockUseJellyfin.mockReturnValue({
@@ -100,7 +101,7 @@ describe("PlaylistSelection", () => {
 
     await screen.findAllByTestId("playlist-card");
 
-    fireEvent.click(screen.getByRole("button", { name: "List view" }));
+    await user.click(screen.getByRole("button", { name: "List view" }));
     expect(screen.getAllByTestId("playlist-row")).toHaveLength(1);
     expect(screen.queryByTestId("playlist-card")).not.toBeInTheDocument();
   });

@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { SettingsPanel } from "@src/components/SettingsPanel";
@@ -24,18 +25,20 @@ describe("SettingsPanel", () => {
     expect(document.body.querySelector('[role="dialog"]')).toBeInTheDocument();
   });
 
-  it("Escape key calls onClose", () => {
+  it("Escape key calls onClose", async () => {
+    const user = userEvent.setup();
     const onClose = vi.fn();
     render(<SettingsPanel onClose={onClose} />);
-    fireEvent.keyDown(window, { key: "Escape" });
+    await user.keyboard("{Escape}");
     expect(onClose).toHaveBeenCalledOnce();
   });
 
-  it("backdrop click calls onClose", () => {
+  it("backdrop click calls onClose", async () => {
+    const user = userEvent.setup();
     const onClose = vi.fn();
     render(<SettingsPanel onClose={onClose} />);
     const backdrop = document.body.querySelector('[aria-hidden="true"]') as HTMLElement;
-    fireEvent.click(backdrop);
+    await user.click(backdrop);
     expect(onClose).toHaveBeenCalledOnce();
   });
 

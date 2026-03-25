@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { ThemeSection } from "@src/components/settings/ThemeSection";
 
@@ -29,15 +30,16 @@ describe("ThemeSection", () => {
     expect(darkBtn.className).toContain("bg-[var(--accent)]");
   });
 
-  it("clicking a button calls setAndApply with correct mode", () => {
+  it("clicking a button calls setAndApply with correct mode", async () => {
+    const user = userEvent.setup();
     mockSetAndApply.mockClear();
     mockUseThemeMode.mockReturnValue({ mode: "auto", setAndApply: mockSetAndApply });
     render(<ThemeSection />);
-    fireEvent.click(screen.getByRole("button", { name: "Light" }));
+    await user.click(screen.getByRole("button", { name: "Light" }));
     expect(mockSetAndApply).toHaveBeenCalledWith("light");
-    fireEvent.click(screen.getByRole("button", { name: "Dark" }));
+    await user.click(screen.getByRole("button", { name: "Dark" }));
     expect(mockSetAndApply).toHaveBeenCalledWith("dark");
-    fireEvent.click(screen.getByRole("button", { name: "Auto" }));
+    await user.click(screen.getByRole("button", { name: "Auto" }));
     expect(mockSetAndApply).toHaveBeenCalledWith("auto");
   });
 });

@@ -1,4 +1,5 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { ConnectForm } from "@src/pages/PlaylistsPage/components/playlist-selection/ConnectForm";
@@ -36,17 +37,17 @@ describe("ConnectForm", () => {
   });
 
   it("submit calls resolveUserId then setCfg with resolved userId", async () => {
+    const user = userEvent.setup();
     mockSetCfg.mockClear();
     mockUseJellyfin.mockReturnValue({ setCfg: mockSetCfg });
     mockResolveUserId.mockResolvedValue("resolved-user-id");
     render(<ConnectForm />);
 
     const urlInput = screen.getByPlaceholderText("http://localhost:8096");
-    const apiKeyInput = screen.getByPlaceholderText("Paste your API key");
-
-    fireEvent.change(urlInput, { target: { value: "http://jelly.local" } });
-    fireEvent.change(apiKeyInput, { target: { value: "my-api-key" } });
-    fireEvent.click(screen.getByRole("button", { name: "Connect" }));
+    await user.clear(urlInput);
+    await user.type(urlInput, "http://jelly.local");
+    await user.type(screen.getByPlaceholderText("Paste your API key"), "my-api-key");
+    await user.click(screen.getByRole("button", { name: "Connect" }));
 
     await waitFor(() =>
       expect(mockSetCfg).toHaveBeenCalledWith({
@@ -58,14 +59,13 @@ describe("ConnectForm", () => {
   });
 
   it("shows error message when resolveUserId throws", async () => {
+    const user = userEvent.setup();
     mockUseJellyfin.mockReturnValue({ setCfg: mockSetCfg });
     mockResolveUserId.mockRejectedValue(new Error("Connection refused"));
     render(<ConnectForm />);
 
-    fireEvent.change(screen.getByPlaceholderText("Paste your API key"), {
-      target: { value: "bad-key" },
-    });
-    fireEvent.click(screen.getByRole("button", { name: "Connect" }));
+    await user.type(screen.getByPlaceholderText("Paste your API key"), "bad-key");
+    await user.click(screen.getByRole("button", { name: "Connect" }));
 
     await waitFor(() =>
       expect(screen.getByText("Connection refused")).toBeInTheDocument(),
